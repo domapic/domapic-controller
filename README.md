@@ -20,14 +20,15 @@
 
 ## Introduction
 
-Control all your Domapic services and them interact using Domapic Controller interface. Register plugins to connnect Domapic with other Domotic systems or online services.
+Control all your Domapic services and make them interact using Domapic Controller interface.
+Register plugins to connnect Domapic with other Domotic systems or online services.
 
 [domapic-base-logo-image]: http://domapic.com/assets/domapic-logo.png
 
 [coveralls-image]: https://coveralls.io/repos/github/domapic/domapic-controller/badge.svg
 [coveralls-url]: https://coveralls.io/github/domapic/domapic-controller
-[travisci-image]: https://travis-ci.org/domapic/domapic-controller.svg?branch=master
-[travisci-url]: https://travis-ci.org/domapic/domapic-controller
+[travisci-image]: https://travis-ci.com/domapic/domapic-controller.svg?branch=master
+[travisci-url]: https://travis-ci.com/domapic/domapic-controller
 [last-commit-image]: https://img.shields.io/github/last-commit/domapic/domapic-controller.svg
 [last-commit-url]: https://github.com/domapic/domapic-controller/commits
 [license-image]: https://img.shields.io/npm/l/domapic-controller.svg
