@@ -1,2 +1,3 @@
-# domapic-controller
-Controller for Domapic systems
+# domapic-service
+
+Base for Domapic Node.js services.
