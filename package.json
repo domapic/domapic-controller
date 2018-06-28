@@ -1,0 +1,31 @@
+{
+  "name": "domapic-controller",
+  "version": "1.0.0-alpha.1",
+  "description": "Controller for Domapic systems",
+  "main": "server.js",
+  "keywords": [
+    "domotic",
+    "api",
+    "openapi",
+    "openapi3",
+    "swagger-ui"
+  ],
+  "scripts": {
+    "test": "narval",
+    "coveralls": "cat ./.coverage/unit/lcov.info | coveralls"
+  },
+  "dependencies": {
+    "domapic-base": "1.0.0-beta.3"
+  },
+  "devDependencies": {
+    "coveralls": "3.0.1",
+    "narval": "1.2.0"
+  },
+  "author": {
+    "name": "Javier Brea",
+    "url": "https://javierbrea.com"
+  },
+  "homepage": "http://domapic.com",
+  "license": "MIT",
+  "repository": "https://github.com/domapic/domapic-controller"
+}
