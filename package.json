@@ -10,7 +10,11 @@
     "openapi3",
     "swagger-ui"
   ],
+  "bin": {
+    "domapic-controller": "./bin/domapic-controller"
+  },
   "scripts": {
+    "domapic-controller": "./bin/domapic-controller",
     "test": "narval",
     "coveralls": "cat ./.coverage/unit/lcov.info | coveralls"
   },
