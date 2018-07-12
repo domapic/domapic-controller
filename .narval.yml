@@ -1,3 +1,24 @@
+schemas:
+  bind: &bind
+    - bin
+    - cli
+    - test
+    - server.js
+docker-images:
+  - name: node-image
+    from: node:8.11.1
+    expose:
+      - 3000
+    add:
+      - package.json
+    install: test/functional/commands/install.sh
+docker-containers:
+  - name: controller-container
+    build: node-image
+    bind: *bind
+  - name: test-container
+    build: node-image
+    bind: *bind
 suites:
   unit: 
     - name: unit
@@ -6,3 +27,33 @@ suites:
       coverage:
         config:
           dir: .coverage/unit
+  functional:
+    - name: cli
+      before:
+        local:
+          command: test/functional/commands/local-clean.sh
+        docker:
+          down-volumes: true
+      services:
+        - name: controller
+          docker:
+            container: controller-container
+            command: test/functional/commands/cli-start.sh
+            env:
+              controller_host_name: controller-container
+              domapic_path: .shared
+          local:
+            command: test/functional/commands/cli-start.sh
+            env:
+              controller_host_name: localhost
+              domapic_path: .test
+      test:
+        specs:
+          - test/functional/specs/server-started.js
+        local:
+          wait-on: tcp:localhost:3000
+        docker:
+          container: test-container
+          wait-on: tcp:controller-container:3000
+      coverage:
+        enabled: false

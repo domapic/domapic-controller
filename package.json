@@ -10,12 +10,16 @@
     "openapi3",
     "swagger-ui"
   ],
+  "bin": {
+    "domapic-controller": "./bin/domapic-controller"
+  },
   "scripts": {
+    "domapic-controller": "./bin/domapic-controller",
     "test": "narval",
     "coveralls": "cat ./.coverage/unit/lcov.info | coveralls"
   },
   "dependencies": {
-    "domapic-base": "1.0.0-beta.3"
+    "domapic-base": "1.0.0-beta.4"
   },
   "devDependencies": {
     "coveralls": "3.0.1",
