@@ -2,6 +2,7 @@ schemas:
   bind: &bind
     - bin
     - cli
+    - lib
     - test
     - server.js
 docker-images:

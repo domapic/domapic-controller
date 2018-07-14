@@ -8,7 +8,16 @@ const Mock = function () {
 
   const serviceStubs = {
     server: {
+      addAuthentication: sandbox.stub().usingPromise().resolves(),
+      addOperations: sandbox.stub().usingPromise().resolves(),
+      extendOpenApi: sandbox.stub().usingPromise().resolves(),
       start: sandbox.stub().usingPromise().resolves()
+    },
+    config: {
+      get: sandbox.stub().usingPromise().resolves()
+    },
+    tracer: {
+      info: sandbox.stub().usingPromise().resolves()
     }
   }
 
