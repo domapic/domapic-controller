@@ -3,6 +3,11 @@
 const path = require('path')
 const fs = require('fs')
 
+const requestPromise = require('request-promise')
+
+const SERVICE_HOST = process.env.controller_host_name
+const SERVICE_PORT = '3000'
+const DOMAPIC_PATH = process.env.domapic_path
 const ESTIMATED_START_TIME = 1000
 
 const readFile = function (filePath) {
@@ -31,7 +36,29 @@ const waitOnestimatedStartTime = function (time = ESTIMATED_START_TIME) {
   })
 }
 
+const request = function (uri, options = {}) {
+  const defaultOptions = {
+    uri: `http://${SERVICE_HOST}:${SERVICE_PORT}/api${uri}`,
+    json: true,
+    strictSSL: false,
+    rejectUnauthorized: false,
+    simple: false,
+    requestCert: false,
+    resolveWithFullResponse: true
+  }
+  return requestPromise(Object.assign(defaultOptions, options))
+}
+
+const readStorage = function (folder = 'storage', file = 'service.json') {
+  return readFile(path.resolve(__dirname, '..', '..', '..', DOMAPIC_PATH, '.domapic', 'controller', folder, file))
+    .then((data) => {
+      return Promise.resolve(JSON.parse(data))
+    })
+}
+
 module.exports = {
   waitOnestimatedStartTime: waitOnestimatedStartTime,
-  readOutErr: new ReadLogs()
+  readOutErr: new ReadLogs(),
+  request: request,
+  readStorage: readStorage
 }

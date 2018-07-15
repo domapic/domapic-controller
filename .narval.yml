@@ -43,18 +43,29 @@ suites:
             env:
               controller_host_name: controller-container
               domapic_path: .shared
+              db_uri: mongodb://localhost:27017/domapic
           local:
             command: test/functional/commands/cli-start.sh
             env:
               controller_host_name: localhost
               domapic_path: .test
+              db_uri: mongodb://localhost:27017/domapic
       test:
         specs:
-          - test/functional/specs/server-started.js
+          - test/functional/specs/server-started.specs.js
+          - test/functional/specs/db-config.specs.js
         local:
           wait-on: tcp:localhost:3000
+          env:
+            controller_host_name: localhost
+            domapic_path: .test
+            db_uri: mongodb://localhost:27017/domapic
         docker:
           container: test-container
           wait-on: tcp:controller-container:3000
+          env:
+            controller_host_name: controller-container
+            domapic_path: .shared
+            db_uri: mongodb://localhost:27017/domapic
       coverage:
         enabled: false
