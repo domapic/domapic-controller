@@ -19,7 +19,8 @@
     "coveralls": "cat ./.coverage/unit/lcov.info | coveralls"
   },
   "dependencies": {
-    "domapic-base": "1.0.0-beta.5"
+    "domapic-base": "1.0.0-beta.5",
+    "mongoose": "5.2.3"
   },
   "devDependencies": {
     "coveralls": "3.0.2",

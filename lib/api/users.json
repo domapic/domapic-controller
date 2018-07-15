@@ -1,0 +1,111 @@
+{
+  "tags": [{
+    "name": "user",
+    "description": "Controller registered user"
+  }],
+  "components": {
+    "schemas": {
+      "User": {
+        "description": "User data",
+        "type": "object",
+        "properties": {
+          "_id": {
+            "description": "Unique id of the user",
+            "type": "string"
+          },
+          "name": {
+            "description": "Name of the user",
+            "type": "string"
+          },
+          "email": {
+            "description": "Email of the user",
+            "type": "string",
+            "format": "email"
+          },
+          "role": {
+            "description": "Role assigned to the user",
+            "type": "string",
+            "enum": ["admin", "service", "plugin"]
+          }
+        },
+        "additionalProperties": false,
+        "example": {
+          "_id": "1223123",
+          "name": "Foo user",
+          "email": "foo-email@foo-domain.com",
+          "role": "admin"
+        }
+      },
+      "NewUser": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/User"
+          },
+          {
+            "required": ["name", "role"]
+          }
+        ]
+      },
+      "Users": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/User"
+        }
+      }
+    },
+    "responses": {
+      "NewUser": {
+        "description": "New user added",
+        "headers": {
+          "location": {
+            "$ref": "#/components/headers/ContentLocation"
+          }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/users": {
+      "get": {
+        "tags": ["user"],
+        "summary": "Return users",
+        "description": "Returns an array with all registered users",
+        "operationId": "getUsers",
+        "responses": {
+          "200": {
+            "description": "Users response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Users"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["user"],
+        "summary": "Add a new user",
+        "description": "Register a new user",
+        "operationId": "addUser",
+        "requestBody": {
+          "description": "Data of the user to be added",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewUser"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "$ref": "#/components/responses/NewUser"
+          }
+        }
+      }
+    }
+  }
+}
