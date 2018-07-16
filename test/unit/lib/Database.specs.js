@@ -7,15 +7,18 @@ const Database = require('../../../lib/Database')
 
 test.describe('Database', () => {
   let baseMocks
+  let mongooseMocks
   let database
 
   test.beforeEach(() => {
     baseMocks = new mocks.Base()
+    mongooseMocks = new mocks.Mongoose()
     database = new Database(baseMocks.stubs.service)
   })
 
   test.afterEach(() => {
     baseMocks.restore()
+    mongooseMocks.restore()
   })
 
   test.describe('instance', () => {

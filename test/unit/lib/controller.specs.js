@@ -58,7 +58,7 @@ test.describe('controller', () => {
     })
 
     test.it('should have extended server openApi', () => {
-      test.expect(baseMocks.stubs.service.server.extendOpenApi).to.have.been.calledWith(indexMocks.stubs.api.openapi)
+      test.expect(baseMocks.stubs.service.server.extendOpenApi).to.not.have.been.called()
     })
 
     test.it('should have added operations to server', () => {

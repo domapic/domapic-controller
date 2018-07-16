@@ -25,8 +25,8 @@
   "devDependencies": {
     "coveralls": "3.0.2",
     "narval": "1.2.0",
-    "request-promise": "4.2.2",
-    "request": "2.87.0"
+    "request": "2.87.0",
+    "request-promise": "4.2.2"
   },
   "author": {
     "name": "Javier Brea",
