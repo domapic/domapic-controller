@@ -6,12 +6,14 @@ const mocks = require('../mocks')
 const Database = require('../../../lib/Database')
 
 test.describe('Database', () => {
+  const fooUri = 'foo-db-connection'
   let baseMocks
   let mongooseMocks
   let database
 
   test.beforeEach(() => {
     baseMocks = new mocks.Base()
+    baseMocks.stubs.service.config.get.resolves(fooUri)
     mongooseMocks = new mocks.Mongoose()
     database = new Database(baseMocks.stubs.service)
   })
@@ -29,10 +31,13 @@ test.describe('Database', () => {
       })
 
       test.it('should trace the database config', () => {
-        const fooUri = 'foo-db-connection'
-        baseMocks.stubs.service.config.get.resolves(fooUri)
         return database.connect()
           .then(() => test.expect(baseMocks.stubs.service.tracer.info.getCall(0).args[0]).to.include(fooUri))
+      })
+
+      test.it('should call to mongoose connect', () => {
+        return database.connect()
+          .then(() => test.expect(mongooseMocks.stubs.connect.getCall(0).args[0]).to.equal(fooUri))
       })
     })
   })

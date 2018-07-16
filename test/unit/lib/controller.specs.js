@@ -57,8 +57,26 @@ test.describe('controller', () => {
       test.expect(baseMocks.stubs.service.server.addAuthentication).to.have.been.calledWith(indexMocks.stubs.security.methods)
     })
 
-    test.it('should have extended server openApi', () => {
-      test.expect(baseMocks.stubs.service.server.extendOpenApi).to.not.have.been.called()
+    test.it('should have extended server openApi as many times as openapi definitions are', () => {
+      const fooOpenApi1 = {fooApi: 'foo'}
+      const fooOpenApi2 = {fooApi2: 'foo2'}
+      indexMocks.restore()
+      baseMocks.restore()
+      indexMocks = new mocks.Index()
+      baseMocks = new mocks.Base()
+      indexMocks.stubs.api.openapis = [
+        fooOpenApi1,
+        fooOpenApi2
+      ]
+
+      return controller.start()
+        .then(() => {
+          return Promise.all([
+            test.expect(baseMocks.stubs.service.server.extendOpenApi).to.have.been.calledTwice(),
+            test.expect(baseMocks.stubs.service.server.extendOpenApi.getCall(0).args[0]).to.equal(fooOpenApi1),
+            test.expect(baseMocks.stubs.service.server.extendOpenApi.getCall(1).args[0]).to.equal(fooOpenApi2)
+          ])
+        })
     })
 
     test.it('should have added operations to server', () => {
