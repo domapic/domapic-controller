@@ -13,12 +13,19 @@ docker-images:
     add:
       - package.json
     install: test/functional/commands/install.sh
+  - name: mongodb-image
+    from: mongo:3.6.4
+    expose:
+      - 27017
 docker-containers:
   - name: controller-container
     build: node-image
     bind: *bind
   - name: test-container
     build: node-image
+    bind: *bind
+  - name: mongodb-container
+    build: mongodb-image
     bind: *bind
 suites:
   unit: 
@@ -36,16 +43,22 @@ suites:
         docker:
           down-volumes: true
       services:
+        - name: mongodb
+          docker:
+            container: mongodb-container
+            command: test/functional/commands/mongodb-docker.sh
         - name: controller
           docker:
             container: controller-container
             command: test/functional/commands/cli-start.sh
+            wait-on: tcp:mongodb-container:27017
             env:
               controller_host_name: controller-container
               domapic_path: .shared
-              db_uri: mongodb://localhost:27017/domapic
+              db_uri: mongodb://mongodb-container:27017/domapic
           local:
             command: test/functional/commands/cli-start.sh
+            wait-on: tcp:localhost:27017
             env:
               controller_host_name: localhost
               domapic_path: .test
@@ -66,6 +79,6 @@ suites:
           env:
             controller_host_name: controller-container
             domapic_path: .shared
-            db_uri: mongodb://localhost:27017/domapic
+            db_uri: mongodb://mongodb-container:27017/domapic
       coverage:
         enabled: false
