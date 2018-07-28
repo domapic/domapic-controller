@@ -18,6 +18,9 @@ const Mock = function () {
     },
     tracer: {
       info: sandbox.stub().usingPromise().resolves()
+    },
+    errors: {
+      BadData: sandbox.stub()
     }
   }
 

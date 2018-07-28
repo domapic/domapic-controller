@@ -57,4 +57,44 @@ test.describe('utils', () => {
       })
     })
   })
+
+  test.describe('transformValidationErrors method', () => {
+    test.it('should return the same error if it is not a validation error', () => {
+      const error = new Error('foo')
+      return utils.transformValidationErrors(error)
+        .then(() => {
+          return test.assert.fail()
+        }, (err) => {
+          return test.expect(err).to.equal(error)
+        })
+    })
+
+    test.it('should return a controlled error with all error details, taking reason.message as message if it exists, or message if it does not', () => {
+      const baseMocks = new mocks.Base()
+      const error = new Error('foo')
+      const fooReturnedError = new Error('foo returned error')
+      error.name = 'ValidationError'
+      error.errors = {
+        'fooError': {
+          message: 'foo message'
+        },
+        'fooError2': {
+          reason: {
+            message: 'foo message 2'
+          }
+        }
+      }
+      baseMocks.stubs.service.errors.BadData.returns(fooReturnedError)
+
+      return utils.transformValidationErrors(error, baseMocks.stubs.service)
+        .then(() => {
+          return test.assert.fail()
+        }, (err) => {
+          return Promise.all([
+            test.expect(baseMocks.stubs.service.errors.BadData).to.have.been.calledWith('fooError: foo message, fooError2: foo message 2'),
+            test.expect(err).to.equal(fooReturnedError)
+          ])
+        })
+    })
+  })
 })

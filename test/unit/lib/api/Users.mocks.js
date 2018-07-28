@@ -17,7 +17,8 @@ const Mock = function () {
 
   const stubs = {
     operations: operationsStubs,
-    Operations: sandbox.stub(users, 'Operations').returns(operationsStubs)
+    Operations: sandbox.stub(users, 'Operations').returns(operationsStubs),
+    openapi: sandbox.stub(users, 'openapi').returns({})
   }
 
   const restore = function () {
