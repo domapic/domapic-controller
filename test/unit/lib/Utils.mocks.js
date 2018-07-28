@@ -6,10 +6,10 @@ const utils = require('../../../lib/utils')
 const Mock = function () {
   const sandbox = test.sinon.createSandbox()
 
-  const validateUniqueModelStub = sandbox.stub().usingPromise.resolves()
+  const validateUniqueModelStub = sandbox.stub().usingPromise().resolves()
 
   const stubs = {
-    transformValidationErrors: sandbox.stub(utils, 'transformValidationErrors').usingPromise().resolves(),
+    transformValidationErrors: sandbox.stub(utils, 'transformValidationErrors').usingPromise().rejects(),
     validateUniqueModel: validateUniqueModelStub,
     ValidateUniqueModel: sandbox.stub(utils, 'ValidateUniqueModel').returns(validateUniqueModelStub)
   }
