@@ -67,6 +67,7 @@ suites:
         specs:
           - test/functional/specs/server-started.specs.js
           - test/functional/specs/db-config.specs.js
+          - test/functional/specs/users-api.specs.js
         local:
           wait-on: tcp:localhost:3000
           env:
