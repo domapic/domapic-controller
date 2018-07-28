@@ -6,8 +6,19 @@ const mongoose = require('mongoose')
 const Mock = function () {
   const sandbox = test.sinon.createSandbox()
 
+  const returnsSchema = function (schemaData) {
+    schemaData.name.validate.validator()
+    return schemaData
+  }
+
+  const returnsModelSchema = function (modelName, modelSchema) {
+    return modelSchema
+  }
+
   const stubs = {
-    connect: sandbox.stub(mongoose, 'connect').usingPromise().resolves()
+    connect: sandbox.stub(mongoose, 'connect').usingPromise().resolves(),
+    Schema: sandbox.stub(mongoose, 'Schema').callsFake(returnsSchema),
+    model: sandbox.stub(mongoose, 'model').callsFake(returnsModelSchema)
   }
 
   const restore = function () {
