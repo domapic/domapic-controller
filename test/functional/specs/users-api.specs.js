@@ -79,7 +79,9 @@ test.describe.only('users api', function () {
               test.expect(user._id).to.equal(userId),
               test.expect(user.name).to.equal(newUser.name),
               test.expect(user.role).to.equal(newUser.role),
-              test.expect(user.email).to.equal(newUser.email)
+              test.expect(user.email).to.equal(newUser.email),
+              test.expect(user.createdAt).to.not.be.undefined(),
+              test.expect(user.updatedAt).to.not.be.undefined()
             ])
           })
       })
@@ -132,9 +134,11 @@ test.describe.only('users api', function () {
               test.expect(user1.name).to.equal(newUser.name),
               test.expect(user1.role).to.equal(newUser.role),
               test.expect(user1.email).to.equal(newUser.email),
+              test.expect(user1.createdAt).to.not.be.undefined(),
               test.expect(user2.name).to.equal(newUser2.name),
               test.expect(user2.role).to.equal(newUser2.role),
-              test.expect(user2.email).to.equal(newUser2.email)
+              test.expect(user2.email).to.equal(newUser2.email),
+              test.expect(user1.updatedAt).to.not.be.undefined()
             ])
           })
       })
