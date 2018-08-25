@@ -83,3 +83,48 @@ suites:
             db_uri: mongodb://mongodb-container:27017/domapic
       coverage:
         enabled: false
+    - name: authentication
+      before:
+        local:
+          command: test/functional/commands/local-clean.sh
+        docker:
+          down-volumes: true
+      services:
+        - name: mongodb
+          docker:
+            container: mongodb-container
+            command: test/functional/commands/mongodb-docker.sh
+        - name: controller
+          docker:
+            container: controller-container
+            command: test/functional/commands/cli-start.sh
+            wait-on: tcp:mongodb-container:27017
+            env:
+              controller_host_name: controller-container
+              domapic_path: .shared
+              db_uri: mongodb://mongodb-container:27017/domapic
+          local:
+            command: test/functional/commands/cli-start-authentication.sh
+            wait-on: tcp:localhost:27017
+            env:
+              controller_host_name: localhost
+              domapic_path: .test
+              db_uri: mongodb://localhost:27017/domapic
+      test:
+        specs:
+          - test/functional/specs/authentication-api.specs.js
+        local:
+          wait-on: tcp:localhost:3000
+          env:
+            controller_host_name: localhost
+            domapic_path: .test
+            db_uri: mongodb://localhost:27017/domapic
+        docker:
+          container: test-container
+          wait-on: tcp:controller-container:3000
+          env:
+            controller_host_name: controller-container
+            domapic_path: .shared
+            db_uri: mongodb://mongodb-container:27017/domapic
+      coverage:
+        enabled: false
