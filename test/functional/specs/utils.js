@@ -56,9 +56,48 @@ const readStorage = function (folder = 'storage', file = 'service.json') {
     })
 }
 
+const Authenticator = () => {
+  let accessToken = null
+  let refreshToken = null
+
+  const credentials = () => {
+    if (accessToken) {
+      return {
+        headers: {
+          authorization: `Bearer ${accessToken}`
+        }
+      }
+    }
+    return {}
+  }
+
+  const login = (token, refresh) => {
+    accessToken = token
+    if (refresh) {
+      refreshToken = refresh
+    }
+  }
+
+  const logout = () => {
+    accessToken = null
+  }
+
+  const getRefreshToken = () => {
+    return refreshToken
+  }
+
+  return {
+    credentials,
+    refreshToken: getRefreshToken,
+    login,
+    logout
+  }
+}
+
 module.exports = {
-  waitOnestimatedStartTime: waitOnestimatedStartTime,
+  waitOnestimatedStartTime,
   readOutErr: new ReadLogs(),
-  request: request,
-  readStorage: readStorage
+  request,
+  readStorage,
+  Authenticator
 }
