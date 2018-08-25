@@ -26,14 +26,14 @@ test.describe('user model', () => {
 
     test.describe('name validation', () => {
       test.it('should use ValidateUniqueModel utility', () => {
-        model = new user.Model(baseMocks.stubs.service)
+        model = user.Model(baseMocks.stubs.service)
         test.expect(model.name.validate.validator).to.equal(utilsMocks.stubs.validateUniqueModel)
       })
     })
 
     test.describe('email validation', () => {
       test.it('should throw an error if provided email is not valid', () => {
-        model = new user.Model(baseMocks.stubs.service)
+        model = user.Model(baseMocks.stubs.service)
         return model.email.validate('foo')
           .then(() => {
             return test.assert.fail()
@@ -43,7 +43,7 @@ test.describe('user model', () => {
       })
 
       test.it('should call to validate that email is unique', () => {
-        model = new user.Model(baseMocks.stubs.service)
+        model = user.Model(baseMocks.stubs.service)
         const fooDuplicatedError = new Error('foo duplicated error')
         utilsMocks.stubs.validateUniqueModel.rejects(fooDuplicatedError)
         return model.email.validate('foo@foo.com')
@@ -55,7 +55,7 @@ test.describe('user model', () => {
       })
 
       test.it('should resolve the promise if email is valid and unique validation pass', () => {
-        model = new user.Model(baseMocks.stubs.service)
+        model = user.Model(baseMocks.stubs.service)
         return model.email.validate('foo@foo.com')
           .then(() => {
             return test.expect(true).to.be.true()

@@ -14,7 +14,7 @@ test.describe('Api', () => {
   test.beforeEach(() => {
     baseMocks = new mocks.Base()
     usersMocks = new mocks.api.Users()
-    api = new Api(baseMocks.stubs.service)
+    api = Api(baseMocks.stubs.service)
   })
 
   test.afterEach(() => {

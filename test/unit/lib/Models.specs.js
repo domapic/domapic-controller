@@ -12,7 +12,7 @@ test.describe('Models', () => {
   test.beforeEach(() => {
     baseMocks = new mocks.Base()
     userModelMocks = new mocks.models.User()
-    models = new Models(baseMocks.stubs.service)
+    models = Models(baseMocks.stubs.service)
   })
 
   test.afterEach(() => {

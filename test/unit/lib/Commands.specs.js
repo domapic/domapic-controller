@@ -17,7 +17,7 @@ test.describe('Commands', () => {
     modelsMocks = new mocks.Models()
     clientMocks = new mocks.Client()
     userCommandsMocks = new mocks.commands.User()
-    commands = new Commands(baseMocks.stubs.service, modelsMocks.stubs, clientMocks.stubs)
+    commands = Commands(baseMocks.stubs.service, modelsMocks.stubs, clientMocks.stubs)
   })
 
   test.afterEach(() => {

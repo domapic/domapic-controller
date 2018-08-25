@@ -11,7 +11,7 @@ test.describe('Client', () => {
 
   test.beforeEach(() => {
     baseMocks = new mocks.Base()
-    client = new Client(baseMocks.stubs.service)
+    client = Client(baseMocks.stubs.service)
   })
 
   test.afterEach(() => {

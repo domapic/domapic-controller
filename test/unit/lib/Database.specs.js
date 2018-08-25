@@ -15,7 +15,7 @@ test.describe('Database', () => {
     baseMocks = new mocks.Base()
     baseMocks.stubs.service.config.get.resolves(fooUri)
     mongooseMocks = new mocks.Mongoose()
-    database = new Database(baseMocks.stubs.service)
+    database = Database(baseMocks.stubs.service)
   })
 
   test.afterEach(() => {

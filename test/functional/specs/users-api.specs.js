@@ -3,7 +3,7 @@ const test = require('narval')
 
 const utils = require('./utils')
 
-test.describe.only('users api', function () {
+test.describe('users api', function () {
   const postUser = function (userData) {
     return utils.request('/users', {
       method: 'POST',
@@ -14,7 +14,8 @@ test.describe.only('users api', function () {
   const newUser = {
     name: 'foo name',
     role: 'admin',
-    email: 'foo@foo.com'
+    email: 'foo@foo.com',
+    password: 'foo'
   }
 
   test.describe('add user', () => {
@@ -40,6 +41,28 @@ test.describe.only('users api', function () {
       })
     })
 
+    test.it('should return a bad data error if no email is provided', () => {
+      return postUser({
+        name: 'foo name'
+      }).then((response) => {
+        return Promise.all([
+          test.expect(response.body.message).to.contain('requires property "email"'),
+          test.expect(response.statusCode).to.equal(422)
+        ])
+      })
+    })
+
+    test.it('should return a bad data error if no password is provided', () => {
+      return postUser({
+        name: 'foo name'
+      }).then((response) => {
+        return Promise.all([
+          test.expect(response.body.message).to.contain('requires property "password"'),
+          test.expect(response.statusCode).to.equal(422)
+        ])
+      })
+    })
+
     test.it('should return a bad data error if a wrong role is provided', () => {
       return postUser({
         name: 'foo name',
@@ -56,7 +79,8 @@ test.describe.only('users api', function () {
       return postUser({
         name: 'foo name',
         role: 'admin',
-        email: 'asdasdds'
+        email: 'asdasdds',
+        password: 'foo'
       }).then((response) => {
         return Promise.all([
           test.expect(response.body.message).to.contain('email: does not conform to the "email" format'),
@@ -69,7 +93,8 @@ test.describe.only('users api', function () {
       return postUser({
         name: newUser.name,
         role: newUser.role,
-        email: newUser.email
+        email: newUser.email,
+        password: newUser.password
       }).then((addResponse) => {
         return utils.request('/users')
           .then((getResponse) => {
@@ -91,7 +116,8 @@ test.describe.only('users api', function () {
       return postUser({
         name: 'foo name 2',
         role: 'admin',
-        email: 'foo@foo.com'
+        email: 'foo@foo.com',
+        password: 'foo'
       }).then((response) => {
         return Promise.all([
           test.expect(response.body.message).to.equal('email: Email already exists'),
@@ -104,7 +130,8 @@ test.describe.only('users api', function () {
       return postUser({
         name: 'foo name',
         role: 'admin',
-        email: 'foo2@foo.com'
+        email: 'foo2@foo.com',
+        password: 'foo'
       }).then((response) => {
         return Promise.all([
           test.expect(response.body.message).to.equal('name: User name already exists'),
@@ -119,13 +146,10 @@ test.describe.only('users api', function () {
       const newUser2 = {
         name: 'foo service',
         role: 'service',
-        email: 'foo2@foo.com'
+        email: 'foo2@foo.com',
+        password: 'foo'
       }
-      return postUser({
-        name: newUser2.name,
-        role: newUser2.role,
-        email: newUser2.email
-      }).then(() => {
+      return postUser(newUser2).then(() => {
         return utils.request('/users')
           .then((getResponse) => {
             const user1 = getResponse.body[0]

@@ -8,7 +8,7 @@ const utils = require('../../../lib/utils')
 test.describe('utils', () => {
   test.describe('ValidateUniqueModel', () => {
     test.it('should return a function', () => {
-      return test.expect(typeof new utils.ValidateUniqueModel()).to.equal('function')
+      return test.expect(typeof utils.ValidateUniqueModel()).to.equal('function')
     })
 
     test.describe('instance', () => {
@@ -19,7 +19,7 @@ test.describe('utils', () => {
 
       test.beforeEach(() => {
         ModelMock = new mocks.models.User()
-        validator = new utils.ValidateUniqueModel({
+        validator = utils.ValidateUniqueModel({
           User: ModelMock.stubs.User
         }, 'User', fooField, fooErrorMessage)
       })
