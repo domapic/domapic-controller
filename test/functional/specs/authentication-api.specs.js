@@ -6,7 +6,6 @@ const utils = require('./utils')
 test.describe('authentication api', function () {
   let adminRefreshToken
   let adminAccessToken
-  let userRefreshToken
   const authenticator = utils.Authenticator()
   const newUser = {
     name: 'foo name',
@@ -119,7 +118,6 @@ test.describe('authentication api', function () {
             password: newUser.password
           }).then(response => {
             authenticator.login(response.body.accessToken, response.body.refreshToken)
-            userRefreshToken = response.body.refreshToken
             return Promise.all([
               test.expect(response.body).to.have.all.keys(
                 'accessToken',

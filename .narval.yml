@@ -97,7 +97,7 @@ suites:
         - name: controller
           docker:
             container: controller-container
-            command: test/functional/commands/cli-start.sh
+            command: test/functional/commands/cli-start-authentication.sh
             wait-on: tcp:mongodb-container:27017
             env:
               controller_host_name: controller-container
