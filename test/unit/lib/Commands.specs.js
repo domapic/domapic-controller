@@ -33,5 +33,13 @@ test.describe('Commands', () => {
         'get'
       )
     })
+
+    test.it('should contain refreshToken commands', () => {
+      return test.expect(commands.refreshToken).to.have.all.keys(
+        'add',
+        'getUser',
+        'remove'
+      )
+    })
   })
 })
