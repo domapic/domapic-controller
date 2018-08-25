@@ -10,7 +10,7 @@ const Mock = function () {
 
   const stubs = {
     user: userCommandsMocks.stubs.commands,
-    refreshToken: refreshTokenMocks.stubs.refreshTokenMocks
+    refreshToken: refreshTokenMocks.stubs.commands
   }
 
   const restore = function () {
