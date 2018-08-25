@@ -21,7 +21,8 @@ const Mock = function () {
       debug: sandbox.stub().usingPromise().resolves()
     },
     errors: {
-      BadData: sandbox.stub()
+      BadData: sandbox.stub(),
+      NotFound: sandbox.stub()
     }
   }
 

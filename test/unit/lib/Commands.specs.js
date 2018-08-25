@@ -9,14 +9,12 @@ test.describe('Commands', () => {
   let baseMocks
   let modelsMocks
   let clientMocks
-  let userCommandsMocks
   let commands
 
   test.beforeEach(() => {
     baseMocks = new mocks.Base()
     modelsMocks = new mocks.Models()
     clientMocks = new mocks.Client()
-    userCommandsMocks = new mocks.commands.User()
     commands = Commands(baseMocks.stubs.service, modelsMocks.stubs, clientMocks.stubs)
   })
 
@@ -24,14 +22,15 @@ test.describe('Commands', () => {
     baseMocks.restore()
     modelsMocks.restore()
     clientMocks.restore()
-    userCommandsMocks.restore()
   })
 
   test.describe('instance', () => {
     test.it('should contain user commands', () => {
       return test.expect(commands.user).to.have.all.keys(
         'add',
-        'getAll'
+        'getAll',
+        'getById',
+        'get'
       )
     })
   })

@@ -1,4 +1,5 @@
 
+const md5 = require('md5')
 const test = require('narval')
 
 const mocks = require('../../mocks')
@@ -60,6 +61,12 @@ test.describe('user model', () => {
           .then(() => {
             return test.expect(true).to.be.true()
           })
+      })
+
+      test.it('should encode the user password using md5', () => {
+        const fooPassword = 'foo-password'
+        model = user.Model(baseMocks.stubs.service)
+        test.expect(model.password.set(fooPassword)).to.equal(md5(fooPassword))
       })
     })
   })

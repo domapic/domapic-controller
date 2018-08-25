@@ -79,5 +79,57 @@ test.describe('user commands', () => {
           })
       })
     })
+
+    test.describe('getById method', () => {
+      test.it('should call to user model findById method, and return the result', () => {
+        const fooResult = 'foo'
+        modelsMocks.stubs.User.findById.resolves(fooResult)
+        return commands.getById('foo_id')
+          .then((result) => {
+            return Promise.all([
+              test.expect(result).to.equal(fooResult),
+              test.expect(modelsMocks.stubs.User.findById).to.have.been.called()
+            ])
+          })
+      })
+
+      test.it('should return a not found error if no user is found', () => {
+        const fooError = new Error('foo error')
+        modelsMocks.stubs.User.findById.resolves(null)
+        baseMocks.stubs.service.errors.NotFound.returns(fooError)
+        return commands.getById('foo_id')
+          .then(() => {
+            return test.assert.fail()
+          }, err => {
+            return test.expect(err).to.equal(fooError)
+          })
+      })
+    })
+
+    test.describe('get method', () => {
+      test.it('should call to user model get method, and return the result', () => {
+        const fooResult = 'foo'
+        modelsMocks.stubs.User.findOne.resolves(fooResult)
+        return commands.get({_id: 'id'})
+          .then((result) => {
+            return Promise.all([
+              test.expect(result).to.equal(fooResult),
+              test.expect(modelsMocks.stubs.User.findOne).to.have.been.called()
+            ])
+          })
+      })
+
+      test.it('should call to user model get method with an empty object if it is not provided, and return the result', () => {
+        const fooResult = []
+        modelsMocks.stubs.User.findOne.resolves(fooResult)
+        return commands.get()
+          .then((result) => {
+            return Promise.all([
+              test.expect(result).to.equal(fooResult),
+              test.expect(modelsMocks.stubs.User.findOne.getCall(0).args[0]).to.deep.equal({})
+            ])
+          })
+      })
+    })
   })
 })
