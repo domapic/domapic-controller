@@ -1,7 +1,7 @@
 
 const test = require('narval')
 
-const refreshToken = require('../../../../lib/commands/refreshToken')
+const securityToken = require('../../../../lib/commands/securityToken')
 
 const Mock = function () {
   const sandbox = test.sinon.createSandbox()
@@ -14,7 +14,7 @@ const Mock = function () {
 
   const stubs = {
     commands: commandsStubs,
-    Commands: sandbox.stub(refreshToken, 'Commands').returns(commandsStubs)
+    Commands: sandbox.stub(securityToken, 'Commands').returns(commandsStubs)
   }
 
   const restore = function () {

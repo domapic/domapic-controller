@@ -11,9 +11,9 @@ const Models = require('./lib/Models.mocks')
 const Security = require('./lib/Security.mocks')
 const UsersApi = require('./lib/api/Users.mocks')
 const UserCommands = require('./lib/commands/User.mocks')
-const RefreshTokenCommands = require('./lib/commands/RefreshToken.mocks')
+const SecurityTokenCommands = require('./lib/commands/SecurityToken.mocks')
 const UserModel = require('./lib/models/User.mocks')
-const RefreshTokenModel = require('./lib/models/RefreshToken.mocks')
+const SecurityTokenModel = require('./lib/models/SecurityToken.mocks')
 const Utils = require('./lib/Utils.mocks')
 
 module.exports = {
@@ -23,11 +23,11 @@ module.exports = {
   },
   commands: {
     User: UserCommands,
-    RefrehToken: RefreshTokenCommands
+    SecurityToken: SecurityTokenCommands
   },
   models: {
     User: UserModel,
-    RefreshToken: RefreshTokenModel
+    SecurityToken: SecurityTokenModel
   },
   Base,
   Client,

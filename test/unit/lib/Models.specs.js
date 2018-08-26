@@ -7,20 +7,20 @@ const Models = require('../../../lib/Models')
 test.describe('Models', () => {
   let baseMocks
   let userModelMocks
-  let refreshTokenModelMocks
+  let securityTokenModelMocks
   let models
 
   test.beforeEach(() => {
     baseMocks = new mocks.Base()
     userModelMocks = new mocks.models.User()
-    refreshTokenModelMocks = new mocks.models.RefreshToken()
+    securityTokenModelMocks = new mocks.models.SecurityToken()
     models = Models(baseMocks.stubs.service)
   })
 
   test.afterEach(() => {
     baseMocks.restore()
     userModelMocks.restore()
-    refreshTokenModelMocks.restore()
+    securityTokenModelMocks.restore()
   })
 
   test.describe('instance', () => {
@@ -28,8 +28,8 @@ test.describe('Models', () => {
       return test.expect(typeof models.User).to.equal('function')
     })
 
-    test.it('should contain RefreshToken model', () => {
-      return test.expect(typeof models.RefreshToken).to.equal('function')
+    test.it('should contain SecurityToken model', () => {
+      return test.expect(typeof models.SecurityToken).to.equal('function')
     })
   })
 })

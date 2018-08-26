@@ -1,23 +1,23 @@
 const test = require('narval')
 
 const UserModel = require('./models/User.mocks')
-const RefreshTokenModel = require('./models/RefreshToken.mocks')
+const SecurityTokenModel = require('./models/SecurityToken.mocks')
 
 const Mock = function () {
   const sandbox = test.sinon.createSandbox()
   const userModelMocks = new UserModel()
-  const refreshTokenMocks = new RefreshTokenModel()
+  const securityTokenMocks = new SecurityTokenModel()
 
   const stubs = {
     user: userModelMocks.stubs.user,
     User: userModelMocks.stubs.User,
-    refreshToken: refreshTokenMocks.stubs.refreshToken,
-    RefreshToken: refreshTokenMocks.stubs.RefreshToken
+    securityToken: securityTokenMocks.stubs.securityToken,
+    SecurityToken: securityTokenMocks.stubs.SecurityToken
   }
 
   const restore = function () {
     userModelMocks.restore()
-    refreshTokenMocks.restore()
+    securityTokenMocks.restore()
     sandbox.restore()
   }
 

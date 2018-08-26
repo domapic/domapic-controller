@@ -217,7 +217,7 @@ test.describe('authentication api', function () {
         authenticator.login(adminAccessToken)
         return removeRefreshToken('foo-token').then(response => {
           return Promise.all([
-            test.expect(response.body.message).to.contain('Refresh token not found'),
+            test.expect(response.body.message).to.contain('Security token not found'),
             test.expect(response.statusCode).to.equal(404)
           ])
         })
