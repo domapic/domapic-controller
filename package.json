@@ -19,7 +19,7 @@
     "coveralls": "cat ./.coverage/unit/lcov.info | coveralls"
   },
   "dependencies": {
-    "domapic-base": "file:../domapic-base",
+    "domapic-base": "git://github.com/domapic/domapic-base#security-handlers",
     "md5": "2.2.1",
     "mongoose": "5.2.3",
     "rand-token": "0.4.0"
