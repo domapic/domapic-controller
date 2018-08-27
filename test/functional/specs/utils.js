@@ -59,37 +59,58 @@ const readStorage = function (folder = 'storage', file = 'service.json') {
 const Authenticator = () => {
   let accessToken = null
   let refreshToken = null
+  let apiKey
 
   const credentials = () => {
+    let headers
     if (accessToken) {
-      return {
-        headers: {
-          authorization: `Bearer ${accessToken}`
-        }
+      headers = {
+        authorization: `Bearer ${accessToken}`
       }
+    } else if (apiKey) {
+      headers = {
+        'X-Api-Key': apiKey
+      }
+    }
+    if (headers) {
+      return { headers }
     }
     return {}
   }
 
   const login = (token, refresh) => {
+    apiKey = null
     accessToken = token
     if (refresh) {
       refreshToken = refresh
     }
   }
 
-  const logout = () => {
+  const loginApiKey = (key) => {
     accessToken = null
+    refreshToken = null
+    apiKey = key
   }
 
-  const getRefreshToken = () => {
-    return refreshToken
+  const logout = () => {
+    accessToken = null
+    refreshToken = null
+    apiKey = null
   }
+
+  const getRefreshToken = () => refreshToken
+
+  const getAccessToken = () => accessToken
+
+  const getApiKey = () => apiKey
 
   return {
     credentials,
+    accessToken: getAccessToken,
     refreshToken: getRefreshToken,
+    apiKey: getApiKey,
     login,
+    loginApiKey,
     logout
   }
 }
