@@ -1,5 +1,6 @@
 
 const test = require('narval')
+const testUtils = require('narval/utils')
 
 const utils = require('./utils')
 
@@ -7,7 +8,7 @@ const DB_URI = process.env.db_uri
 
 test.describe('server', function () {
   test.it('should have printed a log with the mongodb uri', () => {
-    return utils.readOutErr()
+    return testUtils.logs.combined('controller')
       .then((log) => {
         return test.expect(log).to.contain(`Connecting with database "${DB_URI}"`)
       })
