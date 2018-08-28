@@ -4,7 +4,7 @@ const mocks = require('../../mocks')
 
 const utils = require('../../../../lib/security/utils')
 
-test.describe.only('security utils', () => {
+test.describe('security utils', () => {
   test.describe('cleanUserData method', () => {
     test.it('should return only certain properties of provided user', () => {
       test.expect(utils.cleanUserData({
