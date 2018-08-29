@@ -27,7 +27,7 @@ test.describe('users api', function () {
     password: 'foo'
   }
 
-  test.describe.only('when user is admin', () => {
+  test.describe('when user is admin', () => {
     test.before(() => {
       return utils.doLogin()
         .then(auth => {
