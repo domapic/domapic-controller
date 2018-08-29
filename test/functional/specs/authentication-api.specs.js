@@ -14,7 +14,7 @@ test.describe('authentication api', function () {
     password: 'foo'
   }
   const adminUser = {
-    name: 'admin',
+    name: 'administrator',
     role: 'admin',
     email: 'foo2@foo2.com',
     password: 'foo2'
