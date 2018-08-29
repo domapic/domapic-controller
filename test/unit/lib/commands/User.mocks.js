@@ -10,7 +10,8 @@ const Mock = function () {
     add: sandbox.stub().usingPromise().resolves(),
     getAll: sandbox.stub().usingPromise().resolves(),
     getById: sandbox.stub().usingPromise().resolves(),
-    get: sandbox.stub().usingPromise().resolves()
+    get: sandbox.stub().usingPromise().resolves(),
+    init: sandbox.stub().usingPromise().resolves()
   }
 
   const stubs = {

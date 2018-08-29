@@ -114,7 +114,12 @@
               }
             }
           }
-        }
+        },
+        "security": [{
+          "jwt": []
+        }, {
+          "apiKey": []
+        }]
       },
       "post": {
         "tags": ["user"],
@@ -136,7 +141,12 @@
           "201": {
             "$ref": "#/components/responses/NewUser"
           }
-        }
+        },
+        "security": [{
+          "jwt": []
+        }, {
+          "apiKey": []
+        }]
       }
     }
   }

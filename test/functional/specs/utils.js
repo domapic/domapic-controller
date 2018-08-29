@@ -10,6 +10,13 @@ const SERVICE_PORT = '3000'
 const DOMAPIC_PATH = process.env.domapic_path
 const ESTIMATED_START_TIME = 1000
 
+const superAdmin = {
+  name: 'super admin',
+  email: 'admin@admin.com',
+  role: 'admin',
+  password: 'admin'
+}
+
 const readFile = function (filePath) {
   return new Promise((resolve, reject) => {
     fs.readFile(filePath, 'utf8', (err, data) => {
@@ -51,9 +58,10 @@ const readStorage = function (folder = 'storage', file = 'service.json') {
 }
 
 const Authenticator = () => {
+  let name = null
   let accessToken = null
   let refreshToken = null
-  let apiKey
+  let apiKey = null
 
   const credentials = () => {
     let headers
@@ -72,46 +80,68 @@ const Authenticator = () => {
     return {}
   }
 
-  const login = (token, refresh) => {
-    apiKey = null
+  const login = (userName, token, refresh) => {
+    name = userName
     accessToken = token
-    if (refresh) {
-      refreshToken = refresh
-    }
+    refreshToken = refresh
+    apiKey = null
   }
 
-  const loginApiKey = (key) => {
+  const loginApiKey = (userName, key) => {
+    name = userName
     accessToken = null
     refreshToken = null
     apiKey = key
   }
 
   const logout = () => {
+    name = null
     accessToken = null
     refreshToken = null
     apiKey = null
   }
 
-  const getRefreshToken = () => refreshToken
-
-  const getAccessToken = () => accessToken
-
-  const getApiKey = () => apiKey
+  const current = () => ({
+    name,
+    accessToken,
+    refreshToken,
+    apiKey
+  })
 
   return {
     credentials,
-    accessToken: getAccessToken,
-    refreshToken: getRefreshToken,
-    apiKey: getApiKey,
+    current,
     login,
     loginApiKey,
     logout
   }
 }
 
+const getAccessToken = (userData, authenticator) => {
+  return request('/auth/jwt', {
+    method: 'POST',
+    body: userData,
+    ...authenticator.credentials()
+  })
+}
+
+const doLogin = (userData = superAdmin) => {
+  const authenticator = Authenticator()
+  return getAccessToken({
+    user: userData.email,
+    password: userData.password
+  }, authenticator).then((response) => {
+    authenticator.login(userData.name, response.body.accessToken, response.body.refreshToken)
+    return Promise.resolve(authenticator)
+  })
+}
+
 module.exports = {
+  superAdmin,
   waitOnestimatedStartTime,
   request,
   readStorage,
-  Authenticator
+  Authenticator,
+  getAccessToken,
+  doLogin
 }
