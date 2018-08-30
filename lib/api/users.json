@@ -66,7 +66,7 @@
           "role": {
             "description": "Role assigned to the user",
             "type": "string",
-            "enum": ["admin", "service", "plugin"]
+            "enum": ["admin", "operator", "service", "service-registerer", "plugin"]
           }
         },
         "required": ["name", "email", "password", "role"],
