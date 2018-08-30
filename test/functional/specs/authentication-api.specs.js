@@ -238,7 +238,7 @@ test.describe('authentication api', function () {
               test.expect(response.body.authDisabled).to.deep.equal([]),
               test.expect(response.body.port).to.equal(3000),
               test.expect(response.body.color).to.equal(true),
-              test.expect(response.body.logLevel).to.equal('trace'),
+              test.expect(response.body.logLevel).to.equal('info'),
               test.expect(response.statusCode).to.equal(200)
             ])
           })
