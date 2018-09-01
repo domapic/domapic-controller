@@ -67,7 +67,7 @@ test.describe('users api', function () {
 
       test.it('should return a bad data error if no role is provided', () => {
         return utils.createUser(authenticator, {
-          name: 'foo name'
+          name: 'foo-name'
         }).then((response) => {
           return Promise.all([
             test.expect(response.body.message).to.contain('requires property "role"'),
@@ -76,25 +76,45 @@ test.describe('users api', function () {
         })
       })
 
-      test.it('should return a bad data error if no email is provided', () => {
+      test.it('should return a bad data error if no email is provided, and role is not "service" or "plugin"', () => {
         return utils.createUser(authenticator, {
-          name: 'foo name'
+          name: 'foo-name',
+          role: 'operator'
         }).then((response) => {
           return Promise.all([
-            test.expect(response.body.message).to.contain('requires property "email"'),
+            test.expect(response.body.message).to.contain('email: Email is required'),
             test.expect(response.statusCode).to.equal(422)
           ])
         })
       })
 
-      test.it('should return a bad data error if no password is provided', () => {
+      test.it('should return a bad data error if no password is provided, and role is not "service" or "plugin"', () => {
         return utils.createUser(authenticator, {
-          name: 'foo name'
+          name: 'foo-name',
+          role: 'operator'
         }).then((response) => {
           return Promise.all([
-            test.expect(response.body.message).to.contain('requires property "password"'),
+            test.expect(response.body.message).to.contain('password: Password is required'),
             test.expect(response.statusCode).to.equal(422)
           ])
+        })
+      })
+
+      test.it('should allow to create users with role "service" without password and email', () => {
+        return utils.createUser(authenticator, {
+          name: 'foo-service-name',
+          role: 'service'
+        }).then((response) => {
+          return test.expect(response.statusCode).to.equal(201)
+        })
+      })
+
+      test.it('should allow to create users with role "plugin" without password and email', () => {
+        return utils.createUser(authenticator, {
+          name: 'foo-plugin-name',
+          role: 'plugin'
+        }).then((response) => {
+          return test.expect(response.statusCode).to.equal(201)
         })
       })
 
@@ -134,9 +154,8 @@ test.describe('users api', function () {
           return getUsers()
             .then((getResponse) => {
               const userId = addResponse.headers.location.split('/').pop()
-              const user = getResponse.body[2]
+              const user = getResponse.body.find(user => user._id === userId)
               return Promise.all([
-                test.expect(user._id).to.equal(userId),
                 test.expect(user.name).to.equal(operatorUser.name),
                 test.expect(user.role).to.equal(operatorUser.role),
                 test.expect(user.email).to.equal(operatorUser.email),
@@ -149,7 +168,7 @@ test.describe('users api', function () {
 
       test.it('should return a bad data error if an already existant email is provided', () => {
         return utils.createUser(authenticator, {
-          name: 'foo name 2',
+          name: 'foo-name-2',
           role: 'admin',
           email: operatorUser.email,
           password: 'foo'
@@ -181,14 +200,12 @@ test.describe('users api', function () {
         return utils.createUser(authenticator, newUser).then(() => {
           return getUsers()
             .then((getResponse) => {
-              const user1 = getResponse.body[2]
-              const user2 = getResponse.body[3]
+              const user1 = getResponse.body.find(user => user.name === operatorUser.name)
+              const user2 = getResponse.body.find(user => user.name === newUser.name)
               return Promise.all([
-                test.expect(user1.name).to.equal(operatorUser.name),
                 test.expect(user1.role).to.equal(operatorUser.role),
                 test.expect(user1.email).to.equal(operatorUser.email),
                 test.expect(user1.createdAt).to.not.be.undefined(),
-                test.expect(user2.name).to.equal(newUser.name),
                 test.expect(user2.role).to.equal(newUser.role),
                 test.expect(user2.email).to.equal(newUser.email),
                 test.expect(user1.updatedAt).to.not.be.undefined()

@@ -69,7 +69,7 @@
             "enum": ["admin", "operator", "service", "service-registerer", "plugin"]
           }
         },
-        "required": ["name", "email", "password", "role"],
+        "required": ["name", "role"],
         "additionalProperties": false,
         "example": {
           "name": "foo-user",
