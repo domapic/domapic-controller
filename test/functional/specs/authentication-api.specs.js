@@ -3,8 +3,6 @@ const test = require('narval')
 
 const utils = require('./utils')
 
-const superAdmin = utils.superAdmin
-
 test.describe('authentication api', function () {
   const authenticator = utils.Authenticator()
   const newUser = {
@@ -18,14 +16,6 @@ test.describe('authentication api', function () {
     role: 'admin',
     email: 'foo2@foo2.com',
     password: 'foo2'
-  }
-
-  const createUser = (userData = newUser) => {
-    return utils.request('/users', {
-      method: 'POST',
-      body: userData,
-      ...authenticator.credentials()
-    })
   }
 
   const getConfig = () => {
@@ -70,22 +60,7 @@ test.describe('authentication api', function () {
   }
 
   const forceCreateUser = (userData = newUser) => {
-    const oldTokens = authenticator.current()
-    return createUser(superAdmin).finally(() => getAccessToken({
-      user: superAdmin.email,
-      password: superAdmin.password
-    }).then(response => {
-      authenticator.login('superAdmin', response.body.accessToken, response.body.refreshToken)
-      return createUser(userData).then(newUserData => {
-        authenticator.logout()
-        if (oldTokens.accessToken && oldTokens.refreshToken) {
-          authenticator.login(userData.name, oldTokens.accessToken, oldTokens.refreshToken)
-        } else if (authenticator.apiKey) {
-          authenticator.loginApiKey(userData.name, oldTokens.apiKey)
-        }
-        return Promise.resolve(userData)
-      })
-    }))
+    return utils.ensureUserAndDoLogin(authenticator, userData)
   }
 
   test.describe('when no authenticated', () => {

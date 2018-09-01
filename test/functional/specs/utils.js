@@ -152,11 +152,11 @@ const ensureUser = (authenticator, userData) => {
 
 const ensureUserAndDoLogin = (authenticator, userData) => {
   return ensureUser(authenticator, userData)
-    .then(() => createUser(authenticator, userData).finally(() => doLogin(authenticator, {
+    .then(() => doLogin(authenticator, {
       name: userData.name,
       email: userData.email,
       password: userData.password
-    })))
+    }))
 }
 
 module.exports = {
