@@ -80,6 +80,7 @@ suites:
           dir: .coverage/unit
   functional:
     - name: cli
+      describe: Controller should start using built-in cli
       before: *base-before
       services: *base-services
       test: 
@@ -89,6 +90,7 @@ suites:
           - test/functional/specs/db-config.specs.js
       coverage: *base-coverage
     - name: users
+      describe: Users api should work as expected
       before: *base-before
       services: *base-services
       test: 
@@ -97,6 +99,7 @@ suites:
           - test/functional/specs/users-api.specs.js
       coverage: *base-coverage
     - name: authentication
+      describe: JWT and apiKeys apis should work as expected
       before: *base-before
       services: *base-services
       test: 
