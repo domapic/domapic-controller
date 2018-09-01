@@ -68,7 +68,7 @@ test.describe('security utils', () => {
     test.beforeEach(() => {
       sandbox = test.sinon.createSandbox()
       getOwner = sandbox.stub().usingPromise().resolves({
-        email: 'fooEmail'
+        name: 'foo-name'
       })
       authOperation = utils.AuthOperation(getOwner)
     })
@@ -78,7 +78,7 @@ test.describe('security utils', () => {
     })
 
     test.it('should call to provided getOwner function, passing arguments to it', () => {
-      const args = [{ email: 'fooEmail' }, 'foo2', 'foo3']
+      const args = [{ name: 'foo-name' }, 'foo2', 'foo3']
       return authOperation(...args)
         .then(result => {
           return test.expect(getOwner).to.have.been.calledWith(...args)
@@ -90,8 +90,8 @@ test.describe('security utils', () => {
       return test.expect(authOperation(...args)).to.be.true()
     })
 
-    test.it('should return a rejected promise if provided user email is not equal to email returned by getOwner function', () => {
-      const args = [{ email: 'fooDifferentEmail' }, 'foo2', 'foo3']
+    test.it('should return a rejected promise if provided user name is not equal to name returned by getOwner function', () => {
+      const args = [{ name: 'foo-different-name' }, 'foo2', 'foo3']
       return authOperation(...args)
         .then(result => {
           return test.assert.fail()

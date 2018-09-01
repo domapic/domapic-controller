@@ -11,7 +11,7 @@ const DOMAPIC_PATH = process.env.domapic_path
 const ESTIMATED_START_TIME = 1000
 
 const superAdmin = {
-  name: 'super admin',
+  name: 'admin',
   email: 'admin@admin.com',
   role: 'admin',
   password: 'admin'
@@ -127,7 +127,7 @@ const getAccessToken = (authenticator, userData) => {
 
 const doLogin = (authenticator, userData = superAdmin) => {
   return getAccessToken(authenticator, {
-    user: userData.email,
+    user: userData.name,
     password: userData.password
   }).then((response) => {
     authenticator.login(userData.name, response.body.accessToken, response.body.refreshToken)
@@ -154,7 +154,6 @@ const ensureUserAndDoLogin = (authenticator, userData) => {
   return ensureUser(authenticator, userData)
     .then(() => doLogin(authenticator, {
       name: userData.name,
-      email: userData.email,
       password: userData.password
     }))
 }

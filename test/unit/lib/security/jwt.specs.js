@@ -85,7 +85,7 @@ test.describe('jwt security', () => {
           }).then(result => {
             return Promise.all([
               test.expect(commandsMocks.stubs.user.get).to.have.been.calledWith({
-                email: 'fooUser',
+                name: 'fooUser',
                 password: 'fooPassword'
               }),
               test.expect(commandsMocks.stubs.securityToken.add).to.have.been.calledWith(fooUserData),
@@ -113,7 +113,7 @@ test.describe('jwt security', () => {
           }, error => {
             return Promise.all([
               test.expect(commandsMocks.stubs.user.get).to.have.been.calledWith({
-                email: 'fooUser',
+                name: 'fooUser',
                 password: 'fooPassword'
               }),
               test.expect(error).to.equal(fooError)
@@ -143,9 +143,9 @@ test.describe('jwt security', () => {
 
         test.it('should get user data from refresh token and reject the promise if the token do not belongs to himself', () => {
           commandsMocks.stubs.securityToken.getUser.resolves({
-            email: 'fooEmail'
+            name: 'foo-name'
           })
-          return security.revokeAuth({email: 'fooDifferentEmail'}, {}, {refreshToken: 'fooRefreshToken'})
+          return security.revokeAuth({name: 'foo-different-name'}, {}, {refreshToken: 'fooRefreshToken'})
             .then(() => {
               return test.assert.fail()
             }, () => {
@@ -155,7 +155,7 @@ test.describe('jwt security', () => {
 
         test.it('should reject the promise if retrieving user data returns an error', () => {
           commandsMocks.stubs.securityToken.getUser.rejects(new Error())
-          return security.revokeAuth({email: 'fooEmail'}, {}, {refreshToken: 'fooRefreshToken'})
+          return security.revokeAuth({name: 'foo-name'}, {}, {refreshToken: 'fooRefreshToken'})
             .then(() => {
               return test.assert.fail()
             }, () => {

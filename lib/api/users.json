@@ -72,7 +72,7 @@
         "required": ["name", "email", "password", "role"],
         "additionalProperties": false,
         "example": {
-          "name": "Foo user",
+          "name": "foo-user",
           "email": "foo-email@foo-domain.com",
           "role": "admin",
           "password": "foopass"

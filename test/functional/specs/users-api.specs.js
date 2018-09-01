@@ -14,35 +14,35 @@ test.describe('users api', function () {
   }
 
   const newUser = {
-    name: 'foo service',
+    name: 'foo-service',
     role: 'service',
     email: 'foo2@foo.com',
     password: 'foo'
   }
 
   const operatorUser = {
-    name: 'foo operator',
+    name: 'foo-operator',
     role: 'operator',
     email: 'operator@foo.com',
     password: 'foo'
   }
 
   const serviceUser = {
-    name: 'foo service user',
+    name: 'foo-service-user',
     role: 'service',
     email: 'service@foo.com',
     password: 'foo'
   }
 
   const pluginUser = {
-    name: 'foo plugin',
+    name: 'foo-plugin',
     role: 'plugin',
     email: 'plugin@foo.com',
     password: 'foo'
   }
 
   const serviceRegistererUser = {
-    name: 'foo service registerer',
+    name: 'foo-service-registerer',
     role: 'service-registerer',
     email: 'service-registerer@foo.com',
     password: 'foo'
@@ -100,7 +100,7 @@ test.describe('users api', function () {
 
       test.it('should return a bad data error if a wrong role is provided', () => {
         return utils.createUser(authenticator, {
-          name: 'foo name',
+          name: 'foo-name',
           role: 'admidsn'
         }).then((response) => {
           return Promise.all([
@@ -112,7 +112,7 @@ test.describe('users api', function () {
 
       test.it('should return a bad data error if a wrong email is provided', () => {
         return utils.createUser(authenticator, {
-          name: 'foo name',
+          name: 'foo-name',
           role: 'admin',
           email: 'asdasdds',
           password: 'foo'
@@ -241,7 +241,7 @@ test.describe('users api', function () {
     test.describe('add user', () => {
       test.it('should return 201 when adding a new user with role "service"', () => {
         return utils.createUser(authenticator, {
-          name: 'foo new service',
+          name: 'foo-new-service',
           role: 'service',
           email: 'fooNewService@foo.com',
           password: 'foo'
@@ -252,7 +252,7 @@ test.describe('users api', function () {
 
       test.it('should return a forbidden error when adding a new user with role different to "service"', () => {
         return utils.createUser(authenticator, {
-          name: 'foo new admin',
+          name: 'foo-new-admin',
           role: 'admin',
           email: 'fooNewAdmin@foo.com',
           password: 'foo'
