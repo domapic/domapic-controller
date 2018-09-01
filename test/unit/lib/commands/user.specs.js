@@ -131,5 +131,23 @@ test.describe('user commands', () => {
           })
       })
     })
+
+    test.describe('init method', () => {
+      test.it('should call to add initial users if getAll method returns an empty array', () => {
+        modelsMocks.stubs.User.find.resolves([])
+        return commands.init()
+          .then(() => {
+            return test.expect(modelsMocks.stubs.user.save).to.have.been.calledTwice()
+          })
+      })
+
+      test.it('should do nothing if getAll method returns users', () => {
+        modelsMocks.stubs.User.find.resolves(['foo-user'])
+        return commands.init()
+          .then(() => {
+            return test.expect(modelsMocks.stubs.user.save).to.not.have.been.called()
+          })
+      })
+    })
   })
 })

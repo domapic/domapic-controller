@@ -66,13 +66,13 @@
           "role": {
             "description": "Role assigned to the user",
             "type": "string",
-            "enum": ["admin", "service", "plugin"]
+            "enum": ["admin", "operator", "service", "service-registerer", "plugin"]
           }
         },
-        "required": ["name", "email", "password", "role"],
+        "required": ["name", "role"],
         "additionalProperties": false,
         "example": {
-          "name": "Foo user",
+          "name": "foo-user",
           "email": "foo-email@foo-domain.com",
           "role": "admin",
           "password": "foopass"
@@ -114,7 +114,12 @@
               }
             }
           }
-        }
+        },
+        "security": [{
+          "jwt": []
+        }, {
+          "apiKey": []
+        }]
       },
       "post": {
         "tags": ["user"],
@@ -136,7 +141,12 @@
           "201": {
             "$ref": "#/components/responses/NewUser"
           }
-        }
+        },
+        "security": [{
+          "jwt": []
+        }, {
+          "apiKey": []
+        }]
       }
     }
   }

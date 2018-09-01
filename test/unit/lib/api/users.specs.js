@@ -23,6 +23,26 @@ test.describe('api users', () => {
       commandsMocks.restore()
     })
 
+    test.describe('getUsers auth', () => {
+      test.it('should return true if provided user has "admin" role', () => {
+        test.expect(operations.getUsers.auth({
+          role: 'admin'
+        }, {}, {})).to.be.true()
+      })
+
+      const testRole = function (role) {
+        test.it(`should return false if provided user has "${role}" role`, () => {
+          test.expect(operations.getUsers.auth({
+            role
+          }, {}, {})).to.be.false()
+        })
+      }
+      testRole('service')
+      testRole('operator')
+      testRole('plugin')
+      testRole('service-registerer')
+    })
+
     test.describe('getUsers handler', () => {
       test.it('should return all users, calling to correspondant command', () => {
         const resolves = 'foo result'
@@ -36,6 +56,41 @@ test.describe('api users', () => {
             ])
           })
       })
+    })
+
+    test.describe('addUser auth', () => {
+      test.it('should return true if provided user has "admin" role', () => {
+        test.expect(operations.addUser.auth({
+          role: 'admin'
+        }, {}, {})).to.be.true()
+      })
+
+      test.it('should return true if provided user has "service-registerer" role and body user has "service" role', () => {
+        test.expect(operations.addUser.auth({
+          role: 'service-registerer'
+        }, {}, {
+          role: 'service'
+        })).to.be.true()
+      })
+
+      test.it('should return false if provided user has "service-registerer" role and body user has a role different to service', () => {
+        test.expect(operations.addUser.auth({
+          role: 'service-registerer'
+        }, {}, {
+          role: 'admin'
+        })).to.be.false()
+      })
+
+      const testRole = function (role) {
+        test.it(`should return false if provided user has "${role}" role`, () => {
+          test.expect(operations.addUser.auth({
+            role
+          }, {}, {})).to.be.false()
+        })
+      }
+      testRole('service')
+      testRole('operator')
+      testRole('plugin')
     })
 
     test.describe('addUser handler', () => {
