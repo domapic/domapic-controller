@@ -47,40 +47,60 @@ test.describe('Security', () => {
       test.expect(jwtStub).to.have.been.calledWith(baseMocks.stubs.service, commandsMocks.stubs)
     })
 
-    test.it('should expose jwt authenticate handler method', () => {
-      test.expect(security.methods.jwt.authenticate.handler).to.equal(jwtMock.authenticateHandler)
-    })
-
-    test.it('should expose jwt revoke auth method', () => {
-      test.expect(security.methods.jwt.revoke.auth).to.equal(jwtMock.revokeAuth)
-    })
-
-    test.it('should expose jwt revoke handler method', () => {
-      test.expect(security.methods.jwt.revoke.handler).to.equal(jwtMock.revokeHandler)
-    })
-
     test.it('should have created an apiKey methods instance', () => {
       test.expect(apiKeyStub).to.have.been.calledWith(baseMocks.stubs.service, commandsMocks.stubs)
     })
 
-    test.it('should expose apiKey verify method', () => {
-      test.expect(security.methods.apiKey.verify).to.equal(apiKeyMock.verify)
-    })
+    test.describe('methods', () => {
+      let methods
+      test.before(() => {
+        return security.methods().then(returnedMethods => {
+          methods = returnedMethods
+        })
+      })
 
-    test.it('should expose apiKey authenticate auth method', () => {
-      test.expect(security.methods.apiKey.authenticate.auth).to.equal(apiKeyMock.authenticateAuth)
-    })
+      test.it('should call to base service to get "secret" config, and return it in the jwt.secret property', () => {
+        const fooSecret = 'foo secret'
+        baseMocks.stubs.service.config.get.resolves(fooSecret)
+        return security.methods().then(securityMethods => {
+          return Promise.all([
+            test.expect(baseMocks.stubs.service.config.get).to.have.been.calledWith('secret'),
+            test.expect(securityMethods.jwt.secret).to.equal(fooSecret)
+          ])
+        })
+      })
 
-    test.it('should expose apiKey authenticate handler method', () => {
-      test.expect(security.methods.apiKey.authenticate.handler).to.equal(apiKeyMock.authenticateHandler)
-    })
+      test.it('should expose jwt authenticate handler method', () => {
+        test.expect(methods.jwt.authenticate.handler).to.equal(jwtMock.authenticateHandler)
+      })
 
-    test.it('should expose apiKey revoke auth method', () => {
-      test.expect(security.methods.apiKey.revoke.auth).to.equal(apiKeyMock.revokeAuth)
-    })
+      test.it('should expose jwt revoke auth method', () => {
+        test.expect(methods.jwt.revoke.auth).to.equal(jwtMock.revokeAuth)
+      })
 
-    test.it('should expose apiKey revoke handler method', () => {
-      test.expect(security.methods.apiKey.revoke.handler).to.equal(apiKeyMock.revokeHandler)
+      test.it('should expose jwt revoke handler method', () => {
+        test.expect(methods.jwt.revoke.handler).to.equal(jwtMock.revokeHandler)
+      })
+
+      test.it('should expose apiKey verify method', () => {
+        test.expect(methods.apiKey.verify).to.equal(apiKeyMock.verify)
+      })
+
+      test.it('should expose apiKey authenticate auth method', () => {
+        test.expect(methods.apiKey.authenticate.auth).to.equal(apiKeyMock.authenticateAuth)
+      })
+
+      test.it('should expose apiKey authenticate handler method', () => {
+        test.expect(methods.apiKey.authenticate.handler).to.equal(apiKeyMock.authenticateHandler)
+      })
+
+      test.it('should expose apiKey revoke auth method', () => {
+        test.expect(methods.apiKey.revoke.auth).to.equal(apiKeyMock.revokeAuth)
+      })
+
+      test.it('should expose apiKey revoke handler method', () => {
+        test.expect(methods.apiKey.revoke.handler).to.equal(apiKeyMock.revokeHandler)
+      })
     })
   })
 })

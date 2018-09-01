@@ -4,7 +4,7 @@ const Mock = function () {
   const sandbox = test.sinon.createSandbox()
 
   const stubs = {
-    methods: {}
+    methods: sandbox.stub().usingPromise().resolves({})
   }
 
   const restore = function () {

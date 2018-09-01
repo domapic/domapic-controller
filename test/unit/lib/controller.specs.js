@@ -7,11 +7,15 @@ const controller = require('../../../lib/controller')
 
 test.describe('controller', () => {
   test.describe('start method', () => {
+    const fooSecurityMethods = {
+      foo: 'foo'
+    }
     let baseMocks
     let indexMocks
 
     test.beforeEach(() => {
       indexMocks = new mocks.Index()
+      indexMocks.stubs.security.methods.resolves(fooSecurityMethods)
       baseMocks = new mocks.Base()
       return controller.start()
     })
@@ -54,7 +58,7 @@ test.describe('controller', () => {
     })
 
     test.it('should have added authentication to the server', () => {
-      test.expect(baseMocks.stubs.service.server.addAuthentication).to.have.been.calledWith(indexMocks.stubs.security.methods)
+      test.expect(baseMocks.stubs.service.server.addAuthentication).to.have.been.calledWith(fooSecurityMethods)
     })
 
     test.it('should have extended server openApi as many times as openapi definitions are', () => {
@@ -81,6 +85,10 @@ test.describe('controller', () => {
 
     test.it('should have added operations to server', () => {
       test.expect(baseMocks.stubs.service.server.addOperations).to.have.been.calledWith(indexMocks.stubs.api.operations)
+    })
+
+    test.it('should have called to init users command', () => {
+      test.expect(indexMocks.stubs.commands.user.init).to.have.been.called()
     })
 
     test.it('should have called to start the server', () => {
