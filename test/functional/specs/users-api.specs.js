@@ -6,32 +6,11 @@ const utils = require('./utils')
 test.describe('users api', function () {
   let authenticator = utils.Authenticator()
 
-  const postUser = function (userData) {
-    return utils.request('/users', {
-      method: 'POST',
-      body: userData,
-      ...authenticator.credentials()
-    })
-  }
-
   const getUsers = function () {
     return utils.request('/users', {
       method: 'GET',
       ...authenticator.credentials()
     })
-  }
-
-  const ensureUserAndDoLogin = function (user) {
-    return utils.doLogin(authenticator)
-      .then(() => {
-        return postUser(user).finally(() => utils.doLogin(authenticator, {
-          name: user.name,
-          email: user.email,
-          password: user.password
-        }).then(auth => {
-          return Promise.resolve()
-        }))
-      })
   }
 
   const newUser = {
@@ -76,7 +55,7 @@ test.describe('users api', function () {
   test.describe('when user is admin', () => {
     test.describe('add user', () => {
       test.it('should return a bad data error if no name is provided', () => {
-        return postUser({
+        return utils.createUser(authenticator, {
           role: 'admin'
         }).then((response) => {
           return Promise.all([
@@ -87,7 +66,7 @@ test.describe('users api', function () {
       })
 
       test.it('should return a bad data error if no role is provided', () => {
-        return postUser({
+        return utils.createUser(authenticator, {
           name: 'foo name'
         }).then((response) => {
           return Promise.all([
@@ -98,7 +77,7 @@ test.describe('users api', function () {
       })
 
       test.it('should return a bad data error if no email is provided', () => {
-        return postUser({
+        return utils.createUser(authenticator, {
           name: 'foo name'
         }).then((response) => {
           return Promise.all([
@@ -109,7 +88,7 @@ test.describe('users api', function () {
       })
 
       test.it('should return a bad data error if no password is provided', () => {
-        return postUser({
+        return utils.createUser(authenticator, {
           name: 'foo name'
         }).then((response) => {
           return Promise.all([
@@ -120,7 +99,7 @@ test.describe('users api', function () {
       })
 
       test.it('should return a bad data error if a wrong role is provided', () => {
-        return postUser({
+        return utils.createUser(authenticator, {
           name: 'foo name',
           role: 'admidsn'
         }).then((response) => {
@@ -132,7 +111,7 @@ test.describe('users api', function () {
       })
 
       test.it('should return a bad data error if a wrong email is provided', () => {
-        return postUser({
+        return utils.createUser(authenticator, {
           name: 'foo name',
           role: 'admin',
           email: 'asdasdds',
@@ -146,7 +125,7 @@ test.describe('users api', function () {
       })
 
       test.it('should add user to database if all provided data pass validation', () => {
-        return postUser({
+        return utils.createUser(authenticator, {
           name: operatorUser.name,
           role: operatorUser.role,
           email: operatorUser.email,
@@ -169,7 +148,7 @@ test.describe('users api', function () {
       })
 
       test.it('should return a bad data error if an already existant email is provided', () => {
-        return postUser({
+        return utils.createUser(authenticator, {
           name: 'foo name 2',
           role: 'admin',
           email: operatorUser.email,
@@ -183,7 +162,7 @@ test.describe('users api', function () {
       })
 
       test.it('should return a bad data error if an already existant name is provided', () => {
-        return postUser({
+        return utils.createUser(authenticator, {
           name: operatorUser.name,
           role: 'admin',
           email: 'foo2@foo.com',
@@ -199,7 +178,7 @@ test.describe('users api', function () {
 
     test.describe('get users', () => {
       test.it('should return all existant users', () => {
-        return postUser(newUser).then(() => {
+        return utils.createUser(authenticator, newUser).then(() => {
           return getUsers()
             .then((getResponse) => {
               const user1 = getResponse.body[2]
@@ -223,12 +202,12 @@ test.describe('users api', function () {
   const testRole = function (user) {
     test.describe(`when user has role "${user.role}"`, () => {
       test.before(() => {
-        return ensureUserAndDoLogin(user)
+        return utils.ensureUserAndDoLogin(authenticator, user)
       })
 
       test.describe('add user', () => {
         test.it('should return a forbidden error', () => {
-          return postUser(newUser).then(response => {
+          return utils.createUser(authenticator, newUser).then(response => {
             return Promise.all([
               test.expect(response.body.message).to.contain('Not authorized'),
               test.expect(response.statusCode).to.equal(403)
@@ -256,12 +235,12 @@ test.describe('users api', function () {
 
   test.describe(`when user has role "service-registerer"`, () => {
     test.before(() => {
-      return ensureUserAndDoLogin(serviceRegistererUser)
+      return utils.ensureUserAndDoLogin(authenticator, serviceRegistererUser)
     })
 
     test.describe('add user', () => {
       test.it('should return 201 when adding a new user with role "service"', () => {
-        return postUser({
+        return utils.createUser(authenticator, {
           name: 'foo new service',
           role: 'service',
           email: 'fooNewService@foo.com',
@@ -272,7 +251,7 @@ test.describe('users api', function () {
       })
 
       test.it('should return a forbidden error when adding a new user with role different to "service"', () => {
-        return postUser({
+        return utils.createUser(authenticator, {
           name: 'foo new admin',
           role: 'admin',
           email: 'fooNewAdmin@foo.com',

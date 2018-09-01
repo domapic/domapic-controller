@@ -152,7 +152,7 @@ const ensureUser = (authenticator, userData) => {
 
 const ensureUserAndDoLogin = (authenticator, userData) => {
   return ensureUser(authenticator, userData)
-    .then(() => createUser(authenticator, userData).finally(() => doLogin({
+    .then(() => createUser(authenticator, userData).finally(() => doLogin(authenticator, {
       name: userData.name,
       email: userData.email,
       password: userData.password
