@@ -4,7 +4,8 @@ const test = require('narval')
 const utils = require('./utils')
 
 test.describe('users api', function () {
-  let authenticator
+  let authenticator = utils.Authenticator()
+
   const postUser = function (userData) {
     return utils.request('/users', {
       method: 'POST',
@@ -21,15 +22,13 @@ test.describe('users api', function () {
   }
 
   const ensureUserAndDoLogin = function (user) {
-    return utils.doLogin()
-      .then((auth) => {
-        authenticator = auth
-        return postUser(user).finally(() => utils.doLogin({
+    return utils.doLogin(authenticator)
+      .then(() => {
+        return postUser(user).finally(() => utils.doLogin(authenticator, {
           name: user.name,
           email: user.email,
           password: user.password
         }).then(auth => {
-          authenticator = auth
           return Promise.resolve()
         }))
       })
@@ -71,11 +70,7 @@ test.describe('users api', function () {
   }
 
   test.before(() => {
-    return utils.doLogin()
-      .then(auth => {
-        authenticator = auth
-        return Promise.resolve()
-      })
+    return utils.doLogin(authenticator)
   })
 
   test.describe('when user is admin', () => {

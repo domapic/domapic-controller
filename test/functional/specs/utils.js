@@ -117,7 +117,7 @@ const Authenticator = () => {
   }
 }
 
-const getAccessToken = (userData, authenticator) => {
+const getAccessToken = (authenticator, userData) => {
   return request('/auth/jwt', {
     method: 'POST',
     body: userData,
@@ -125,15 +125,38 @@ const getAccessToken = (userData, authenticator) => {
   })
 }
 
-const doLogin = (userData = superAdmin) => {
-  const authenticator = Authenticator()
-  return getAccessToken({
+const doLogin = (authenticator, userData = superAdmin) => {
+  return getAccessToken(authenticator, {
     user: userData.email,
     password: userData.password
-  }, authenticator).then((response) => {
+  }).then((response) => {
     authenticator.login(userData.name, response.body.accessToken, response.body.refreshToken)
-    return Promise.resolve(authenticator)
+    return Promise.resolve(response)
   })
+}
+
+const createUser = (authenticator, userData) => {
+  return request('/users', {
+    method: 'POST',
+    body: userData,
+    ...authenticator.credentials()
+  })
+}
+
+const ensureUser = (authenticator, userData) => {
+  return doLogin(authenticator)
+    .then(() => createUser(authenticator, userData)
+      .finally(() => Promise.resolve())
+    )
+}
+
+const ensureUserAndDoLogin = (authenticator, userData) => {
+  return ensureUser(authenticator, userData)
+    .then(() => createUser(authenticator, userData).finally(() => doLogin({
+      name: userData.name,
+      email: userData.email,
+      password: userData.password
+    })))
 }
 
 module.exports = {
@@ -143,5 +166,8 @@ module.exports = {
   readStorage,
   Authenticator,
   getAccessToken,
-  doLogin
+  doLogin,
+  createUser,
+  ensureUser,
+  ensureUserAndDoLogin
 }
