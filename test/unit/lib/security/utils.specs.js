@@ -100,4 +100,18 @@ test.describe('security utils', () => {
         })
     })
   })
+
+  test.describe('onlyAdmin method', () => {
+    test.it('should return true if provided user has "admin" role', () => {
+      return test.expect(utils.onlyAdmin({
+        role: 'admin'
+      })).to.be.true()
+    })
+
+    test.it('should return false if provided user has not "admin" role', () => {
+      return test.expect(utils.onlyAdmin({
+        role: 'service'
+      })).to.be.false()
+    })
+  })
 })
