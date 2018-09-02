@@ -4,7 +4,8 @@ const Mock = function () {
   const sandbox = test.sinon.createSandbox()
 
   const stubs = {
-    connect: sandbox.stub().usingPromise().resolves()
+    connect: sandbox.stub().usingPromise().resolves(),
+    disconnect: sandbox.stub().usingPromise().resolves()
   }
 
   const restore = function () {

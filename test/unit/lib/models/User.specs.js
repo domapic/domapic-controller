@@ -84,4 +84,14 @@ test.describe('user model', () => {
       })
     })
   })
+
+  test.describe('isValidEmail method', () => {
+    test.it('should return true if provided email is valid', () => {
+      test.expect(user.isValidEmail('foo@foo.com')).to.be.true()
+    })
+
+    test.it('should return false if provided email is not valid', () => {
+      test.expect(user.isValidEmail('foo')).to.be.false()
+    })
+  })
 })
