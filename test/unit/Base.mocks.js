@@ -29,7 +29,7 @@ const Mock = function () {
 
   const stubs = {
     service: serviceStubs,
-    cli: sandbox.stub(domapicBase, 'cli'),
+    cli: sandbox.stub(domapicBase, 'cli').usingPromise().resolves(),
     Service: sandbox.stub(domapicBase, 'Service').usingPromise().resolves(serviceStubs)
   }
 

@@ -31,7 +31,8 @@ test.describe('Commands', () => {
         'getAll',
         'getById',
         'get',
-        'init'
+        'init',
+        'remove'
       )
     })
 

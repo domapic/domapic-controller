@@ -6,15 +6,15 @@ const domapic = require('domapic-base')
 const options = require('../lib/options')
 const user = require('./commands/user')
 
-domapic.cli({
+module.exports = domapic.cli({
   script: path.resolve(__dirname, '..', 'server.js'),
   customConfig: options,
   customCommands: {
     user
   }
-}).catch((err) => {
+}).catch(err => {
   process.exitCode = 1
   if (!err.isDomapic) {
-    console.log(err)
+    console.error(err)
   }
 })
