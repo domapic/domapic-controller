@@ -141,6 +141,14 @@ test.describe('user commands', () => {
             return test.expect(modelsMocks.stubs.User.findOneAndRemove).to.have.been.calledWith(fooFilter)
           })
       })
+
+      test.it('should call to findOneAndRemove method with an empty object if no filter is provided', () => {
+        modelsMocks.stubs.User.findOneAndRemove.resolves({})
+        return commands.remove()
+          .then(() => {
+            return test.expect(modelsMocks.stubs.User.findOneAndRemove.getCall(0).args[0]).to.deep.equal({})
+          })
+      })
     })
 
     test.describe('init method', () => {
