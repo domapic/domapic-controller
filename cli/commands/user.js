@@ -107,7 +107,7 @@ const Options = (config, cli, commands) => {
   const get = async () => {
     if (!ACTIONS.includes(config.action)) {
       return Promise.reject(new cli.errors.MethodNotAllowed(templates.notValidUserAction({
-        actions: ACTIONS.join(',')
+        actions: ACTIONS.join(', ')
       })))
     }
 
