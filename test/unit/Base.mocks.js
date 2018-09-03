@@ -22,14 +22,15 @@ const Mock = function () {
       error: sandbox.stub().usingPromise().resolves()
     },
     errors: {
-      BadData: sandbox.stub(),
-      NotFound: sandbox.stub()
+      BadData: sandbox.stub().returns(new Error()),
+      NotFound: sandbox.stub().returns(new Error()),
+      MethodNotAllowed: sandbox.stub().returns(new Error())
     }
   }
 
   const stubs = {
     service: serviceStubs,
-    cli: sandbox.stub(domapicBase, 'cli'),
+    cli: sandbox.stub(domapicBase, 'cli').usingPromise().resolves(),
     Service: sandbox.stub(domapicBase, 'Service').usingPromise().resolves(serviceStubs)
   }
 

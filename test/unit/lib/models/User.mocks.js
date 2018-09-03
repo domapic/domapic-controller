@@ -14,6 +14,7 @@ const Mock = function () {
   UserStub.findOne = sandbox.stub().usingPromise().resolves()
   UserStub.find = sandbox.stub().usingPromise().resolves()
   UserStub.findById = sandbox.stub().usingPromise().resolves()
+  UserStub.findOneAndRemove = sandbox.stub().usingPromise().resolves()
 
   const stubs = {
     user: userStub,

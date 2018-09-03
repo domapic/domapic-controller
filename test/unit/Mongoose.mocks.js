@@ -12,6 +12,7 @@ const Mock = function () {
 
   const stubs = {
     connect: sandbox.stub(mongoose, 'connect').usingPromise().resolves(),
+    disconnect: sandbox.stub(mongoose, 'disconnect').usingPromise().resolves(),
     Schema: sandbox.stub(mongoose, 'Schema').callsFake(returnsSchema),
     model: sandbox.stub(mongoose, 'model').callsFake(returnsModelSchema)
   }

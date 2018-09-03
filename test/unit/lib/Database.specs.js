@@ -40,5 +40,12 @@ test.describe('Database', () => {
           .then(() => test.expect(mongooseMocks.stubs.connect.getCall(0).args[0]).to.equal(fooUri))
       })
     })
+
+    test.describe('disconnect method', () => {
+      test.it('should call to mongoose disconnect', () => {
+        return database.disconnect()
+          .then(() => test.expect(mongooseMocks.stubs.disconnect).to.have.been.called())
+      })
+    })
   })
 })

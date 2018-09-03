@@ -20,6 +20,8 @@
   },
   "dependencies": {
     "domapic-base": "1.0.0-beta.8",
+    "inquirer": "6.2.0",
+    "inquirer-autocomplete-prompt": "1.0.1",
     "md5": "2.2.1",
     "mongoose": "5.2.3",
     "rand-token": "0.4.0"
@@ -28,7 +30,8 @@
     "coveralls": "3.0.2",
     "narval": "2.2.1",
     "request": "2.87.0",
-    "request-promise": "4.2.2"
+    "request-promise": "4.2.2",
+    "mockery": "2.1.0"
   },
   "author": {
     "name": "Javier Brea",

@@ -107,5 +107,14 @@ suites:
         specs:
           - test/functional/specs/authentication-api.specs.js
       coverage: *base-coverage
+    - name: users-cli
+      describe: Users cli should be able to add and remove users
+      before: *base-before
+      services: *base-services
+      test: 
+        <<: *base-test
+        specs:
+          - test/functional/specs/users-cli.specs.js
+      coverage: *base-coverage
 
 
