@@ -130,7 +130,7 @@ const user = async (config, cli) => {
   const options = Options(config, cli, commands)
 
   return database.connect()
-    .then(async () => options.get())
+    .then(options.get)
     .then(options => commands.user[options.action](options.user))
     .finally(() => database.disconnect())
 }
