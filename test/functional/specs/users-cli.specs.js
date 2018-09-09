@@ -92,6 +92,20 @@ test.describe('users cli', function () {
       })
     })
 
+    test.it('should throw an error if name is not valid', () => {
+      const fooName = 'FooName'
+      return executeCli('add', {
+        ...adminUser,
+        ...{
+          name: fooName
+        }
+      }).then(() => {
+        return test.assert.fail()
+      }, error => {
+        return test.expect(error.message).to.contain('Name must contain only')
+      })
+    })
+
     test.it('should add user to database when all data is provided', () => {
       return executeCli('add', adminUser).then(() => getUsers().then(response => {
         const newUser = response.body.find(user => user.name === adminUser.name)

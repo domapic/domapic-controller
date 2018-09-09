@@ -100,6 +100,18 @@ test.describe('users api', function () {
         })
       })
 
+      test.it('should return a bad data error if a not valid name is provided', () => {
+        return utils.createUser(authenticator, {
+          name: 'FooName',
+          role: 'service'
+        }).then((response) => {
+          return Promise.all([
+            test.expect(response.body.message).to.contain('Name must contain only'),
+            test.expect(response.statusCode).to.equal(422)
+          ])
+        })
+      })
+
       test.it('should allow to create users with role "service" without password and email', () => {
         return utils.createUser(authenticator, {
           name: 'foo-service-name',

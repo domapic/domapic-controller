@@ -7,7 +7,7 @@ const autocomplete = require('inquirer-autocomplete-prompt')
 const lib = require('../../lib')
 const templates = require('../../lib/templates')
 const { roles } = require('../../lib/security/utils')
-const { isValidEmail } = require('../../lib/models/user')
+const { isValidEmail, isValidName } = require('../../lib/models/user')
 
 inquirer.registerPrompt('autocomplete', autocomplete)
 
@@ -44,14 +44,17 @@ const questions = {
   }
 }
 
-const checkEmail = value => {
-  if (isValidEmail(value)) {
+const Check = (validator, errorTemplate) => value => {
+  if (validator(value)) {
     return Promise.resolve(true)
   }
-  return Promise.resolve(templates.notValidEmail({
+  return Promise.resolve(errorTemplate({
     value
   }))
 }
+
+const checkEmail = Check(isValidEmail, templates.notValidEmail)
+const checkName = Check(isValidName, templates.notValidName)
 
 const inquire = async (question, extraOptions) => inquirer.prompt({ ...question, ...extraOptions })
   .then(answers => answers.value)
@@ -67,15 +70,12 @@ const Options = (config, cli, commands) => {
     })
   }
 
-  const ValidateUserEmail = () => {
-    const avoidDuplicated = AvoidDuplicatedUser('email', templates.emailAlreadyExists())
-    return value => checkEmail(value).then(validation => {
-      if (validation === true) {
-        return avoidDuplicated(value)
-      }
-      return Promise.resolve(validation)
-    })
-  }
+  const ValidateField = (fieldValidator, avoidDuplicated) => value => fieldValidator(value).then(validation => {
+    if (validation === true) {
+      return avoidDuplicated(value)
+    }
+    return Promise.resolve(validation)
+  })
 
   const FilterUser = async () => commands.user.getAll()
     .then(users => Promise.resolve(users.map(user => user.name)))
@@ -84,12 +84,12 @@ const Options = (config, cli, commands) => {
   const getUserToAdd = async () => {
     const user = {}
     user.name = config.userName || await inquire(questions.name, {
-      validate: AvoidDuplicatedUser('name', templates.userNameAlreadyExists())
+      validate: ValidateField(checkName, AvoidDuplicatedUser('name', templates.userNameAlreadyExists()))
     })
     user.role = config.role || await inquire(questions.role)
     if (![roles.SERVICE, roles.SERVICE_REGISTERER, roles.PLUGIN].includes(user.role)) {
       user.email = config.email || await inquire(questions.email, {
-        validate: ValidateUserEmail()
+        validate: ValidateField(checkEmail, AvoidDuplicatedUser('email', templates.emailAlreadyExists()))
       })
       user.password = config.password || await inquire(questions.password)
     }
