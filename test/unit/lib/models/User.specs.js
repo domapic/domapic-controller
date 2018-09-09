@@ -26,9 +26,44 @@ test.describe('user model', () => {
     })
 
     test.describe('name validation', () => {
-      test.it('should use ValidateUniqueModel utility', () => {
+      test.it('should call to validate that name is unique', () => {
         model = user.Model(baseMocks.stubs.service)
-        test.expect(model.name.validate.validator).to.equal(utilsMocks.stubs.validateUniqueModel)
+        const fooDuplicatedError = new Error('foo duplicated error')
+        utilsMocks.stubs.validateUniqueModel.rejects(fooDuplicatedError)
+        return model.name.validate('foo-name')
+          .then(() => {
+            return test.assert.fail()
+          }, (err) => {
+            return test.expect(err).to.equal(fooDuplicatedError)
+          })
+      })
+
+      test.it('should throw an error if name contains upper case letters', () => {
+        model = user.Model(baseMocks.stubs.service)
+        return model.name.validate('Foo')
+          .then(() => {
+            return test.assert.fail()
+          }, (err) => {
+            return test.expect(err.message).to.include('Name must contain only')
+          })
+      })
+
+      test.it('should throw an error if name contains other not allowed strange characters', () => {
+        model = user.Model(baseMocks.stubs.service)
+        return model.name.validate('foo^?aad;@')
+          .then(() => {
+            return test.assert.fail()
+          }, (err) => {
+            return test.expect(err.message).to.include('Name must contain only')
+          })
+      })
+
+      test.it('should not throw an error if name is valid', () => {
+        model = user.Model(baseMocks.stubs.service)
+        return Promise.all([
+          model.name.validate('foo-name_123-foo2'),
+          model.name.validate('javier.brea')
+        ])
       })
     })
 
@@ -92,6 +127,16 @@ test.describe('user model', () => {
 
     test.it('should return false if provided email is not valid', () => {
       test.expect(user.isValidEmail('foo')).to.be.false()
+    })
+  })
+
+  test.describe('isValidName method', () => {
+    test.it('should return true if provided name is valid', () => {
+      test.expect(user.isValidName('foo-name.foo_name-122')).to.be.true()
+    })
+
+    test.it('should return false if provided name is not valid', () => {
+      test.expect(user.isValidName('Foo#@Name')).to.be.false()
     })
   })
 })

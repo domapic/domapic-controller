@@ -99,6 +99,28 @@ test.describe('cli user command', () => {
         })
       })
 
+      test.it('should check if name is duplicated when name is valid', () => {
+        const fooName = 'foo-name'
+        fooPromptValue = fooName
+        return user.command({
+          action: 'add'
+        }, baseMocks.stubs.service).then(() => {
+          return test.expect(indexMocks.stubs.commands.user.get).to.have.been.calledWith({
+            name: fooName
+          })
+        })
+      })
+
+      test.it('should not check if name is duplicated when name is not valid', () => {
+        const fooName = 'FOO-name'
+        fooPromptValue = fooName
+        return user.command({
+          action: 'add'
+        }, baseMocks.stubs.service).then(() => {
+          return test.expect(indexMocks.stubs.commands.user.get).to.not.have.been.called()
+        })
+      })
+
       test.it('should not pass inquirer validation if user name is duplicated', () => {
         return user.command({
           action: 'add'

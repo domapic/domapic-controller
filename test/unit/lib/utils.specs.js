@@ -58,6 +58,43 @@ test.describe('utils', () => {
     })
   })
 
+  test.describe('FieldValidator', () => {
+    test.it('should return a function', () => {
+      return test.expect(typeof utils.FieldValidator()).to.equal('function')
+    })
+
+    test.describe('instance', () => {
+      test.it('should call to provided validate function, and resolve if function returns true', () => {
+        const fooValidator = test.sinon.stub().returns(true)
+        const fieldValidator = utils.FieldValidator(fooValidator)
+        const fooValue = 'foo-value'
+        return fieldValidator(fooValue)
+          .then(() => {
+            return test.expect(fooValidator).to.have.been.calledWith(fooValue)
+          })
+      })
+
+      test.it('should call to template function and return error with message if validator function returns false', () => {
+        const fooTemplateMessage = 'foo message'
+        const fooValidator = test.sinon.stub().returns(false)
+        const fooTemplate = test.sinon.stub().returns(fooTemplateMessage)
+        const fieldValidator = utils.FieldValidator(fooValidator, fooTemplate)
+        const fooValue = 'foo-value'
+        return fieldValidator(fooValue)
+          .then(() => {
+            return test.assert.fail()
+          }, error => {
+            return Promise.all([
+              test.expect(fooTemplate).to.have.been.calledWith({
+                value: fooValue
+              }),
+              test.expect(error.message).to.deep.equal(fooTemplateMessage)
+            ])
+          })
+      })
+    })
+  })
+
   test.describe('transformValidationErrors method', () => {
     test.it('should return the same error if it is not a validation error', () => {
       const error = new Error('foo')
