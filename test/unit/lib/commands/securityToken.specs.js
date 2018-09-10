@@ -80,6 +80,36 @@ test.describe('securityToken commands', () => {
       })
     })
 
+    test.describe('get method', () => {
+      test.it('should call to find security token and return the result', () => {
+        const fooFilter = {
+          _user: 'foo-id'
+        }
+        const fooToken = {
+          token: 'foo'
+        }
+        modelsMocks.stubs.SecurityToken.findOne.resolves(fooToken)
+        return commands.get(fooFilter)
+          .then((result) => {
+            return Promise.all([
+              test.expect(result).to.equal(fooToken),
+              test.expect(modelsMocks.stubs.SecurityToken.findOne).to.have.been.calledWith(fooFilter)
+            ])
+          })
+      })
+
+      test.it('should call to find security token with an empty filter if it is not provided', () => {
+        modelsMocks.stubs.SecurityToken.findOne.resolves(fooToken)
+        return commands.get()
+          .then((result) => {
+            return Promise.all([
+              test.expect(result).to.equal(fooToken),
+              test.expect(modelsMocks.stubs.SecurityToken.findOne).to.have.been.calledWith({})
+            ])
+          })
+      })
+    })
+
     test.describe('getUser method', () => {
       test.it('should call to find security token, then find related user, and return the result', () => {
         const fooUserId = 'fooUserId'

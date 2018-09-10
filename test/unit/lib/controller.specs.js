@@ -88,7 +88,7 @@ test.describe('controller', () => {
     })
 
     test.it('should have called to init users command', () => {
-      test.expect(indexMocks.stubs.commands.user.init).to.have.been.called()
+      test.expect(indexMocks.stubs.commands.composed.initUsers).to.have.been.called()
     })
 
     test.it('should have called to start the server', () => {

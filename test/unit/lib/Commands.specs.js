@@ -25,7 +25,7 @@ test.describe('Commands', () => {
   })
 
   test.describe('instance', () => {
-    test.it('should contain user commands', () => {
+    test.it('should contain all user commands', () => {
       return test.expect(commands.user).to.have.all.keys(
         'add',
         'getAll',
@@ -36,11 +36,18 @@ test.describe('Commands', () => {
       )
     })
 
-    test.it('should contain securityToken commands', () => {
+    test.it('should contain all securityToken commands', () => {
       return test.expect(commands.securityToken).to.have.all.keys(
         'add',
         'getUser',
-        'remove'
+        'remove',
+        'get'
+      )
+    })
+
+    test.it('should contain all composed commands', () => {
+      return test.expect(commands.composed).to.have.all.keys(
+        'initUsers'
       )
     })
   })
