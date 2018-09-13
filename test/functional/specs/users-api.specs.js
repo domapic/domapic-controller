@@ -13,6 +13,13 @@ test.describe('users api', function () {
     })
   }
 
+  const getUser = function (userName) {
+    return utils.request(`/users/${userName}`, {
+      method: 'GET',
+      ...authenticator.credentials()
+    })
+  }
+
   const newUser = {
     name: 'foo-service',
     role: 'service',
@@ -165,8 +172,8 @@ test.describe('users api', function () {
         }).then((addResponse) => {
           return getUsers()
             .then((getResponse) => {
-              const userId = addResponse.headers.location.split('/').pop()
-              const user = getResponse.body.find(user => user._id === userId)
+              const userName = addResponse.headers.location.split('/').pop()
+              const user = getResponse.body.find(user => user.name === userName)
               return Promise.all([
                 test.expect(user.name).to.equal(operatorUser.name),
                 test.expect(user.role).to.equal(operatorUser.role),
@@ -226,6 +233,33 @@ test.describe('users api', function () {
         })
       })
     })
+
+    test.describe('get user', () => {
+      test.it('should return user data', () => {
+        return getUser(newUser.name)
+          .then((response) => {
+            const user = response.body
+            return Promise.all([
+              test.expect(user._id).to.not.be.undefined(),
+              test.expect(user.name).to.equal(newUser.name),
+              test.expect(user.role).to.equal(newUser.role),
+              test.expect(user.email).to.equal(newUser.email),
+              test.expect(user.createdAt).to.not.be.undefined(),
+              test.expect(user.updatedAt).to.not.be.undefined()
+            ])
+          })
+      })
+
+      test.it('should return a not found response when user does not exist', () => {
+        return getUser('foo-unexistant-user')
+          .then((response) => {
+            return Promise.all([
+              test.expect(response.body.message).to.equal('User not found'),
+              test.expect(response.statusCode).to.equal(404)
+            ])
+          })
+      })
+    })
   })
 
   const testRole = function (user) {
@@ -248,6 +282,17 @@ test.describe('users api', function () {
       test.describe('get users', () => {
         test.it('should return a forbidden error', () => {
           return getUsers().then(response => {
+            return Promise.all([
+              test.expect(response.body.message).to.contain('Not authorized'),
+              test.expect(response.statusCode).to.equal(403)
+            ])
+          })
+        })
+      })
+
+      test.describe('get user', () => {
+        test.it('should return a forbidden error', () => {
+          return getUser(newUser.name).then(response => {
             return Promise.all([
               test.expect(response.body.message).to.contain('Not authorized'),
               test.expect(response.statusCode).to.equal(403)
@@ -293,12 +338,40 @@ test.describe('users api', function () {
 
     test.describe('get users', () => {
       test.it('should return a forbidden error', () => {
-        return getUsers().then(response => {
-          return Promise.all([
-            test.expect(response.body.message).to.contain('Not authorized'),
-            test.expect(response.statusCode).to.equal(403)
-          ])
-        })
+        return getUsers()
+          .then((response) => {
+            return Promise.all([
+              test.expect(response.body.message).to.contain('Not authorized'),
+              test.expect(response.statusCode).to.equal(403)
+            ])
+          })
+      })
+    })
+
+    test.describe('get user', () => {
+      test.it('should return user data', () => {
+        return getUser(newUser.name)
+          .then((response) => {
+            const user = response.body
+            return Promise.all([
+              test.expect(user._id).to.not.be.undefined(),
+              test.expect(user.name).to.equal(newUser.name),
+              test.expect(user.role).to.equal(newUser.role),
+              test.expect(user.email).to.equal(newUser.email),
+              test.expect(user.createdAt).to.not.be.undefined(),
+              test.expect(user.updatedAt).to.not.be.undefined()
+            ])
+          })
+      })
+
+      test.it('should return a not found response when user does not exist', () => {
+        return getUser('foo-unexistant-user')
+          .then((response) => {
+            return Promise.all([
+              test.expect(response.body.message).to.equal('User not found'),
+              test.expect(response.statusCode).to.equal(404)
+            ])
+          })
       })
     })
   })
