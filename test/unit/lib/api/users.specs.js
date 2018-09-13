@@ -37,6 +37,7 @@ test.describe('api users', () => {
           }, {}, {})).to.be.false()
         })
       }
+
       testRole('service')
       testRole('operator')
       testRole('plugin')
@@ -45,14 +46,60 @@ test.describe('api users', () => {
 
     test.describe('getUsers handler', () => {
       test.it('should return all users, calling to correspondant command', () => {
-        const resolves = 'foo result'
-        commandsMocks.stubs.user.getAll.resolves(resolves)
+        const fooResult = 'foo result'
+        commandsMocks.stubs.user.getAll.resolves(fooResult)
 
         return operations.getUsers.handler()
           .then((result) => {
             return Promise.all([
-              test.expect(result).to.equal(result),
+              test.expect(result).to.equal(fooResult),
               test.expect(commandsMocks.stubs.user.getAll).to.have.been.called()
+            ])
+          })
+      })
+    })
+
+    test.describe('getUser auth', () => {
+      test.it('should return true if provided user has "admin" role', () => {
+        test.expect(operations.getUser.auth({
+          role: 'admin'
+        }, {}, {})).to.be.true()
+      })
+
+      test.it('should return true if provided user has "service-registerer" role', () => {
+        test.expect(operations.getUser.auth({
+          role: 'service-registerer'
+        }, {}, {})).to.be.true()
+      })
+
+      const testRole = function (role) {
+        test.it(`should return false if provided user has "${role}" role`, () => {
+          test.expect(operations.getUser.auth({
+            role
+          }, {}, {})).to.be.false()
+        })
+      }
+      testRole('service')
+      testRole('operator')
+      testRole('plugin')
+    })
+
+    test.describe('getUser handler', () => {
+      test.it('should return user, calling to correspondant command', () => {
+        const fooName = 'foo-name'
+        const fooResult = 'foo result'
+        commandsMocks.stubs.user.get.resolves(fooResult)
+
+        return operations.getUser.handler({
+          path: {
+            name: fooName
+          }})
+          .then((result) => {
+            return Promise.all([
+              test.expect(result).to.equal(fooResult),
+              test.expect(commandsMocks.stubs.user.get).to.have.been.calledWith({
+                name: fooName
+              })
             ])
           })
       })
@@ -95,7 +142,8 @@ test.describe('api users', () => {
 
     test.describe('addUser handler', () => {
       const fooUser = {
-        _id: 'foo-id'
+        _id: 'foo-id',
+        name: 'foo-name'
       }
       const fooBody = {
         name: 'foo'
@@ -130,10 +178,10 @@ test.describe('api users', () => {
           })
       })
 
-      test.it('should set the response header with the user id', () => {
+      test.it('should set the response header with the user name', () => {
         return operations.addUser.handler({}, fooBody, response)
           .then(() => {
-            return test.expect(response.header).to.have.been.calledWith('location', '/api/users/foo-id')
+            return test.expect(response.header).to.have.been.calledWith('location', '/api/users/foo-name')
           })
       })
 
