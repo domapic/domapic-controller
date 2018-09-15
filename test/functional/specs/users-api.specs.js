@@ -22,7 +22,7 @@ test.describe('users api', function () {
 
   const newUser = {
     name: 'foo-service',
-    role: 'service',
+    role: 'operator',
     email: 'foo2@foo.com',
     password: 'foo'
   }
@@ -317,6 +317,7 @@ test.describe('users api', function () {
   testRole(operatorUser)
   testRole(serviceUser)
   testRole(pluginUser)
+  testRole(serviceRegistererUser)
 
   test.describe(`when user has role "service-registerer"`, () => {
     test.before(() => {
@@ -360,29 +361,28 @@ test.describe('users api', function () {
     })
 
     test.describe('get user', () => {
-      test.it('should return user data', () => {
-        return getUser(newUser.name)
+      test.it('should return user data if user has "service" role', () => {
+        return getUser(serviceUser.name)
           .then((response) => {
             const user = response.body
             return Promise.all([
               test.expect(user._id).to.not.be.undefined(),
-              test.expect(user.name).to.equal(newUser.name),
-              test.expect(user.role).to.equal(newUser.role),
-              test.expect(user.email).to.equal(newUser.email),
+              test.expect(user.name).to.equal(serviceUser.name),
+              test.expect(user.role).to.equal(serviceUser.role),
+              test.expect(user.email).to.equal(serviceUser.email),
               test.expect(user.createdAt).to.not.be.undefined(),
               test.expect(user.updatedAt).to.not.be.undefined()
             ])
           })
       })
 
-      test.it('should return a not found response when user does not exist', () => {
-        return getUser('foo-unexistant-user')
-          .then((response) => {
-            return Promise.all([
-              test.expect(response.body.message).to.equal('User not found'),
-              test.expect(response.statusCode).to.equal(404)
-            ])
-          })
+      test.it('should return a forbidden error if user has a role different to "service"', () => {
+        return getUser(newUser.name).then(response => {
+          return Promise.all([
+            test.expect(response.body.message).to.contain('Not authorized'),
+            test.expect(response.statusCode).to.equal(403)
+          ])
+        })
       })
     })
   })
