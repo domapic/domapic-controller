@@ -291,11 +291,22 @@ test.describe('users api', function () {
       })
 
       test.describe('get user', () => {
-        test.it('should return a forbidden error', () => {
+        test.it('should return a forbidden error if user is different to himself', () => {
           return getUser(newUser.name).then(response => {
             return Promise.all([
               test.expect(response.body.message).to.contain('Not authorized'),
               test.expect(response.statusCode).to.equal(403)
+            ])
+          })
+        })
+
+        test.it('should return user data if user is himself', () => {
+          return getUser(user.name).then(response => {
+            return Promise.all([
+              test.expect(response.body.name).to.equal(user.name),
+              test.expect(response.body.email).to.equal(user.email),
+              test.expect(response.body.role).to.equal(user.role),
+              test.expect(response.statusCode).to.equal(200)
             ])
           })
         })
