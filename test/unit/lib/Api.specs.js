@@ -9,17 +9,20 @@ const Api = require('../../../lib/Api')
 test.describe('Api', () => {
   let baseMocks
   let usersMocks
+  let securityTokensMocks
   let api
 
   test.beforeEach(() => {
     baseMocks = new mocks.Base()
     usersMocks = new mocks.api.Users()
+    securityTokensMocks = new mocks.api.SecurityTokens()
     api = Api(baseMocks.stubs.service)
   })
 
   test.afterEach(() => {
     baseMocks.restore()
     usersMocks.restore()
+    securityTokensMocks.restore()
   })
 
   test.describe('instance', () => {
@@ -33,7 +36,9 @@ test.describe('Api', () => {
       test.it('should contain all api operations', () => {
         return test.expect(api.operations).to.have.all.keys(
           'getUsers',
-          'addUser'
+          'addUser',
+          'getUser',
+          'getSecurityTokens'
         )
       })
     })

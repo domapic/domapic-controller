@@ -81,7 +81,7 @@ test.describe('securityToken commands', () => {
     })
 
     test.describe('get method', () => {
-      test.it('should call to find security token and return the result', () => {
+      test.it('should call to find one security token and return the result', () => {
         const fooFilter = {
           _user: 'foo-id'
         }
@@ -105,6 +105,37 @@ test.describe('securityToken commands', () => {
             return Promise.all([
               test.expect(result).to.equal(fooToken),
               test.expect(modelsMocks.stubs.SecurityToken.findOne).to.have.been.calledWith({})
+            ])
+          })
+      })
+    })
+
+    test.describe('getAll method', () => {
+      const fooFilter = {
+        _user: 'foo-id'
+      }
+      const fooTokens = [{
+        token: 'foo'
+      }]
+
+      test.it('should call to find security tokens and return the result', () => {
+        modelsMocks.stubs.SecurityToken.find.resolves(fooTokens)
+        return commands.getAll(fooFilter)
+          .then((result) => {
+            return Promise.all([
+              test.expect(result).to.equal(fooTokens),
+              test.expect(modelsMocks.stubs.SecurityToken.find).to.have.been.calledWith(fooFilter)
+            ])
+          })
+      })
+
+      test.it('should call to find security tokens with an empty filter if it is not provided', () => {
+        modelsMocks.stubs.SecurityToken.find.resolves(fooTokens)
+        return commands.getAll()
+          .then((result) => {
+            return Promise.all([
+              test.expect(result).to.equal(fooTokens),
+              test.expect(modelsMocks.stubs.SecurityToken.find).to.have.been.calledWith({})
             ])
           })
       })

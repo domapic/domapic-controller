@@ -99,6 +99,15 @@ suites:
         specs:
           - test/functional/specs/users-api.specs.js
       coverage: *base-coverage
+    - name: security-tokens
+      describe: Security tokens api should work as expected
+      before: *base-before
+      services: *base-services
+      test: 
+        <<: *base-test
+        specs:
+          - test/functional/specs/security-tokens-api.specs.js
+      coverage: *base-coverage
     - name: authentication
       describe: JWT and apiKeys apis should work as expected
       before: *base-before

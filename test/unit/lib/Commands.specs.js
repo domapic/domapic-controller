@@ -40,6 +40,7 @@ test.describe('Commands', () => {
       return test.expect(commands.securityToken).to.have.all.keys(
         'add',
         'getUser',
+        'getAll',
         'remove',
         'get'
       )

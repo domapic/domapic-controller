@@ -2,7 +2,9 @@
 
 const path = require('path')
 const fs = require('fs')
+const querystring = require('querystring')
 
+const { omitBy, isUndefined } = require('lodash')
 const requestPromise = require('request-promise')
 
 const SERVICE_HOST = process.env.controller_host_name
@@ -38,8 +40,12 @@ const waitOnestimatedStartTime = function (time = ESTIMATED_START_TIME) {
 }
 
 const request = function (uri, options = {}) {
+  let url = `http://${SERVICE_HOST}:${SERVICE_PORT}/api${uri}`
+  if (options.query) {
+    url = `${url}?${querystring.stringify(omitBy(options.query, isUndefined))}`
+  }
   const defaultOptions = {
-    uri: `http://${SERVICE_HOST}:${SERVICE_PORT}/api${uri}`,
+    uri: url,
     json: true,
     strictSSL: false,
     rejectUnauthorized: false,
