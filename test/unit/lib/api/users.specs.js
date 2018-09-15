@@ -73,10 +73,39 @@ test.describe('api users', () => {
       })
 
       const testRole = function (role) {
-        test.it(`should return false if provided user has "${role}" role`, () => {
-          test.expect(operations.getUser.auth({
+        test.it(`should reject the promise if provided user has "${role}" role and requested user is different to himself`, () => {
+          commandsMocks.stubs.user.get.resolves({
+            _id: 'foo-different-id'
+          })
+          return operations.getUser.auth({
+            _id: 'foo-id',
             role
-          }, {}, {})).to.be.false()
+          }, {
+            path: {
+              name: 'foo-name'
+            }
+          }, {}).then(() => {
+            return test.assert.fail()
+          }, (error) => {
+            return test.expect(error).to.be.an.instanceof(Error)
+          })
+        })
+
+        test.it(`should resolve the promise if provided user has "${role}" role and requested user is same to himself`, () => {
+          const fooId = 'foo-id'
+          commandsMocks.stubs.user.get.resolves({
+            _id: fooId
+          })
+          return operations.getUser.auth({
+            _id: fooId,
+            role
+          }, {
+            path: {
+              name: 'foo-name'
+            }
+          }, {}).then(() => {
+            return test.expect(true).to.be.true()
+          })
         })
       }
       testRole('service')
