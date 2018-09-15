@@ -24,7 +24,8 @@ const Mock = function () {
     errors: {
       BadData: sandbox.stub().returns(new Error()),
       NotFound: sandbox.stub().returns(new Error()),
-      MethodNotAllowed: sandbox.stub().returns(new Error())
+      MethodNotAllowed: sandbox.stub().returns(new Error()),
+      Forbidden: sandbox.stub().returns(new Error())
     }
   }
 
