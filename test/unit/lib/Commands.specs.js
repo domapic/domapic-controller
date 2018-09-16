@@ -40,7 +40,7 @@ test.describe('Commands', () => {
       return test.expect(commands.securityToken).to.have.all.keys(
         'add',
         'getUser',
-        'getAll',
+        'getFiltered',
         'remove',
         'get'
       )
@@ -49,6 +49,13 @@ test.describe('Commands', () => {
     test.it('should contain all composed commands', () => {
       return test.expect(commands.composed).to.have.all.keys(
         'initUsers'
+      )
+    })
+
+    test.it('should contain all service commands', () => {
+      return test.expect(commands.service).to.have.all.keys(
+        'add',
+        'getFiltered'
       )
     })
   })

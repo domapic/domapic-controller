@@ -24,7 +24,6 @@ test.describe('securityToken commands', () => {
       modelsMocks = new mocks.Models()
       clientMocks = new mocks.Client()
       utilMocks = new mocks.Utils()
-      sandbox.stub()
 
       commands = securityToken.Commands(baseMocks.stubs.service, modelsMocks.stubs, clientMocks.stubs)
     })
@@ -110,7 +109,7 @@ test.describe('securityToken commands', () => {
       })
     })
 
-    test.describe('getAll method', () => {
+    test.describe('getFiltered method', () => {
       const fooFilter = {
         _user: 'foo-id'
       }
@@ -120,7 +119,7 @@ test.describe('securityToken commands', () => {
 
       test.it('should call to find security tokens and return the result', () => {
         modelsMocks.stubs.SecurityToken.find.resolves(fooTokens)
-        return commands.getAll(fooFilter)
+        return commands.getFiltered(fooFilter)
           .then((result) => {
             return Promise.all([
               test.expect(result).to.equal(fooTokens),
@@ -131,7 +130,7 @@ test.describe('securityToken commands', () => {
 
       test.it('should call to find security tokens with an empty filter if it is not provided', () => {
         modelsMocks.stubs.SecurityToken.find.resolves(fooTokens)
-        return commands.getAll()
+        return commands.getFiltered()
           .then((result) => {
             return Promise.all([
               test.expect(result).to.equal(fooTokens),
