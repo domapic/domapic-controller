@@ -6,7 +6,7 @@ const mocks = require('../../mocks')
 const users = require('../../../../lib/api/users')
 const definition = require('../../../../lib/api/users.json')
 
-test.describe('api users', () => {
+test.describe('users api', () => {
   test.describe('Operations instance', () => {
     let operations
     let commandsMocks

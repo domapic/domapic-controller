@@ -6,7 +6,7 @@ const mocks = require('../../mocks')
 const securityTokens = require('../../../../lib/api/securityTokens')
 const definition = require('../../../../lib/api/securityTokens.json')
 
-test.describe('securityTokens users', () => {
+test.describe('securityTokens api', () => {
   test.describe('Operations instance', () => {
     let operations
     let commandsMocks
