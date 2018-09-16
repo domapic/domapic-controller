@@ -15,6 +15,7 @@ const UserCommands = require('./lib/commands/User.mocks')
 const SecurityTokenCommands = require('./lib/commands/SecurityToken.mocks')
 const ComposedCommands = require('./lib/commands/Composed.mocks')
 const UserModel = require('./lib/models/User.mocks')
+const ServiceModel = require('./lib/models/Service.mocks')
 const SecurityTokenModel = require('./lib/models/SecurityToken.mocks')
 const Utils = require('./lib/Utils.mocks')
 
@@ -31,7 +32,8 @@ module.exports = {
   },
   models: {
     User: UserModel,
-    SecurityToken: SecurityTokenModel
+    SecurityToken: SecurityTokenModel,
+    Service: ServiceModel
   },
   Base,
   Client,

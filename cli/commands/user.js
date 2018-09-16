@@ -7,7 +7,8 @@ const autocomplete = require('inquirer-autocomplete-prompt')
 const lib = require('../../lib')
 const templates = require('../../lib/templates')
 const { roles } = require('../../lib/security/utils')
-const { isValidEmail, isValidName } = require('../../lib/models/user')
+const { isValidEmail } = require('../../lib/models/user')
+const { isValidName } = require('../../lib/utils')
 
 inquirer.registerPrompt('autocomplete', autocomplete)
 

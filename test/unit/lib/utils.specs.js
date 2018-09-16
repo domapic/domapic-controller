@@ -134,4 +134,22 @@ test.describe('utils', () => {
         })
     })
   })
+
+  test.describe('isValidName method', () => {
+    test.it('should return true if provided name is valid', () => {
+      test.expect(utils.isValidName('foo-name.foo_name-122')).to.be.true()
+    })
+
+    test.it('should return false if provided name is not valid', () => {
+      test.expect(utils.isValidName('Foo#@Name')).to.be.false()
+    })
+
+    test.it('should return false if name contains upper letters', () => {
+      test.expect(utils.isValidName('Foo')).to.be.false()
+    })
+
+    test.it('should return false if name contains other not allowed strange characters', () => {
+      test.expect(utils.isValidName('foo^?aad;@')).to.be.false()
+    })
+  })
 })

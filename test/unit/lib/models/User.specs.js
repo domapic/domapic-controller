@@ -38,7 +38,8 @@ test.describe('user model', () => {
           })
       })
 
-      test.it('should throw an error if name contains upper case letters', () => {
+      test.it('should throw an error if name validation returns false', () => {
+        utilsMocks.stubs.isValidName.returns(false)
         model = user.Model(baseMocks.stubs.service)
         return model.name.validate('Foo')
           .then(() => {
@@ -48,17 +49,8 @@ test.describe('user model', () => {
           })
       })
 
-      test.it('should throw an error if name contains other not allowed strange characters', () => {
-        model = user.Model(baseMocks.stubs.service)
-        return model.name.validate('foo^?aad;@')
-          .then(() => {
-            return test.assert.fail()
-          }, (err) => {
-            return test.expect(err.message).to.include('Name must contain only')
-          })
-      })
-
-      test.it('should not throw an error if name is valid', () => {
+      test.it('should not throw an error if name validation returns true', () => {
+        utilsMocks.stubs.isValidName.returns(true)
         model = user.Model(baseMocks.stubs.service)
         return Promise.all([
           model.name.validate('foo-name_123-foo2'),
@@ -127,16 +119,6 @@ test.describe('user model', () => {
 
     test.it('should return false if provided email is not valid', () => {
       test.expect(user.isValidEmail('foo')).to.be.false()
-    })
-  })
-
-  test.describe('isValidName method', () => {
-    test.it('should return true if provided name is valid', () => {
-      test.expect(user.isValidName('foo-name.foo_name-122')).to.be.true()
-    })
-
-    test.it('should return false if provided name is not valid', () => {
-      test.expect(user.isValidName('Foo#@Name')).to.be.false()
     })
   })
 })
