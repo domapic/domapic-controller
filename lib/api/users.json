@@ -53,7 +53,8 @@
         "properties": {
           "name": {
             "description": "Name of the user",
-            "type": "string"
+            "type": "string",
+            "pattern": "^[a-z0-9_.-]*$"
           },
           "email": {
             "description": "Email of the user",
