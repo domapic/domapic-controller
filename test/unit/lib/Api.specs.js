@@ -43,6 +43,7 @@ test.describe('Api', () => {
           'getUser',
           'getSecurityTokens',
           'getServices',
+          'getService',
           'addService'
         )
       })

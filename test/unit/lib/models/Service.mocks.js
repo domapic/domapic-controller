@@ -12,6 +12,7 @@ const Mock = function () {
 
   const ServiceStub = sandbox.stub().returns(serviceStub)
   ServiceStub.find = sandbox.stub().usingPromise().resolves()
+  ServiceStub.findOne = sandbox.stub().usingPromise().resolves()
 
   const stubs = {
     service: serviceStub,

@@ -55,7 +55,8 @@ test.describe('Commands', () => {
     test.it('should contain all service commands', () => {
       return test.expect(commands.service).to.have.all.keys(
         'add',
-        'getFiltered'
+        'getFiltered',
+        'get'
       )
     })
   })

@@ -98,6 +98,81 @@ test.describe('services api', () => {
       })
     })
 
+    test.describe('getService auth', () => {
+      test.it('should return true if provided user has "admin" role', () => {
+        test.expect(operations.getService.auth({
+          role: 'admin'
+        }, {}, {})).to.be.true()
+      })
+
+      test.it('should return true if provided user has "service-registerer" role', () => {
+        test.expect(operations.getService.auth({
+          role: 'service-registerer'
+        }, {}, {})).to.be.true()
+      })
+
+      const testRole = function (role) {
+        test.it(`should reject the promise if provided user has "${role}" role and requested user is different to himself`, () => {
+          commandsMocks.stubs.service.get.resolves({
+            _user: 'foo-different-id'
+          })
+          return operations.getService.auth({
+            _id: 'foo-id',
+            role
+          }, {
+            path: {
+              name: 'foo-name'
+            }
+          }, {}).then(() => {
+            return test.assert.fail()
+          }, (error) => {
+            return test.expect(error).to.be.an.instanceof(Error)
+          })
+        })
+
+        test.it(`should resolve the promise if provided user has "${role}" role and requested user is same to himself`, () => {
+          const fooId = 'foo-id'
+          commandsMocks.stubs.service.get.resolves({
+            _user: fooId
+          })
+          return operations.getService.auth({
+            _id: fooId,
+            role
+          }, {
+            path: {
+              name: 'foo-name'
+            }
+          }, {}).then(() => {
+            return test.expect(true).to.be.true()
+          })
+        })
+      }
+      testRole('service')
+      testRole('operator')
+      testRole('plugin')
+    })
+
+    test.describe('getService handler', () => {
+      test.it('should return service, calling to correspondant command', () => {
+        const fooName = 'foo-name'
+        const fooResult = 'foo result'
+        commandsMocks.stubs.service.get.resolves(fooResult)
+
+        return operations.getService.handler({
+          path: {
+            name: fooName
+          }})
+          .then((result) => {
+            return Promise.all([
+              test.expect(result).to.equal(fooResult),
+              test.expect(commandsMocks.stubs.service.get).to.have.been.calledWith({
+                name: fooName
+              })
+            ])
+          })
+      })
+    })
+
     test.describe('addService auth', () => {
       const fooId = 'foo-id'
       test.it('should return true if provided user has "admin" role', () => {

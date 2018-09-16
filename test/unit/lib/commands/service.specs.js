@@ -98,5 +98,45 @@ test.describe('service commands', () => {
           })
       })
     })
+
+    test.describe('get method', () => {
+      test.it('should call to service model get method, and return the result', () => {
+        const fooResult = 'foo'
+        modelsMocks.stubs.Service.findOne.resolves(fooResult)
+        return commands.get({_id: 'id'})
+          .then((result) => {
+            return Promise.all([
+              test.expect(result).to.equal(fooResult),
+              test.expect(modelsMocks.stubs.Service.findOne).to.have.been.called()
+            ])
+          })
+      })
+
+      test.it('should call to service model get method with an empty object if it is not provided, and return the result', () => {
+        const fooResult = []
+        modelsMocks.stubs.Service.findOne.resolves(fooResult)
+        return commands.get()
+          .then((result) => {
+            return Promise.all([
+              test.expect(result).to.equal(fooResult),
+              test.expect(modelsMocks.stubs.Service.findOne.getCall(0).args[0]).to.deep.equal({})
+            ])
+          })
+      })
+
+      test.it('should return a not found error if no service is found', () => {
+        const fooError = new Error('foo error')
+        modelsMocks.stubs.Service.findOne.resolves(null)
+        baseMocks.stubs.service.errors.NotFound.returns(fooError)
+        return commands.get({
+          _id: 'foo'
+        })
+          .then(() => {
+            return test.assert.fail()
+          }, err => {
+            return test.expect(err).to.equal(fooError)
+          })
+      })
+    })
   })
 })

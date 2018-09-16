@@ -12,6 +12,9 @@ const Mock = function () {
     },
     addService: {
       handler: sandbox.stub().usingPromise().resolves()
+    },
+    getService: {
+      handler: sandbox.stub().usingPromise().resolves()
     }
   }
 
