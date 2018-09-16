@@ -15,6 +15,13 @@ test.describe('services api', function () {
     })
   }
 
+  const getService = function (serviceName) {
+    return utils.request(`/services/${serviceName}`, {
+      method: 'GET',
+      ...authenticator.credentials()
+    })
+  }
+
   const getUser = function (userName) {
     return utils.request(`/users/${userName}`, {
       method: 'GET',
@@ -234,15 +241,40 @@ test.describe('services api', function () {
         })
       })
     })
+
+    test.describe('get service', () => {
+      test.it('should return service data', () => {
+        return getService(fooService.name)
+          .then((response) => {
+            const service = response.body
+            return Promise.all([
+              test.expect(service._id).to.not.be.undefined(),
+              test.expect(service.name).to.equal(fooService.name),
+              test.expect(service.url).to.equal(fooService.url)
+            ])
+          })
+      })
+
+      test.it('should return a not found response when service does not exist', () => {
+        return getService('foo-unexistant-user')
+          .then((response) => {
+            return Promise.all([
+              test.expect(response.body.message).to.equal('Service not found'),
+              test.expect(response.statusCode).to.equal(404)
+            ])
+          })
+      })
+    })
   })
 
   const testRole = function (user) {
     test.describe(`when user has role "${user.role}"`, () => {
       let userId
       let fooNewUserService
+      const fooNewServiceName = `foo-${user.role}-service`
       const fooNewService = {
         ...fooService,
-        name: `foo-${user.role}-service`,
+        name: fooNewServiceName,
         url: `https://${user.role}.com`
       }
       test.before(() => {
@@ -307,6 +339,27 @@ test.describe('services api', function () {
           })
         })
       })
+
+      test.describe('get service', () => {
+        test.it('should return a forbidden error if service user is different to himself', () => {
+          return getService(fooService.name).then(response => {
+            return Promise.all([
+              test.expect(response.body.message).to.contain('Not authorized'),
+              test.expect(response.statusCode).to.equal(403)
+            ])
+          })
+        })
+
+        test.it('should return user data if user is himself', () => {
+          return getService(fooNewServiceName).then(response => {
+            return Promise.all([
+              test.expect(response.body.name).to.equal(fooNewUserService.name),
+              test.expect(response.body.url).to.equal(fooNewUserService.url),
+              test.expect(response.statusCode).to.equal(200)
+            ])
+          })
+        })
+      })
     })
   }
 
@@ -341,6 +394,18 @@ test.describe('services api', function () {
         return getServices().then(response => {
           return Promise.all([
             test.expect(response.body.length).to.equal(6),
+            test.expect(response.statusCode).to.equal(200)
+          ])
+        })
+      })
+    })
+
+    test.describe('get service', () => {
+      test.it('should return service data', () => {
+        return getService(fooService.name).then(response => {
+          return Promise.all([
+            test.expect(response.body.name).to.equal(fooService.name),
+            test.expect(response.body.url).to.equal(fooService.url),
             test.expect(response.statusCode).to.equal(200)
           ])
         })
