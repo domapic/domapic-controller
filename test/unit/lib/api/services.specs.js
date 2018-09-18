@@ -261,6 +261,130 @@ test.describe('services api', () => {
           })
       })
     })
+
+    test.describe('updateService auth', () => {
+      test.it('should return true if provided user has "admin" role', () => {
+        test.expect(operations.updateService.auth({
+          role: 'admin'
+        }, {}, {})).to.be.true()
+      })
+
+      test.it('should return true if provided user has "service-registerer" role', () => {
+        test.expect(operations.updateService.auth({
+          role: 'service-registerer'
+        }, {}, {})).to.be.true()
+      })
+
+      const testRole = function (role) {
+        test.it(`should reject the promise if provided user has "${role}" role and requested user is different to himself`, () => {
+          commandsMocks.stubs.service.get.resolves({
+            _user: 'foo-different-id'
+          })
+          return operations.updateService.auth({
+            _id: 'foo-id',
+            role
+          }, {
+            path: {
+              name: 'foo-name'
+            }
+          }, {}).then(() => {
+            return test.assert.fail()
+          }, (error) => {
+            return test.expect(error).to.be.an.instanceof(Error)
+          })
+        })
+
+        test.it(`should resolve the promise if provided user has "${role}" role and requested user is same to himself`, () => {
+          const fooId = 'foo-id'
+          commandsMocks.stubs.service.get.resolves({
+            _user: fooId
+          })
+          return operations.updateService.auth({
+            _id: fooId,
+            role
+          }, {
+            path: {
+              name: 'foo-name'
+            }
+          }, {}).then(() => {
+            return test.expect(true).to.be.true()
+          })
+        })
+      }
+      testRole('service')
+      testRole('operator')
+      testRole('plugin')
+    })
+
+    test.describe('updateService handler', () => {
+      const fooName = 'foo-service-name'
+      const fooBody = {
+        description: 'foo-description'
+      }
+      const fooService = {
+        _id: 'foo-id',
+        name: 'foo-service-name'
+      }
+      let sandbox
+      let response
+
+      test.beforeEach(() => {
+        sandbox = test.sinon.createSandbox()
+        response = {
+          status: sandbox.stub(),
+          header: sandbox.stub()
+        }
+        commandsMocks.stubs.service.update.resolves(fooService)
+      })
+
+      test.afterEach(() => {
+        sandbox.restore()
+      })
+
+      test.it('should call to update service, passing the received name and body', () => {
+        return operations.updateService.handler({
+          path: {
+            name: fooName
+          }
+        }, fooBody, response)
+          .then((result) => {
+            return test.expect(commandsMocks.stubs.service.update).to.have.been.calledWith(fooName,fooBody)
+          })
+      })
+
+      test.it('should add a 204 header to response', () => {
+        return operations.updateService.handler({
+          path: {
+            name: fooName
+          }
+        }, fooBody, response)
+          .then(() => {
+            return test.expect(response.status).to.have.been.calledWith(204)
+          })
+      })
+
+      test.it('should set the response header with the service name', () => {
+        return operations.updateService.handler({
+          path: {
+            name: fooName
+          }
+        }, fooBody, response)
+          .then(() => {
+            return test.expect(response.header).to.have.been.calledWith('location', '/api/services/foo-service-name')
+          })
+      })
+
+      test.it('should resolve the promise with no value', () => {
+        return operations.updateService.handler({
+          path: {
+            name: fooName
+          }
+        }, fooBody, response)
+          .then((result) => {
+            return test.expect(result).to.be.undefined()
+          })
+      })
+    })
   })
 
   test.describe('openapi', () => {

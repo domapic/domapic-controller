@@ -100,7 +100,7 @@ test.describe('service commands', () => {
     })
 
     test.describe('get method', () => {
-      test.it('should call to service model get method, and return the result', () => {
+      test.it('should call to service model findOne method, and return the result', () => {
         const fooResult = 'foo'
         modelsMocks.stubs.Service.findOne.resolves(fooResult)
         return commands.get({_id: 'id'})
@@ -131,6 +131,52 @@ test.describe('service commands', () => {
         return commands.get({
           _id: 'foo'
         })
+          .then(() => {
+            return test.assert.fail()
+          }, err => {
+            return test.expect(err).to.equal(fooError)
+          })
+      })
+    })
+
+    test.describe('update method', () => {
+      const fooName = 'foo-name'
+      const fooData = {description: 'foo-description'}
+
+      test.it('should call to service model findOneAndUpdate method, and return the result', () => {        
+        const fooResult = 'foo'
+        modelsMocks.stubs.Service.findOneAndUpdate.resolves(fooResult)
+        return commands.update(fooName, fooData)
+          .then((result) => {
+            return Promise.all([
+              test.expect(result).to.equal(fooResult),
+              test.expect(modelsMocks.stubs.Service.findOneAndUpdate).to.have.been.calledWith({
+                name: fooName
+              }, fooData)
+            ])
+          })
+      })
+
+      test.it('should call to transform the received error if updating service fails', () => {
+        let updateError = new Error('update error')
+        modelsMocks.stubs.Service.findOneAndUpdate.rejects(updateError)
+        utilMocks.stubs.transformValidationErrors.rejects(updateError)
+        return commands.update(fooName, fooData)
+          .then(() => {
+            return test.assert.fail()
+          }, (err) => {
+            return Promise.all([
+              test.expect(err).to.equal(updateError),
+              test.expect(utilMocks.stubs.transformValidationErrors).to.have.been.calledWith(updateError)
+            ])
+          })
+      })
+
+      test.it('should return a not found error if no service is found', () => {
+        const fooError = new Error('foo error')
+        modelsMocks.stubs.Service.findOneAndUpdate.resolves(null)
+        baseMocks.stubs.service.errors.NotFound.returns(fooError)
+        return commands.update(fooName, fooData)
           .then(() => {
             return test.assert.fail()
           }, err => {

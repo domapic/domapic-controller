@@ -157,8 +157,8 @@
       }
     },
     "responses": {
-      "NewService": {
-        "description": "New service added",
+      "Service": {
+        "description": "Service added or modified",
         "headers": {
           "location": {
             "$ref": "#/components/headers/ContentLocation"
@@ -220,7 +220,7 @@
         },
         "responses": {
           "201": {
-            "$ref": "#/components/responses/NewService"
+            "$ref": "#/components/responses/Service"
           }
         },
         "security": [{
@@ -257,6 +257,44 @@
                 }
               }
             }
+          }
+        },
+        "security": [{
+          "jwt": []
+        }, {
+          "apiKey": []
+        }]
+      },
+      "patch": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "name",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "Service name"
+          }
+        ],
+        "tags": ["service"],
+        "summary": "Update service data",
+        "description": "Update service data",
+        "operationId": "updateService",
+        "requestBody": {
+          "description": "Data of the service to be modified",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateService"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "$ref": "#/components/responses/Service"
           }
         },
         "security": [{
