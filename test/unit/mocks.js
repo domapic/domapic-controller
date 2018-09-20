@@ -24,6 +24,7 @@ const Models = require('./lib/Models.mocks')
 const UserModel = require('./lib/models/User.mocks')
 const ServiceModel = require('./lib/models/Service.mocks')
 const SecurityTokenModel = require('./lib/models/SecurityToken.mocks')
+const AbilityModel = require('./lib/models/Ability.mocks')
 
 module.exports = {
   Api,
@@ -41,7 +42,8 @@ module.exports = {
   models: {
     User: UserModel,
     SecurityToken: SecurityTokenModel,
-    Service: ServiceModel
+    Service: ServiceModel,
+    Ability: AbilityModel
   },
   Base,
   Client,
