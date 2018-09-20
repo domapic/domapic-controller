@@ -143,7 +143,7 @@ test.describe('service commands', () => {
       const fooName = 'foo-name'
       const fooData = {description: 'foo-description'}
 
-      test.it('should call to service model findOneAndUpdate method, and return the result', () => {        
+      test.it('should call to service model findOneAndUpdate method, and return the result', () => {
         const fooResult = 'foo'
         modelsMocks.stubs.Service.findOneAndUpdate.resolves(fooResult)
         return commands.update(fooName, fooData)

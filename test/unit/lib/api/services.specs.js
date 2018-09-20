@@ -348,7 +348,7 @@ test.describe('services api', () => {
           }
         }, fooBody, response)
           .then((result) => {
-            return test.expect(commandsMocks.stubs.service.update).to.have.been.calledWith(fooName,fooBody)
+            return test.expect(commandsMocks.stubs.service.update).to.have.been.calledWith(fooName, fooBody)
           })
       })
 
