@@ -19,8 +19,8 @@ const Mock = function () {
     SecurityToken: securityTokenMocks.stubs.SecurityToken,
     service: serviceModelMocks.stubs.service,
     Service: serviceModelMocks.stubs.Service,
-    ability: abilityModelMocks.stubs.service,
-    Ability: abilityModelMocks.stubs.Service
+    ability: abilityModelMocks.stubs.ability,
+    Ability: abilityModelMocks.stubs.Ability
   }
 
   const restore = function () {

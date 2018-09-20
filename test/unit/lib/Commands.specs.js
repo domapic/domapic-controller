@@ -60,5 +60,14 @@ test.describe('Commands', () => {
         'update'
       )
     })
+
+    test.it('should contain all ability commands', () => {
+      return test.expect(commands.ability).to.have.all.keys(
+        'add',
+        'getFiltered',
+        'get',
+        'update'
+      )
+    })
   })
 })

@@ -12,6 +12,8 @@ const Mock = function () {
 
   const AbilityStub = sandbox.stub().returns(abilityStub)
   AbilityStub.find = sandbox.stub().usingPromise().resolves()
+  AbilityStub.findOne = sandbox.stub().usingPromise().resolves()
+  AbilityStub.findOneAndUpdate = sandbox.stub().usingPromise().resolves()
 
   const stubs = {
     ability: abilityStub,

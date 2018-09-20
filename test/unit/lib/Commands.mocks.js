@@ -4,6 +4,7 @@ const UserCommands = require('./commands/User.mocks')
 const SecurityTokenCommands = require('./commands/SecurityToken.mocks')
 const ComposedCommands = require('./commands/Composed.mocks')
 const ServiceCommands = require('./commands/Service.mocks')
+const AbilityCommands = require('./commands/Ability.mocks')
 
 const Mock = function () {
   const sandbox = test.sinon.createSandbox()
@@ -11,12 +12,14 @@ const Mock = function () {
   const securityTokenMocks = new SecurityTokenCommands()
   const composedMocks = new ComposedCommands()
   const serviceMocks = new ServiceCommands()
+  const abilityMocks = new AbilityCommands()
 
   const stubs = {
     user: userCommandsMocks.stubs.commands,
     securityToken: securityTokenMocks.stubs.commands,
     composed: composedMocks.stubs.commands,
-    service: serviceMocks.stubs.commands
+    service: serviceMocks.stubs.commands,
+    ability: abilityMocks.stubs.commands
   }
 
   const restore = function () {
@@ -24,6 +27,7 @@ const Mock = function () {
     userCommandsMocks.restore()
     securityTokenMocks.restore()
     serviceMocks.restore()
+    abilityMocks.restore()
     sandbox.restore()
   }
 
