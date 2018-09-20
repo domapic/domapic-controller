@@ -1,22 +1,21 @@
 
 const test = require('narval')
 
-const securityToken = require('../../../../lib/commands/securityToken')
+const service = require('../../../../lib/commands/service')
 
 const Mock = function () {
   const sandbox = test.sinon.createSandbox()
 
   const commandsStubs = {
     add: sandbox.stub().usingPromise().resolves(),
-    getUser: sandbox.stub().usingPromise().resolves(),
     getFiltered: sandbox.stub().usingPromise().resolves(),
-    remove: sandbox.stub().usingPromise().resolves(),
-    get: sandbox.stub().usingPromise().resolves()
+    get: sandbox.stub().usingPromise().resolves(),
+    update: sandbox.stub().usingPromise().resolves()
   }
 
   const stubs = {
     commands: commandsStubs,
-    Commands: sandbox.stub(securityToken, 'Commands').returns(commandsStubs)
+    Commands: sandbox.stub(service, 'Commands').returns(commandsStubs)
   }
 
   const restore = function () {

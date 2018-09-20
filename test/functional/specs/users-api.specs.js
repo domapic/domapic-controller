@@ -59,7 +59,7 @@ test.describe('users api', function () {
     return utils.doLogin(authenticator)
   })
 
-  test.describe('when user is admin', () => {
+  test.describe('when user has permissions', () => {
     test.describe('add user', () => {
       test.it('should return a bad data error if no name is provided', () => {
         return utils.createUser(authenticator, {
@@ -113,7 +113,7 @@ test.describe('users api', function () {
           role: 'service'
         }).then((response) => {
           return Promise.all([
-            test.expect(response.body.message).to.contain('Name must contain only'),
+            test.expect(response.body.message).to.contain('does not match pattern'),
             test.expect(response.statusCode).to.equal(422)
           ])
         })

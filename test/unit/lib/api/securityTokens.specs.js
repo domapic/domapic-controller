@@ -6,7 +6,7 @@ const mocks = require('../../mocks')
 const securityTokens = require('../../../../lib/api/securityTokens')
 const definition = require('../../../../lib/api/securityTokens.json')
 
-test.describe('securityTokens users', () => {
+test.describe('securityTokens api', () => {
   test.describe('Operations instance', () => {
     let operations
     let commandsMocks
@@ -95,7 +95,7 @@ test.describe('securityTokens users', () => {
     test.describe('getSecurityTokens handler', () => {
       test.it('should return all security tokens if no query is received', () => {
         const fooResult = 'foo result'
-        commandsMocks.stubs.securityToken.getAll.resolves(fooResult)
+        commandsMocks.stubs.securityToken.getFiltered.resolves(fooResult)
 
         return operations.getSecurityTokens.handler({
           query: {}
@@ -103,7 +103,7 @@ test.describe('securityTokens users', () => {
           .then((result) => {
             return Promise.all([
               test.expect(result).to.equal(fooResult),
-              test.expect(commandsMocks.stubs.securityToken.getAll).to.have.been.calledWith({})
+              test.expect(commandsMocks.stubs.securityToken.getFiltered).to.have.been.calledWith({})
             ])
           })
       })
@@ -114,7 +114,7 @@ test.describe('securityTokens users', () => {
           query: {
             type: fooType
           }
-        }).then(() => test.expect(commandsMocks.stubs.securityToken.getAll).to.have.been.calledWith({
+        }).then(() => test.expect(commandsMocks.stubs.securityToken.getFiltered).to.have.been.calledWith({
           type: fooType
         }))
       })
@@ -125,7 +125,7 @@ test.describe('securityTokens users', () => {
           query: {
             user: fooUser
           }
-        }).then(() => test.expect(commandsMocks.stubs.securityToken.getAll).to.have.been.calledWith({
+        }).then(() => test.expect(commandsMocks.stubs.securityToken.getFiltered).to.have.been.calledWith({
           _user: fooUser
         }))
       })

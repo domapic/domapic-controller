@@ -24,7 +24,8 @@
     "inquirer-autocomplete-prompt": "1.0.1",
     "md5": "2.2.1",
     "mongoose": "5.2.3",
-    "rand-token": "0.4.0"
+    "rand-token": "0.4.0",
+    "url-regex": "^4.1.1"
   },
   "devDependencies": {
     "coveralls": "3.0.2",
