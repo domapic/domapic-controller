@@ -25,7 +25,7 @@ test.describe('ability model', () => {
 
     test.describe('name validation', () => {
       test.it('should throw an error if name validation returns false', () => {
-        utilsMocks.stubs.isValidName.returns(false)
+        utilsMocks.stubs.isValidAbilityName.returns(false)
         model = ability.Model(baseMocks.stubs.service)
         return model.name.validate('Foo')
           .then(() => {
@@ -36,7 +36,7 @@ test.describe('ability model', () => {
       })
 
       test.it('should not throw an error if name validation returns true', () => {
-        utilsMocks.stubs.isValidName.returns(true)
+        utilsMocks.stubs.isValidAbilityName.returns(true)
         model = ability.Model(baseMocks.stubs.service)
         return Promise.all([
           model.name.validate('foo-name_123-foo2'),

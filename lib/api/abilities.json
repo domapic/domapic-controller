@@ -16,7 +16,7 @@
           "name": {
             "description": "Name of the ability",
             "type": "string",
-            "pattern": "^[a-z0-9_-]*$"
+            "pattern": "^[a-zA-Z0-9_-]*$"
           },
           "_service": {
             "description": "Unique id of the service owner of the ability",
@@ -130,7 +130,7 @@
           "name": {
             "description": "Name of the ability",
             "type": "string",
-            "pattern": "^[a-z0-9_-]*$"
+            "pattern": "^[a-zA-Z0-9_-]*$"
           },
           "description": {
             "description": "Description of the ability",
