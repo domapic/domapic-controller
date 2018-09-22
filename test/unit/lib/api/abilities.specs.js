@@ -72,6 +72,26 @@ test.describe('abilities api', () => {
       })
     })
 
+    test.describe('addAbility auth', () => {
+      test.it('should return true if provided user has "service" role', () => {
+        test.expect(operations.addAbility.auth({
+          role: 'service'
+        }, {}, {})).to.be.true()
+      })
+
+      const testRole = function (role) {
+        test.it(`should return false if provided user has "${role}" role`, () => {
+          test.expect(operations.addAbility.auth({
+            role
+          }, {}, {})).to.be.false()
+        })
+      }
+      testRole('admin')
+      testRole('service-registerer')
+      testRole('operator')
+      testRole('plugin')
+    })
+
     test.describe('addAbility handler', () => {
       const fooAbility = {
         _id: 'foo-id',
@@ -79,6 +99,9 @@ test.describe('abilities api', () => {
       }
       const fooBody = {
         name: 'foo'
+      }
+      const fooUserData = {
+        _id: 'foo-user-id'
       }
       let sandbox
       let response
@@ -96,32 +119,70 @@ test.describe('abilities api', () => {
         sandbox.restore()
       })
 
-      test.it('should call to add ability, passing the received body', () => {
-        return operations.addAbility.handler({}, fooBody, response)
+      test.it('should call to add ability, passing the received body adding the user id', () => {
+        return operations.addAbility.handler({}, fooBody, response, fooUserData)
           .then((result) => {
-            return test.expect(commandsMocks.stubs.ability.add).to.have.been.calledWith(fooBody)
+            return test.expect(commandsMocks.stubs.ability.add).to.have.been.calledWith({
+              ...fooBody,
+              _user: fooUserData._id
+            })
           })
       })
 
       test.it('should add a 201 header to response', () => {
-        return operations.addAbility.handler({}, fooBody, response)
+        return operations.addAbility.handler({}, fooBody, response, fooUserData)
           .then(() => {
             return test.expect(response.status).to.have.been.calledWith(201)
           })
       })
 
       test.it('should set the response header with the ability id', () => {
-        return operations.addAbility.handler({}, fooBody, response)
+        return operations.addAbility.handler({}, fooBody, response, fooUserData)
           .then(() => {
             return test.expect(response.header).to.have.been.calledWith('location', '/api/abilities/foo-id')
           })
       })
 
       test.it('should resolve the promise with no value', () => {
-        return operations.addAbility.handler({}, fooBody, response)
+        return operations.addAbility.handler({}, fooBody, response, fooUserData)
           .then((result) => {
             return test.expect(result).to.be.undefined()
           })
+      })
+    })
+
+    test.describe('updateAbility auth', () => {
+      const fooUserId = 'foo-user-id'
+      const fooParams = {
+        path: {
+          id: 'foo-ability-id'
+        }
+      }
+
+      test.it('should resolve if logged user is owner of the ability', () => {
+        commandsMocks.stubs.ability.get.resolves({
+          _user: fooUserId
+        })
+
+        return operations.updateAbility.auth({
+          _id: fooUserId
+        }, fooParams, {}).then(() => {
+          return test.expect(true).to.be.true()
+        })
+      })
+
+      test.it('should reject if logged user is not owner of the ability', () => {
+        commandsMocks.stubs.ability.get.resolves({
+          _user: fooUserId
+        })
+
+        return operations.updateAbility.auth({
+          _id: 'another-user-id'
+        }, fooParams, {}).then(() => {
+          return test.assert.fail()
+        }, (error) => {
+          return test.expect(error).to.be.an.instanceof(Error)
+        })
       })
     })
 
