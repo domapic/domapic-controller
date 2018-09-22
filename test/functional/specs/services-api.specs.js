@@ -1,6 +1,5 @@
 
 const test = require('narval')
-const testUtils = require('narval/utils')
 
 const utils = require('./utils')
 
@@ -98,11 +97,6 @@ test.describe('services api', function () {
     version: 'foo updated version',
     apiKey: 'foo updated api key',
     url: 'https://2.2.2.2'
-  }
-
-  const fooService2 = {
-    ...fooService,
-    url: 'https://192.168.1.2'
   }
 
   test.before(() => {

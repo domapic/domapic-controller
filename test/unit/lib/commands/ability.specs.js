@@ -31,7 +31,7 @@ test.describe('ability commands', () => {
 
     test.describe('add method', () => {
       const fooUserData = {
-        _id: 'foo-user-id',
+        _id: 'foo-user-id'
       }
       const fooServiceData = {
         _id: 'foo-service-id'

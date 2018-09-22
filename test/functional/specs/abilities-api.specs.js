@@ -1,6 +1,5 @@
 
 const test = require('narval')
-const testUtils = require('narval/utils')
 
 const utils = require('./utils')
 
@@ -101,11 +100,6 @@ test.describe('abilities api', function () {
     state: true,
     format: 'email',
     type: 'boolean'
-  }
-
-  const fooAbility2 = {
-    ...fooAbility,
-    name: 'foo-ability-name-2'
   }
 
   test.before(() => {
