@@ -30,6 +30,7 @@ test.describe('Commands', () => {
         'add',
         'getAll',
         'get',
+        'getById',
         'init',
         'remove'
       )

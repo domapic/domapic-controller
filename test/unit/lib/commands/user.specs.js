@@ -118,6 +118,33 @@ test.describe('user commands', () => {
       })
     })
 
+    test.describe('getById method', () => {
+      test.it('should call to user model findById method, and return the result', () => {
+        const fooId = 'foo-id'
+        const fooResult = 'foo'
+        modelsMocks.stubs.User.findById.resolves(fooResult)
+        return commands.getById(fooId)
+          .then((result) => {
+            return Promise.all([
+              test.expect(result).to.equal(fooResult),
+              test.expect(modelsMocks.stubs.User.findById).to.have.been.calledWith(fooId)
+            ])
+          })
+      })
+
+      test.it('should return a not found error if findById method throws an error', () => {
+        const fooError = new Error('foo error')
+        modelsMocks.stubs.User.findById.rejects(new Error())
+        baseMocks.stubs.service.errors.NotFound.returns(fooError)
+        return commands.getById('foo-id')
+          .then(() => {
+            return test.assert.fail()
+          }, err => {
+            return test.expect(err).to.equal(fooError)
+          })
+      })
+    })
+
     test.describe('remove method', () => {
       const fooFilter = {name: 'foo-name'}
 
