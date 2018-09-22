@@ -1,0 +1,389 @@
+{
+  "tags": [{
+    "name": "ability",
+    "description": "Domapic service ability"
+  }],
+  "components": {
+    "schemas": {
+      "Ability": {
+        "description": "Ability data",
+        "type": "object",
+        "properties": {
+          "_id": {
+            "description": "Unique id of the ability",
+            "type": "string"
+          },
+          "name": {
+            "description": "Name of the ability",
+            "type": "string",
+            "pattern": "^[a-z0-9_-]*$"
+          },
+          "_service": {
+            "description": "Unique id of the service owner of the ability",
+            "type": "string"
+          },
+          "description": {
+            "description": "Description of the ability",
+            "type": "string"
+          },
+          "event": {
+            "description": "Ability is able to dispatch event",
+            "type": "boolean"
+          },
+          "action": {
+            "description": "Ability is able to handle an action",
+            "type": "boolean"
+          },
+          "state": {
+            "description": "Ability has an state",
+            "type": "boolean"
+          },
+          "type": {
+            "description": "Type of ability data",
+            "type": "boolean",
+            "enum": ["string", "boolean", "number"]
+          },
+          "format": {
+            "description": "Format of ability data",
+            "type": "string",
+            "enum": ["date-time", "email", "hostname", "ipv4", "ipv6", "uri"]
+          },
+          "enum": {
+            "description": "If present, ability data has to be one of these items",
+            "type": "array",
+            "items": {
+              "oneOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "number"
+                }
+              ]
+            }
+          },
+          "maxLength": {
+            "description": "Max length of ability data",
+            "type": "integer"
+          },
+          "minLength": {
+            "description": "Min length of ability data",
+            "type": "integer"
+          },
+          "pattern": {
+            "description": "Ability data has to match with this pattern",
+            "type": "string"
+          },
+          "multipleOf": {
+            "description": "Ability data has to be multiple of",
+            "type": "number"
+          },
+          "minimum": {
+            "description": "Ability data has to be upper or equal to this value",
+            "type": "number"
+          },
+          "maximum": {
+            "description": "Ability data has to be lower or equal to this value",
+            "type": "number"
+          },
+          "exclusiveMaximum": {
+            "description": "Ability data has to be lower than maximum value",
+            "type": "boolean"
+          },
+          "exclusiveMinimum": {
+            "description": "Ability data has to be upper than minimum value",
+            "type": "boolean"
+          },
+          "createdAt": {
+            "description": "Creation date timestamp",
+            "type": "string"
+          },
+          "updatedAt": {
+            "description": "Last update date timestamp",
+            "type": "string"
+          }
+        },
+        "required": ["_id", "name", "_service", "type"],
+        "additionalProperties": false,
+        "example": {
+          "_id": "1223123",
+          "name": "foo-ability-name",
+          "_service": "fdaq3r341212fsf",
+          "description": "Rele control",
+          "event": true,
+          "action": true,
+          "state": true,
+          "type": "boolean",
+          "createdAt": "2018-07-28T17:13:08.718Z",
+          "updatedAt": "2018-07-28T17:13:09.730Z"
+        }
+      },
+      "NewAbility": {
+        "description": "New ability data",
+        "type": "object",
+        "properties": {
+          "name": {
+            "description": "Name of the ability",
+            "type": "string",
+            "pattern": "^[a-z0-9_-]*$"
+          },
+          "_service": {
+            "description": "Unique id of the service owner of the ability",
+            "type": "string"
+          },
+          "description": {
+            "description": "Description of the ability",
+            "type": "string"
+          },
+          "event": {
+            "description": "Ability is able to dispatch event",
+            "type": "boolean"
+          },
+          "action": {
+            "description": "Ability is able to handle an action",
+            "type": "boolean"
+          },
+          "state": {
+            "description": "Ability has an state",
+            "type": "boolean"
+          },
+          "type": {
+            "description": "Type of ability data",
+            "type": "boolean",
+            "enum": ["string", "boolean", "number"]
+          },
+          "format": {
+            "description": "Format of ability data",
+            "type": "string",
+            "enum": ["date-time", "email", "hostname", "ipv4", "ipv6", "uri"]
+          },
+          "enum": {
+            "description": "If present, ability data has to be one of these items",
+            "type": "array",
+            "items": {
+              "oneOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "number"
+                }
+              ]
+            }
+          },
+          "maxLength": {
+            "description": "Max length of ability data",
+            "type": "integer"
+          },
+          "minLength": {
+            "description": "Min length of ability data",
+            "type": "integer"
+          },
+          "pattern": {
+            "description": "Ability data has to match with this pattern",
+            "type": "string"
+          },
+          "multipleOf": {
+            "description": "Ability data has to be multiple of",
+            "type": "number"
+          },
+          "minimum": {
+            "description": "Ability data has to be upper or equal to this value",
+            "type": "number"
+          },
+          "maximum": {
+            "description": "Ability data has to be lower or equal to this value",
+            "type": "number"
+          },
+          "exclusiveMaximum": {
+            "description": "Ability data has to be lower than maximum value",
+            "type": "boolean"
+          },
+          "exclusiveMinimum": {
+            "description": "Ability data has to be upper than minimum value",
+            "type": "boolean"
+          }
+        },
+        "required": ["_id", "name", "_service", "type"],
+        "additionalProperties": false,
+        "example": {
+          "name": "foo-ability-name",
+          "_service": "fdaq3r341212fsf",
+          "description": "Rele control",
+          "event": true,
+          "action": true,
+          "state": true,
+          "type": "boolean"
+        }
+      },
+      "UpdateAbility": {
+        "description": "Update ability data",
+        "type": "object",
+        "properties": {
+          "description": {
+            "description": "Description of the ability",
+            "type": "string"
+          }
+        },
+        "additionalProperties": false,
+        "example": {
+          "description": "Rele control"
+        }
+      },
+      "Abilities": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/Ability"
+        }
+      }
+    },
+    "responses": {
+      "Ability": {
+        "description": "Ability added or modified",
+        "headers": {
+          "location": {
+            "$ref": "#/components/headers/ContentLocation"
+          }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/abilities": {
+      "get": {
+        "parameters": [
+          {
+            "in": "query",
+            "name": "service",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Service id owner of the ability"
+          }
+        ],
+        "tags": ["ability"],
+        "summary": "Get abilities",
+        "description": "List abilities, applying a filter if received",
+        "operationId": "getAbilities",
+        "responses": {
+          "200": {
+            "description": "Get abilities success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Abilities"
+                }
+              }
+            }
+          }
+        },
+        "security": [{
+          "jwt": []
+        }, {
+          "apiKey": []
+        }]
+      },
+      "post": {
+        "tags": ["ability"],
+        "summary": "Add a new ability",
+        "description": "Register a new ability",
+        "operationId": "addAbility",
+        "requestBody": {
+          "description": "Data of the ability to be added",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewAbility"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "$ref": "#/components/responses/Ability"
+          }
+        },
+        "security": [{
+          "jwt": []
+        }, {
+          "apiKey": []
+        }]
+      }
+    },
+    "/abilities/{id}": {
+      "get": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "Ability id"
+          }
+        ],
+        "tags": ["ability"],
+        "summary": "Returns ability data",
+        "description": "Returns all data about an ability",
+        "operationId": "getAbility",
+        "responses": {
+          "200": {
+            "description": "ability success",
+            "content": {
+              "application/json": {
+                "schema" : {
+                  "$ref": "#/components/schemas/Ability"
+                }
+              }
+            }
+          }
+        },
+        "security": [{
+          "jwt": []
+        }, {
+          "apiKey": []
+        }]
+      },
+      "patch": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "Ability id"
+          }
+        ],
+        "tags": ["ability"],
+        "summary": "Update ability data",
+        "description": "Update ability data",
+        "operationId": "updateAbility",
+        "requestBody": {
+          "description": "Data of the ability to be modified",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateAbility"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "$ref": "#/components/responses/Ability"
+          }
+        },
+        "security": [{
+          "jwt": []
+        }, {
+          "apiKey": []
+        }]
+      }
+    }
+  }
+}
