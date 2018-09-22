@@ -22,6 +22,10 @@
             "description": "Unique id of the service owner of the ability",
             "type": "string"
           },
+          "_user": {
+            "description": "Unique id of the user owner of the ability",
+            "type": "string"
+          },
           "description": {
             "description": "Description of the ability",
             "type": "string"
@@ -40,7 +44,7 @@
           },
           "type": {
             "description": "Type of ability data",
-            "type": "boolean",
+            "type": "string",
             "enum": ["string", "boolean", "number"]
           },
           "format": {
@@ -109,6 +113,7 @@
           "_id": "1223123",
           "name": "foo-ability-name",
           "_service": "fdaq3r341212fsf",
+          "_user": "132defwer4321312",
           "description": "Rele control",
           "event": true,
           "action": true,
@@ -126,10 +131,6 @@
             "description": "Name of the ability",
             "type": "string",
             "pattern": "^[a-z0-9_-]*$"
-          },
-          "_service": {
-            "description": "Unique id of the service owner of the ability",
-            "type": "string"
           },
           "description": {
             "description": "Description of the ability",
@@ -149,7 +150,7 @@
           },
           "type": {
             "description": "Type of ability data",
-            "type": "boolean",
+            "type": "string",
             "enum": ["string", "boolean", "number"]
           },
           "format": {
@@ -204,11 +205,10 @@
             "type": "boolean"
           }
         },
-        "required": ["_id", "name", "_service", "type"],
+        "required": ["name", "type"],
         "additionalProperties": false,
         "example": {
           "name": "foo-ability-name",
-          "_service": "fdaq3r341212fsf",
           "description": "Rele control",
           "event": true,
           "action": true,
@@ -311,17 +311,17 @@
         }]
       }
     },
-    "/abilities/{id}": {
+    "/abilities/{_id}": {
       "get": {
         "parameters": [
           {
             "in": "path",
-            "name": "id",
+            "name": "_id",
             "schema": {
               "type": "string"
             },
             "required": true,
-            "description": "Ability id"
+            "description": "Ability _id"
           }
         ],
         "tags": ["ability"],
@@ -350,12 +350,12 @@
         "parameters": [
           {
             "in": "path",
-            "name": "id",
+            "name": "_id",
             "schema": {
               "type": "string"
             },
             "required": true,
-            "description": "Ability id"
+            "description": "Ability _id"
           }
         ],
         "tags": ["ability"],
