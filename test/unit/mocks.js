@@ -13,35 +13,41 @@ const Api = require('./lib/Api.mocks')
 const UsersApi = require('./lib/api/Users.mocks')
 const SecurityTokensApi = require('./lib/api/SecurityTokens.mocks')
 const ServicesApi = require('./lib/api/Services.mocks')
+const AbilitiesApi = require('./lib/api/Abilities.mocks')
 
 const Commands = require('./lib/Commands.mocks')
 const UserCommands = require('./lib/commands/User.mocks')
 const SecurityTokenCommands = require('./lib/commands/SecurityToken.mocks')
 const ComposedCommands = require('./lib/commands/Composed.mocks')
 const ServiceCommands = require('./lib/commands/Service.mocks')
+const AbilityCommands = require('./lib/commands/Ability.mocks')
 
 const Models = require('./lib/Models.mocks')
 const UserModel = require('./lib/models/User.mocks')
 const ServiceModel = require('./lib/models/Service.mocks')
 const SecurityTokenModel = require('./lib/models/SecurityToken.mocks')
+const AbilityModel = require('./lib/models/Ability.mocks')
 
 module.exports = {
   Api,
   api: {
     Users: UsersApi,
     SecurityTokens: SecurityTokensApi,
-    Services: ServicesApi
+    Services: ServicesApi,
+    Abilities: AbilitiesApi
   },
   commands: {
     User: UserCommands,
     SecurityToken: SecurityTokenCommands,
     Composed: ComposedCommands,
-    Service: ServiceCommands
+    Service: ServiceCommands,
+    Ability: AbilityCommands
   },
   models: {
     User: UserModel,
     SecurityToken: SecurityTokenModel,
-    Service: ServiceModel
+    Service: ServiceModel,
+    Ability: AbilityModel
   },
   Base,
   Client,

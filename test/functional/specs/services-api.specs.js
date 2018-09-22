@@ -1,6 +1,5 @@
 
 const test = require('narval')
-const testUtils = require('narval/utils')
 
 const utils = require('./utils')
 
@@ -15,15 +14,15 @@ test.describe('services api', function () {
     })
   }
 
-  const getService = function (serviceName) {
-    return utils.request(`/services/${serviceName}`, {
+  const getService = function (serviceId) {
+    return utils.request(`/services/${serviceId}`, {
       method: 'GET',
       ...authenticator.credentials()
     })
   }
 
-  const updateService = function (serviceName, serviceData) {
-    return utils.request(`/services/${serviceName}`, {
+  const updateService = function (serviceId, serviceData) {
+    return utils.request(`/services/${serviceId}`, {
       method: 'PATCH',
       body: serviceData,
       ...authenticator.credentials()
@@ -45,6 +44,13 @@ test.describe('services api', function () {
     })
   }
 
+  const adminUser = {
+    name: 'foo-admin-2',
+    role: 'admin',
+    email: 'admin2@admin2.com',
+    password: 'foo'
+  }
+
   const operatorUser = {
     name: 'foo-operator',
     role: 'operator',
@@ -54,9 +60,12 @@ test.describe('services api', function () {
 
   const serviceUser = {
     name: 'foo-service-user',
-    role: 'service',
-    email: 'service@foo.com',
-    password: 'foo'
+    role: 'service'
+  }
+
+  const serviceUser2 = {
+    name: 'foo-service-user-2',
+    role: 'service'
   }
 
   const pluginUser = {
@@ -66,49 +75,38 @@ test.describe('services api', function () {
     password: 'foo'
   }
 
+  const serviceRegistererUser = {
+    name: 'foo-service-registerer',
+    role: 'service-registerer',
+    email: 'service-registerer-2@foo.com',
+    password: 'foo'
+  }
+
   const fooService = {
-    name: 'foo-service-name',
     id: 'foo-service-id',
     description: 'foo-description',
     package: 'foo-package',
     version: '1.0.0',
     apiKey: 'dasasfdfsdf423efwsfds',
-    _user: 'foo-user-id',
     url: 'https://192.168.1.1'
   }
 
-  const fooService2 = {
-    ...fooService,
-    name: 'foo-service-name-2',
-    url: 'https://192.168.1.2'
+  const fooUpdatedService = {
+    description: 'foo updated description',
+    package: 'foo updated package',
+    version: 'foo updated version',
+    apiKey: 'foo updated api key',
+    url: 'https://2.2.2.2'
   }
 
   test.before(() => {
     return utils.doLogin(authenticator)
   })
 
-  test.describe('when user has permissions', () => {
-    test.describe('add service', () => {
-      test.it('should return a bad data error if no name is provided', () => {
-        const service = {...fooService}
-        delete service.name
-        return addService(service).then((response) => {
-          return Promise.all([
-            test.expect(response.body.message).to.contain('requires property "name"'),
-            test.expect(response.statusCode).to.equal(422)
-          ])
-        })
-      })
-
-      test.it('should return a bad data error if a not valid name is provided', () => {
-        const service = {...fooService}
-        service.name = 'Foo-$"·$Wrong-name'
-        return addService(service).then((response) => {
-          return Promise.all([
-            test.expect(response.body.message).to.contain('does not match pattern'),
-            test.expect(response.statusCode).to.equal(422)
-          ])
-        })
+  test.describe('add service', () => {
+    test.describe('when user has service role', () => {
+      test.before(() => {
+        return utils.ensureUserAndDoLogin(authenticator, serviceUser)
       })
 
       test.it('should return a bad data error if no id is provided', () => {
@@ -177,42 +175,33 @@ test.describe('services api', function () {
         })
       })
 
-      test.it('should return a bad data error if no _user is provided', () => {
-        const service = {...fooService}
-        delete service._user
-        return addService(service).then((response) => {
-          return Promise.all([
-            test.expect(response.body.message).to.contain('requires property "_user"'),
-            test.expect(response.statusCode).to.equal(422)
-          ])
-        })
-      })
-
       test.it('should add service to database if all provided data pass validation', () => {
-        return addService(fooService).then((addResponse) => {
-          return getServices()
-            .then((getResponse) => {
-              const serviceName = addResponse.headers.location.split('/').pop()
-              const service = getResponse.body.find(service => service.name === serviceName)
-              return Promise.all([
-                test.expect(service.name).to.equal(fooService.name),
-                test.expect(service.package).to.equal(fooService.package),
-                test.expect(service.version).to.equal(fooService.version),
-                test.expect(service._user).to.equal(fooService._user),
-                test.expect(service.url).to.equal(fooService.url),
-                test.expect(service.apiKey).to.be.undefined(),
-                test.expect(service.id).to.equal(fooService.id),
-                test.expect(service.createdAt).to.not.be.undefined(),
-                test.expect(service.updatedAt).to.not.be.undefined()
-              ])
+        return getUser(serviceUser.name)
+          .then((getUserResponse) => {
+            const userId = getUserResponse.body._id
+            return addService(fooService).then((addResponse) => {
+              const serviceId = addResponse.headers.location.split('/').pop()
+              return getService(serviceId)
+                .then((getResponse) => {
+                  const service = getResponse.body
+                  return Promise.all([
+                    test.expect(service.name).to.equal(serviceUser.name),
+                    test.expect(service.package).to.equal(fooService.package),
+                    test.expect(service.version).to.equal(fooService.version),
+                    test.expect(service._user).to.equal(userId),
+                    test.expect(service.url).to.equal(fooService.url),
+                    test.expect(service.apiKey).to.be.undefined(),
+                    test.expect(service.id).to.equal(fooService.id),
+                    test.expect(service.createdAt).to.not.be.undefined(),
+                    test.expect(service.updatedAt).to.not.be.undefined()
+                  ])
+                })
             })
-        })
+          })
       })
 
-      test.it('should return a bad data error if repeated name is provided', () => {
-        const service = {...fooService}
-        service.url = 'https://localhost:4321'
-        return addService(service).then((response) => {
+      test.it('should return a bad data error if one user tries to add more than one service', () => {
+        return addService(fooService).then((response) => {
           return Promise.all([
             test.expect(response.body.message).to.contain('name: Service name already exists'),
             test.expect(response.statusCode).to.equal(422)
@@ -221,74 +210,69 @@ test.describe('services api', function () {
       })
 
       test.it('should return a bad data error if repeated url is provided', () => {
-        const service = {...fooService}
-        service.name = 'another-foo-name'
-        return addService(service).then((response) => {
+        return utils.ensureUserAndDoLogin(authenticator, serviceUser2)
+          .then(() => {
+            return addService(fooService).then((response) => {
+              return Promise.all([
+                test.expect(response.body.message).to.contain('url: Service url already exists'),
+                test.expect(response.statusCode).to.equal(422)
+              ])
+            })
+          })
+      })
+    })
+  })
+
+  test.describe('update service', () => {
+    let serviceUserService
+
+    test.before(() => {
+      return utils.ensureUserAndDoLogin(authenticator, serviceUser)
+        .then(() => {
+          return getServices()
+            .then(getResponse => {
+              serviceUserService = getResponse.body.find(service => service.name === serviceUser.name)
+              return Promise.resolve()
+            })
+        })
+    })
+
+    test.describe('when service do not belongs to logged user', () => {
+      test.before(() => {
+        return utils.ensureUserAndDoLogin(authenticator, serviceUser2)
+      })
+
+      test.it('should return a forbidden error', () => {
+        return updateService(serviceUserService._id, {
+          description: 'foo-description'
+        }).then((response) => {
           return Promise.all([
-            test.expect(response.body.message).to.contain('url: Service url already exists'),
-            test.expect(response.statusCode).to.equal(422)
+            test.expect(response.body.message).to.contain('Not authorized'),
+            test.expect(response.statusCode).to.equal(403)
           ])
         })
       })
-    })
 
-    test.describe('get services', () => {
-      test.it('should return all existant services', () => {
-        return addService(fooService2).then(() => {
-          return getServices()
-            .then((getResponse) => {
-              const service1 = getResponse.body.find(service => service.name === fooService.name)
-              const service2 = getResponse.body.find(service => service.name === fooService2.name)
-              return Promise.all([
-                test.expect(service1.name).to.equal(fooService.name),
-                test.expect(service2.name).to.equal(fooService2.name),
-                test.expect(service1.url).to.equal(fooService.url),
-                test.expect(service2.url).to.equal(fooService2.url)
-              ])
-            })
-        })
-      })
-    })
-
-    test.describe('get service', () => {
-      test.it('should return service data', () => {
-        return getService(fooService.name)
-          .then((response) => {
-            const service = response.body
-            return Promise.all([
-              test.expect(service._id).to.not.be.undefined(),
-              test.expect(service.name).to.equal(fooService.name),
-              test.expect(service.url).to.equal(fooService.url)
-            ])
-          })
-      })
-
-      test.it('should return a not found response when service does not exist', () => {
-        return getService('foo-unexistant-user')
-          .then((response) => {
-            return Promise.all([
-              test.expect(response.body.message).to.equal('Service not found'),
-              test.expect(response.statusCode).to.equal(404)
-            ])
-          })
-      })
-    })
-
-    test.describe('update service', () => {
-      test.it('should return a not found response when service does not exist', () => {
-        return updateService('foo-unexistant-user', {
+      test.it('should return a forbidden response when service does not exist', () => {
+        return updateService('foo-unexistant-service-id', {
           description: 'foo-description'
         })
           .then((response) => {
             return Promise.all([
-              test.expect(response.body.message).to.equal('Service not found'),
-              test.expect(response.statusCode).to.equal(404)
+              test.expect(response.body.message).to.contain('Not authorized'),
+              test.expect(response.statusCode).to.equal(403)
             ])
           })
       })
+    })
+
+    test.describe('when service belongs to logged user', () => {
+      test.before(() => {
+        return utils.ensureUserAndDoLogin(authenticator, serviceUser)
+      })
 
       test.it('should return a bad data response if trying to update name', () => {
-        return updateService(fooService2, {
+        return updateService(serviceUserService._id, {
           name: 'foo-new-name'
         })
           .then((response) => {
@@ -300,7 +284,7 @@ test.describe('services api', function () {
       })
 
       test.it('should return a bad data response if trying to update id', () => {
-        return updateService(fooService2, {
+        return updateService(serviceUserService._id, {
           id: 'foo-new-id'
         })
           .then((response) => {
@@ -312,7 +296,7 @@ test.describe('services api', function () {
       })
 
       test.it('should return a bad data response if trying to update _user', () => {
-        return updateService(fooService2, {
+        return updateService(serviceUserService._id, {
           _user: 'foo-new-user-id'
         })
           .then((response) => {
@@ -324,7 +308,7 @@ test.describe('services api', function () {
       })
 
       test.it('should return a bad data response if wrong url is provided', () => {
-        return updateService(fooService2, {
+        return updateService(serviceUserService._id, {
           url: 'foo'
         })
           .then((response) => {
@@ -336,7 +320,7 @@ test.describe('services api', function () {
       })
 
       test.it('should return a bad data response if repeated url is provided', () => {
-        return updateService(fooService2, {
+        return updateService(serviceUserService._id, {
           url: fooService.url
         })
           .then((response) => {
@@ -348,26 +332,19 @@ test.describe('services api', function () {
       })
 
       test.it('should update all provided service data', () => {
-        const fooData = {
-          description: 'foo updated description',
-          package: 'foo updated package',
-          version: 'foo updated version',
-          apiKey: 'foo updated api key',
-          url: 'https://2.2.2.2'
-        }
-        return updateService(fooService2.name, fooData)
+        return updateService(serviceUserService._id, fooUpdatedService)
           .then((patchResponse) => {
-            return getService(fooService2.name)
+            return getService(serviceUserService._id)
               .then((response) => {
                 const data = response.body
                 return Promise.all([
-                  test.expect(data.name).to.equal(fooService2.name),
-                  test.expect(data.id).to.equal(fooService2.id),
-                  test.expect(data.description).to.equal(fooData.description),
-                  test.expect(data.package).to.equal(fooData.package),
-                  test.expect(data.version).to.equal(fooData.version),
+                  test.expect(data.name).to.equal(serviceUser.name),
+                  test.expect(data.id).to.equal(fooService.id),
+                  test.expect(data.description).to.equal(fooUpdatedService.description),
+                  test.expect(data.package).to.equal(fooUpdatedService.package),
+                  test.expect(data.version).to.equal(fooUpdatedService.version),
                   test.expect(data.apiKey).to.be.undefined(),
-                  test.expect(data.url).to.equal(fooData.url),
+                  test.expect(data.url).to.equal(fooUpdatedService.url),
                   test.expect(patchResponse.statusCode).to.equal(204)
                 ])
               })
@@ -378,29 +355,23 @@ test.describe('services api', function () {
 
   const testRole = function (user) {
     test.describe(`when user has role "${user.role}"`, () => {
-      let userId
-      let fooNewUserService
-      const fooNewServiceName = `foo-${user.role}-service`
+      let serviceUserService
       const fooNewService = {
         ...fooService,
-        name: fooNewServiceName,
         url: `https://${user.role}.com`
       }
       test.before(() => {
         return utils.ensureUserAndDoLogin(authenticator, user).then(() => {
-          return getUser(user.name).then((response) => {
-            userId = response.body._id
-            fooNewUserService = {
-              ...fooNewService,
-              _user: userId
-            }
-            return Promise.resolve()
-          })
+          return getServices()
+            .then(getResponse => {
+              serviceUserService = getResponse.body.find(service => service.name === serviceUser.name)
+              return Promise.resolve()
+            })
         })
       })
 
       test.describe('add service', () => {
-        test.it('should return a forbidden error if provided _user is not himself', () => {
+        test.it('should return a forbidden error', () => {
           return addService(fooNewService).then(response => {
             return Promise.all([
               test.expect(response.body.message).to.contain('Not authorized'),
@@ -408,148 +379,48 @@ test.describe('services api', function () {
             ])
           })
         })
-
-        test.it('should add service if provided _user is himself', () => {
-          return addService(fooNewUserService).then(response => {
-            return test.expect(response.statusCode).to.equal(201)
-          })
-        })
-      })
-
-      test.describe('update service', () => {
-        test.it('should return a forbidden error if provided _user is not himself', () => {
-          return updateService(fooService.name, {
-            description: 'foo new description'
-          }).then(response => {
-            return Promise.all([
-              test.expect(response.body.message).to.contain('Not authorized'),
-              test.expect(response.statusCode).to.equal(403)
-            ])
-          })
-        })
-
-        test.it('should update service if provided _user is himself', () => {
-          return updateService(fooNewUserService.name, {
-            description: 'foo new description'
-          }).then(response => {
-            return test.expect(response.statusCode).to.equal(204)
-          })
-        })
       })
 
       test.describe('get services', () => {
-        test.it('should return a forbidden error if no query is defined', () => {
-          return getServices().then(response => {
-            return Promise.all([
-              test.expect(response.body.message).to.contain('Not authorized'),
-              test.expect(response.statusCode).to.equal(403)
-            ])
-          })
-        })
-
-        test.it('should return a forbidden error if query is defined but user id is not from himself', () => {
-          return getServices({
-            user: 'foo-user-id'
-          }).then(response => {
-            return Promise.all([
-              test.expect(response.body.message).to.contain('Not authorized'),
-              test.expect(response.statusCode).to.equal(403)
-            ])
-          })
-        })
-
-        test.it('should return services if user query is defined and belongs to himself', () => {
-          return getServices({
-            user: userId
-          }).then(response => {
-            return Promise.all([
-              test.expect(response.body[0].name).to.equal(fooNewUserService.name),
-              test.expect(response.statusCode).to.equal(200)
-            ])
-          })
+        test.it('should return all existant services', () => {
+          return getServices()
+            .then((getResponse) => {
+              const service1 = getResponse.body.find(service => service.name === serviceUser.name)
+              return Promise.all([
+                test.expect(service1.url).to.equal(fooUpdatedService.url)
+              ])
+            })
         })
       })
 
       test.describe('get service', () => {
-        test.it('should return a forbidden error if service user is different to himself', () => {
-          return getService(fooService.name).then(response => {
-            return Promise.all([
-              test.expect(response.body.message).to.contain('Not authorized'),
-              test.expect(response.statusCode).to.equal(403)
-            ])
-          })
+        test.it('should return service data', () => {
+          return getService(serviceUserService._id)
+            .then((response) => {
+              const service = response.body
+              return Promise.all([
+                test.expect(service._id).to.not.be.undefined(),
+                test.expect(service.name).to.equal(serviceUser.name),
+                test.expect(service.url).to.equal(fooUpdatedService.url)
+              ])
+            })
         })
 
-        test.it('should return user data if user is himself', () => {
-          return getService(fooNewServiceName).then(response => {
-            return Promise.all([
-              test.expect(response.body.name).to.equal(fooNewUserService.name),
-              test.expect(response.body.url).to.equal(fooNewUserService.url),
-              test.expect(response.statusCode).to.equal(200)
-            ])
-          })
+        test.it('should return a not found response when service does not exist', () => {
+          return getService('foo-unexistant-user-id')
+            .then((response) => {
+              return Promise.all([
+                test.expect(response.body.message).to.equal('Service not found'),
+                test.expect(response.statusCode).to.equal(404)
+              ])
+            })
         })
       })
     })
   }
 
+  testRole(adminUser)
   testRole(operatorUser)
-  testRole(serviceUser)
   testRole(pluginUser)
-
-  test.describe('when user has role "service-registerer"', () => {
-    const fooNewService = {
-      ...fooService,
-      name: `foo-service-registerer-service`,
-      url: `https://service-registerer-service-url.com`
-    }
-
-    test.before(() => {
-      return testUtils.logs.combined('controller')
-        .then((log) => {
-          authenticator.loginApiKey('service-registerer', /Use the next api key to register services: (\S*)\n/.exec(log)[1])
-        })
-    })
-
-    test.describe('add service', () => {
-      test.it('should add service', () => {
-        return addService(fooNewService).then(response => {
-          return test.expect(response.statusCode).to.equal(201)
-        })
-      })
-    })
-
-    test.describe('update service', () => {
-      test.it('should update service', () => {
-        return updateService(fooNewService.name, {
-          description: 'foo new description'
-        }).then(response => {
-          return test.expect(response.statusCode).to.equal(204)
-        })
-      })
-    })
-
-    test.describe('get services', () => {
-      test.it('should return all services', () => {
-        return getServices().then(response => {
-          return Promise.all([
-            test.expect(response.body.length).to.equal(6),
-            test.expect(response.statusCode).to.equal(200)
-          ])
-        })
-      })
-    })
-
-    test.describe('get service', () => {
-      test.it('should return service data', () => {
-        return getService(fooService.name).then(response => {
-          return Promise.all([
-            test.expect(response.body.name).to.equal(fooService.name),
-            test.expect(response.body.url).to.equal(fooService.url),
-            test.expect(response.statusCode).to.equal(200)
-          ])
-        })
-      })
-    })
-  })
+  testRole(serviceRegistererUser)
 })

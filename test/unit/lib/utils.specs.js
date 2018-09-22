@@ -152,4 +152,18 @@ test.describe('utils', () => {
       test.expect(utils.isValidName('foo^?aad;@')).to.be.false()
     })
   })
+
+  test.describe('isValidAbilityName method', () => {
+    test.it('should return true if provided name is valid', () => {
+      test.expect(utils.isValidAbilityName('Foo-namefoo_name-122')).to.be.true()
+    })
+
+    test.it('should return false if provided name is not valid', () => {
+      test.expect(utils.isValidAbilityName('Foo#@Name')).to.be.false()
+    })
+
+    test.it('should return false if name contains other not allowed strange characters', () => {
+      test.expect(utils.isValidAbilityName('foo^?aad;@')).to.be.false()
+    })
+  })
 })

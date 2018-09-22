@@ -80,32 +80,6 @@ test.describe('user commands', () => {
       })
     })
 
-    test.describe('getById method', () => {
-      test.it('should call to user model findById method, and return the result', () => {
-        const fooResult = 'foo'
-        modelsMocks.stubs.User.findById.resolves(fooResult)
-        return commands.getById('foo_id')
-          .then((result) => {
-            return Promise.all([
-              test.expect(result).to.equal(fooResult),
-              test.expect(modelsMocks.stubs.User.findById).to.have.been.called()
-            ])
-          })
-      })
-
-      test.it('should return a not found error if no user is found', () => {
-        const fooError = new Error('foo error')
-        modelsMocks.stubs.User.findById.resolves(null)
-        baseMocks.stubs.service.errors.NotFound.returns(fooError)
-        return commands.getById('foo_id')
-          .then(() => {
-            return test.assert.fail()
-          }, err => {
-            return test.expect(err).to.equal(fooError)
-          })
-      })
-    })
-
     test.describe('get method', () => {
       test.it('should call to user model get method, and return the result', () => {
         const fooResult = 'foo'
@@ -130,11 +104,24 @@ test.describe('user commands', () => {
             ])
           })
       })
+
+      test.it('should return a not found error if no user is found', () => {
+        const fooError = new Error('foo error')
+        modelsMocks.stubs.User.findOne.resolves(null)
+        baseMocks.stubs.service.errors.NotFound.returns(fooError)
+        return commands.get({_id: 'id'})
+          .then(() => {
+            return test.assert.fail()
+          }, err => {
+            return test.expect(err).to.equal(fooError)
+          })
+      })
     })
 
     test.describe('remove method', () => {
+      const fooFilter = {name: 'foo-name'}
+
       test.it('should call to findOneAndRemove method', () => {
-        const fooFilter = {name: 'foo-name'}
         modelsMocks.stubs.User.findOneAndRemove.resolves(fooFilter)
         return commands.remove(fooFilter)
           .then(() => {
@@ -147,6 +134,18 @@ test.describe('user commands', () => {
         return commands.remove()
           .then(() => {
             return test.expect(modelsMocks.stubs.User.findOneAndRemove.getCall(0).args[0]).to.deep.equal({})
+          })
+      })
+
+      test.it('should return a not found error if no user is found', () => {
+        const fooError = new Error('foo error')
+        modelsMocks.stubs.User.findOneAndRemove.resolves(null)
+        baseMocks.stubs.service.errors.NotFound.returns(fooError)
+        return commands.remove(fooFilter)
+          .then(() => {
+            return test.assert.fail()
+          }, err => {
+            return test.expect(err).to.equal(fooError)
           })
       })
     })

@@ -30,23 +30,29 @@ test.describe('service commands', () => {
     })
 
     test.describe('add method', () => {
-      const fooServiceData = {
-        name: 'foo-user-name',
-        description: 'foo-description',
-        _user: 'foo-user-id'
+      const fooUser = {
+        _id: 'foo-user-id',
+        name: 'foo-user-name'
       }
-      test.it('should create and save a Service model with the received data', () => {
-        return commands.add(fooServiceData)
+      const fooServiceData = {
+        description: 'foo-description'
+      }
+      test.it('should create and save a Service model with the received data, adding the received user data', () => {
+        return commands.add(fooUser, fooServiceData)
           .then(() => {
             return Promise.all([
-              test.expect(modelsMocks.stubs.Service).to.have.been.calledWith(fooServiceData),
+              test.expect(modelsMocks.stubs.Service).to.have.been.calledWith({
+                ...fooServiceData,
+                name: fooUser.name,
+                _user: fooUser._id
+              }),
               test.expect(modelsMocks.stubs.service.save).to.have.been.called()
             ])
           })
       })
 
       test.it('should resolve the promise with the new service', () => {
-        return commands.add(fooServiceData)
+        return commands.add(fooUser, fooServiceData)
           .then(service => {
             return test.expect(modelsMocks.stubs.service).to.equal(service)
           })
@@ -56,7 +62,7 @@ test.describe('service commands', () => {
         let saveError = new Error('save error')
         modelsMocks.stubs.service.save.rejects(saveError)
         utilMocks.stubs.transformValidationErrors.rejects(saveError)
-        return commands.add(fooServiceData)
+        return commands.add(fooUser, fooServiceData)
           .then(() => {
             return test.assert.fail()
           }, (err) => {
@@ -139,19 +145,46 @@ test.describe('service commands', () => {
       })
     })
 
+    test.describe('getById method', () => {
+      test.it('should call to service model findById method, and return the result', () => {
+        const fooId = 'foo-id'
+        const fooResult = 'foo'
+        modelsMocks.stubs.Service.findById.resolves(fooResult)
+        return commands.getById(fooId)
+          .then((result) => {
+            return Promise.all([
+              test.expect(result).to.equal(fooResult),
+              test.expect(modelsMocks.stubs.Service.findById).to.have.been.calledWith(fooId)
+            ])
+          })
+      })
+
+      test.it('should return a not found error if findById method throws an error', () => {
+        const fooError = new Error('foo error')
+        modelsMocks.stubs.Service.findById.rejects(new Error())
+        baseMocks.stubs.service.errors.NotFound.returns(fooError)
+        return commands.getById('foo-id')
+          .then(() => {
+            return test.assert.fail()
+          }, err => {
+            return test.expect(err).to.equal(fooError)
+          })
+      })
+    })
+
     test.describe('update method', () => {
-      const fooName = 'foo-name'
+      const fooId = 'foo-id'
       const fooData = {description: 'foo-description'}
 
       test.it('should call to service model findOneAndUpdate method, and return the result', () => {
         const fooResult = 'foo'
         modelsMocks.stubs.Service.findOneAndUpdate.resolves(fooResult)
-        return commands.update(fooName, fooData)
+        return commands.update(fooId, fooData)
           .then((result) => {
             return Promise.all([
               test.expect(result).to.equal(fooResult),
               test.expect(modelsMocks.stubs.Service.findOneAndUpdate).to.have.been.calledWith({
-                name: fooName
+                _id: fooId
               }, fooData)
             ])
           })
@@ -161,7 +194,7 @@ test.describe('service commands', () => {
         let updateError = new Error('update error')
         modelsMocks.stubs.Service.findOneAndUpdate.rejects(updateError)
         utilMocks.stubs.transformValidationErrors.rejects(updateError)
-        return commands.update(fooName, fooData)
+        return commands.update(fooId, fooData)
           .then(() => {
             return test.assert.fail()
           }, (err) => {
@@ -176,7 +209,7 @@ test.describe('service commands', () => {
         const fooError = new Error('foo error')
         modelsMocks.stubs.Service.findOneAndUpdate.resolves(null)
         baseMocks.stubs.service.errors.NotFound.returns(fooError)
-        return commands.update(fooName, fooData)
+        return commands.update(fooId, fooData)
           .then(() => {
             return test.assert.fail()
           }, err => {

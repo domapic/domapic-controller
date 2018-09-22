@@ -29,7 +29,6 @@ test.describe('Commands', () => {
       return test.expect(commands.user).to.have.all.keys(
         'add',
         'getAll',
-        'getById',
         'get',
         'init',
         'remove'
@@ -57,6 +56,17 @@ test.describe('Commands', () => {
         'add',
         'getFiltered',
         'get',
+        'getById',
+        'update'
+      )
+    })
+
+    test.it('should contain all ability commands', () => {
+      return test.expect(commands.ability).to.have.all.keys(
+        'add',
+        'getFiltered',
+        'get',
+        'getById',
         'update'
       )
     })

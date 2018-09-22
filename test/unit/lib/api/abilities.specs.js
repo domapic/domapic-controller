@@ -3,10 +3,10 @@ const test = require('narval')
 
 const mocks = require('../../mocks')
 
-const services = require('../../../../lib/api/services')
-const definition = require('../../../../lib/api/services.json')
+const abilities = require('../../../../lib/api/abilities')
+const definition = require('../../../../lib/api/abilities.json')
 
-test.describe('services api', () => {
+test.describe('abilities api', () => {
   test.describe('Operations instance', () => {
     let operations
     let commandsMocks
@@ -15,7 +15,7 @@ test.describe('services api', () => {
     test.beforeEach(() => {
       baseMocks = new mocks.Base()
       commandsMocks = new mocks.Commands()
-      operations = services.Operations(baseMocks.stubs.service, commandsMocks.stubs)
+      operations = abilities.Operations(baseMocks.stubs.service, commandsMocks.stubs)
     })
 
     test.afterEach(() => {
@@ -23,71 +23,83 @@ test.describe('services api', () => {
       commandsMocks.restore()
     })
 
-    test.describe('getServices handler', () => {
-      test.it('should return all services', () => {
+    test.describe('getAbilities handler', () => {
+      test.it('should return all abilities if no query is received', () => {
         const fooResult = 'foo result'
-        commandsMocks.stubs.service.getFiltered.resolves(fooResult)
+        commandsMocks.stubs.ability.getFiltered.resolves(fooResult)
 
-        return operations.getServices.handler()
+        return operations.getAbilities.handler({
+          query: {}
+        })
           .then((result) => {
             return Promise.all([
               test.expect(result).to.equal(fooResult),
-              test.expect(commandsMocks.stubs.service.getFiltered).to.have.been.calledWith()
+              test.expect(commandsMocks.stubs.ability.getFiltered).to.have.been.calledWith({})
             ])
           })
       })
+
+      test.it('should pass service query as a filter if it is received', () => {
+        const fooService = 'foo-service'
+        return operations.getAbilities.handler({
+          query: {
+            service: fooService
+          }
+        }).then(() => test.expect(commandsMocks.stubs.ability.getFiltered).to.have.been.calledWith({
+          _service: fooService
+        }))
+      })
     })
 
-    test.describe('getService handler', () => {
-      test.it('should return service, calling to correspondant command', () => {
+    test.describe('getAbility handler', () => {
+      test.it('should return ability, calling to correspondant command', () => {
         const fooId = 'foo-id'
         const fooResult = 'foo result'
-        commandsMocks.stubs.service.getById.resolves(fooResult)
+        commandsMocks.stubs.ability.getById.resolves(fooResult)
 
-        return operations.getService.handler({
+        return operations.getAbility.handler({
           path: {
             _id: fooId
           }})
           .then((result) => {
             return Promise.all([
               test.expect(result).to.equal(fooResult),
-              test.expect(commandsMocks.stubs.service.getById).to.have.been.calledWith(fooId)
+              test.expect(commandsMocks.stubs.ability.getById).to.have.been.calledWith(fooId)
             ])
           })
       })
     })
 
-    test.describe('addService auth', () => {
-      const fooId = 'foo-id'
+    test.describe('addAbility auth', () => {
       test.it('should return true if provided user has "service" role', () => {
-        test.expect(operations.addService.auth({
+        test.expect(operations.addAbility.auth({
           role: 'service'
         }, {}, {})).to.be.true()
       })
 
       const testRole = function (role) {
         test.it(`should return false if provided user has "${role}" role`, () => {
-          test.expect(operations.addService.auth({
-            _id: fooId
+          test.expect(operations.addAbility.auth({
+            role
           }, {}, {})).to.be.false()
         })
       }
       testRole('admin')
+      testRole('service-registerer')
       testRole('operator')
       testRole('plugin')
-      testRole('service-registerer')
     })
 
-    test.describe('addService handler', () => {
-      const fooUserData = {
-        _id: 'foo-user-id'
-      }
-      const fooService = {
-        _id: 'foo-service-id',
+    test.describe('addAbility handler', () => {
+      const fooAbility = {
+        _id: 'foo-id',
         name: 'foo-name'
       }
       const fooBody = {
         name: 'foo'
+      }
+      const fooUserData = {
+        _id: 'foo-user-id'
       }
       let sandbox
       let response
@@ -98,68 +110,68 @@ test.describe('services api', () => {
           status: sandbox.stub(),
           header: sandbox.stub()
         }
-        commandsMocks.stubs.service.add.resolves(fooService)
+        commandsMocks.stubs.ability.add.resolves(fooAbility)
       })
 
       test.afterEach(() => {
         sandbox.restore()
       })
 
-      test.it('should call to add service, passing the received body and user data', () => {
-        return operations.addService.handler({}, fooBody, response, fooUserData)
+      test.it('should call to add ability, passing the received user data and body', () => {
+        return operations.addAbility.handler({}, fooBody, response, fooUserData)
           .then((result) => {
-            return test.expect(commandsMocks.stubs.service.add).to.have.been.calledWith(fooUserData, fooBody)
+            return test.expect(commandsMocks.stubs.ability.add).to.have.been.calledWith(fooUserData, fooBody)
           })
       })
 
       test.it('should add a 201 header to response', () => {
-        return operations.addService.handler({}, fooBody, response, fooUserData)
+        return operations.addAbility.handler({}, fooBody, response, fooUserData)
           .then(() => {
             return test.expect(response.status).to.have.been.calledWith(201)
           })
       })
 
-      test.it('should set the response header with the new service id', () => {
-        return operations.addService.handler({}, fooBody, response, fooUserData)
+      test.it('should set the response header with the ability id', () => {
+        return operations.addAbility.handler({}, fooBody, response, fooUserData)
           .then(() => {
-            return test.expect(response.header).to.have.been.calledWith('location', '/api/services/foo-service-id')
+            return test.expect(response.header).to.have.been.calledWith('location', '/api/abilities/foo-id')
           })
       })
 
       test.it('should resolve the promise with no value', () => {
-        return operations.addService.handler({}, fooBody, response)
+        return operations.addAbility.handler({}, fooBody, response, fooUserData)
           .then((result) => {
             return test.expect(result).to.be.undefined()
           })
       })
     })
 
-    test.describe('updateService auth', () => {
+    test.describe('updateAbility auth', () => {
       const fooUserId = 'foo-user-id'
       const fooParams = {
         path: {
-          _id: 'foo-service-id'
+          _id: 'foo-ability-id'
         }
       }
 
-      test.it('should resolve if logged user is owner of the service', () => {
-        commandsMocks.stubs.service.getById.resolves({
+      test.it('should resolve if logged user is owner of the ability', () => {
+        commandsMocks.stubs.ability.getById.resolves({
           _user: fooUserId
         })
 
-        return operations.updateService.auth({
+        return operations.updateAbility.auth({
           _id: fooUserId
         }, fooParams, {}).then(() => {
           return test.expect(true).to.be.true()
         })
       })
 
-      test.it('should reject if logged user is not owner of the service', () => {
-        commandsMocks.stubs.service.getById.resolves({
+      test.it('should reject if logged user is not owner of the ability', () => {
+        commandsMocks.stubs.ability.getById.resolves({
           _user: fooUserId
         })
 
-        return operations.updateService.auth({
+        return operations.updateAbility.auth({
           _id: 'another-user-id'
         }, fooParams, {}).then(() => {
           return test.assert.fail()
@@ -169,14 +181,15 @@ test.describe('services api', () => {
       })
     })
 
-    test.describe('updateService handler', () => {
-      const fooId = 'foo-service-id'
+    test.describe('updateAbility handler', () => {
+      const fooId = 'foo-ability-id'
       const fooBody = {
         description: 'foo-description'
       }
-      const fooService = {
-        _id: 'foo-service-id',
-        name: 'foo-service-name'
+      const fooAbility = {
+        ...fooBody,
+        _id: fooId,
+        name: 'ability-name'
       }
       let sandbox
       let response
@@ -187,26 +200,26 @@ test.describe('services api', () => {
           status: sandbox.stub(),
           header: sandbox.stub()
         }
-        commandsMocks.stubs.service.update.resolves(fooService)
+        commandsMocks.stubs.ability.update.resolves(fooAbility)
       })
 
       test.afterEach(() => {
         sandbox.restore()
       })
 
-      test.it('should call to update service, passing the received name and body', () => {
-        return operations.updateService.handler({
+      test.it('should call to update ability, passing the received id and body', () => {
+        return operations.updateAbility.handler({
           path: {
             _id: fooId
           }
         }, fooBody, response)
           .then((result) => {
-            return test.expect(commandsMocks.stubs.service.update).to.have.been.calledWith(fooId, fooBody)
+            return test.expect(commandsMocks.stubs.ability.update).to.have.been.calledWith(fooId, fooBody)
           })
       })
 
       test.it('should add a 204 header to response', () => {
-        return operations.updateService.handler({
+        return operations.updateAbility.handler({
           path: {
             _id: fooId
           }
@@ -216,19 +229,19 @@ test.describe('services api', () => {
           })
       })
 
-      test.it('should set the response header with the service name', () => {
-        return operations.updateService.handler({
+      test.it('should set the response header with the ability id', () => {
+        return operations.updateAbility.handler({
           path: {
             _id: fooId
           }
         }, fooBody, response)
           .then(() => {
-            return test.expect(response.header).to.have.been.calledWith('location', '/api/services/foo-service-id')
+            return test.expect(response.header).to.have.been.calledWith('location', '/api/abilities/foo-ability-id')
           })
       })
 
       test.it('should resolve the promise with no value', () => {
-        return operations.updateService.handler({
+        return operations.updateAbility.handler({
           path: {
             _id: fooId
           }
@@ -242,7 +255,7 @@ test.describe('services api', () => {
 
   test.describe('openapi', () => {
     test.it('should return an array containing the openapi definition', () => {
-      test.expect(services.openapi()).to.deep.equal([definition])
+      test.expect(abilities.openapi()).to.deep.equal([definition])
     })
   })
 })

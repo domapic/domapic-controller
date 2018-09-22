@@ -12,7 +12,8 @@ const Mock = function () {
     transformValidationErrors: sandbox.stub(utils, 'transformValidationErrors').usingPromise().rejects(),
     validateUniqueModel: validateUniqueModelStub,
     ValidateUniqueModel: sandbox.stub(utils, 'ValidateUniqueModel').returns(validateUniqueModelStub),
-    isValidName: sandbox.stub(utils, 'isValidName').returns(true)
+    isValidName: sandbox.stub(utils, 'isValidName').returns(true),
+    isValidAbilityName: sandbox.stub(utils, 'isValidAbilityName').returns(true)
   }
 
   const restore = function () {
