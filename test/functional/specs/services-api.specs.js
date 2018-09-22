@@ -29,13 +29,6 @@ test.describe('services api', function () {
     })
   }
 
-  const getUser = function (userName) {
-    return utils.request(`/users/${userName}`, {
-      method: 'GET',
-      ...authenticator.credentials()
-    })
-  }
-
   const addService = function (serviceData) {
     return utils.request('/services', {
       method: 'POST',
@@ -176,28 +169,23 @@ test.describe('services api', function () {
       })
 
       test.it('should add service to database if all provided data pass validation', () => {
-        return getUser(serviceUser.name)
-          .then((getUserResponse) => {
-            const userId = getUserResponse.body._id
-            return addService(fooService).then((addResponse) => {
-              const serviceId = addResponse.headers.location.split('/').pop()
-              return getService(serviceId)
-                .then((getResponse) => {
-                  const service = getResponse.body
-                  return Promise.all([
-                    test.expect(service.name).to.equal(serviceUser.name),
-                    test.expect(service.package).to.equal(fooService.package),
-                    test.expect(service.version).to.equal(fooService.version),
-                    test.expect(service._user).to.equal(userId),
-                    test.expect(service.url).to.equal(fooService.url),
-                    test.expect(service.apiKey).to.be.undefined(),
-                    test.expect(service.id).to.equal(fooService.id),
-                    test.expect(service.createdAt).to.not.be.undefined(),
-                    test.expect(service.updatedAt).to.not.be.undefined()
-                  ])
-                })
+        return addService(fooService).then((addResponse) => {
+          const serviceId = addResponse.headers.location.split('/').pop()
+          return getService(serviceId)
+            .then((getResponse) => {
+              const service = getResponse.body
+              return Promise.all([
+                test.expect(service.name).to.equal(serviceUser.name),
+                test.expect(service.package).to.equal(fooService.package),
+                test.expect(service.version).to.equal(fooService.version),
+                test.expect(service.url).to.equal(fooService.url),
+                test.expect(service.apiKey).to.be.undefined(),
+                test.expect(service.id).to.equal(fooService.id),
+                test.expect(service.createdAt).to.not.be.undefined(),
+                test.expect(service.updatedAt).to.not.be.undefined()
+              ])
             })
-          })
+        })
       })
 
       test.it('should return a bad data error if one user tries to add more than one service', () => {

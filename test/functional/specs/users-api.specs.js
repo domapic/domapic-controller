@@ -5,6 +5,7 @@ const utils = require('./utils')
 
 test.describe('users api', function () {
   let authenticator = utils.Authenticator()
+  let adminUserId
 
   const getUsers = function () {
     return utils.request('/users', {
@@ -13,8 +14,8 @@ test.describe('users api', function () {
     })
   }
 
-  const getUser = function (userName) {
-    return utils.request(`/users/${userName}`, {
+  const getUser = function (userId) {
+    return utils.request(`/users/${userId}`, {
       method: 'GET',
       ...authenticator.credentials()
     })
@@ -57,6 +58,11 @@ test.describe('users api', function () {
 
   test.before(() => {
     return utils.doLogin(authenticator)
+      .then(() => {
+        return getUsers().then(usersResponse => {
+          adminUserId = usersResponse.body.find(userData => userData.name === 'admin')._id
+        })
+      })
   })
 
   test.describe('when user has permissions', () => {
@@ -172,8 +178,8 @@ test.describe('users api', function () {
         }).then((addResponse) => {
           return getUsers()
             .then((getResponse) => {
-              const userName = addResponse.headers.location.split('/').pop()
-              const user = getResponse.body.find(user => user.name === userName)
+              const userId = addResponse.headers.location.split('/').pop()
+              const user = getResponse.body.find(user => user._id === userId)
               return Promise.all([
                 test.expect(user.name).to.equal(operatorUser.name),
                 test.expect(user.role).to.equal(operatorUser.role),
@@ -236,17 +242,21 @@ test.describe('users api', function () {
 
     test.describe('get user', () => {
       test.it('should return user data', () => {
-        return getUser(newUser.name)
-          .then((response) => {
-            const user = response.body
-            return Promise.all([
-              test.expect(user._id).to.not.be.undefined(),
-              test.expect(user.name).to.equal(newUser.name),
-              test.expect(user.role).to.equal(newUser.role),
-              test.expect(user.email).to.equal(newUser.email),
-              test.expect(user.createdAt).to.not.be.undefined(),
-              test.expect(user.updatedAt).to.not.be.undefined()
-            ])
+        return getUsers()
+          .then((getResponse) => {
+            const userId = getResponse.body.find(user => user.name === newUser.name)._id
+            return getUser(userId)
+              .then((response) => {
+                const user = response.body
+                return Promise.all([
+                  test.expect(user._id).to.not.be.undefined(),
+                  test.expect(user.name).to.equal(newUser.name),
+                  test.expect(user.role).to.equal(newUser.role),
+                  test.expect(user.email).to.equal(newUser.email),
+                  test.expect(user.createdAt).to.not.be.undefined(),
+                  test.expect(user.updatedAt).to.not.be.undefined()
+                ])
+              })
           })
       })
 
@@ -264,8 +274,22 @@ test.describe('users api', function () {
 
   const testRole = function (user) {
     test.describe(`when user has role "${user.role}"`, () => {
+      let userId
+
       test.before(() => {
         return utils.ensureUserAndDoLogin(authenticator, user)
+          .then(() => {
+            return utils.doLogin(authenticator)
+              .then(() => {
+                return getUsers().then(usersResponse => {
+                  userId = usersResponse.body.find(userData => userData.name === user.name)._id
+                  return Promise.resolve()
+                })
+              })
+          })
+          .then(() => {
+            return utils.ensureUserAndDoLogin(authenticator, user)
+          })
       })
 
       test.describe('add user', () => {
@@ -292,7 +316,7 @@ test.describe('users api', function () {
 
       test.describe('get user', () => {
         test.it('should return a forbidden error if user is different to himself', () => {
-          return getUser(newUser.name).then(response => {
+          return getUser(adminUserId).then(response => {
             return Promise.all([
               test.expect(response.body.message).to.contain('Not authorized'),
               test.expect(response.statusCode).to.equal(403)
@@ -301,7 +325,7 @@ test.describe('users api', function () {
         })
 
         test.it('should return user data if user is himself', () => {
-          return getUser(user.name).then(response => {
+          return getUser(userId).then(response => {
             return Promise.all([
               test.expect(response.body.name).to.equal(user.name),
               test.expect(response.body.email).to.equal(user.email),
@@ -320,8 +344,21 @@ test.describe('users api', function () {
   testRole(serviceRegistererUser)
 
   test.describe(`when user has role "service-registerer"`, () => {
+    let userId
     test.before(() => {
       return utils.ensureUserAndDoLogin(authenticator, serviceRegistererUser)
+        .then(() => {
+          return utils.doLogin(authenticator)
+            .then(() => {
+              return getUsers().then(usersResponse => {
+                userId = usersResponse.body.find(userData => userData.name === serviceRegistererUser.name)._id
+                return Promise.resolve()
+              })
+            })
+        })
+        .then(() => {
+          return utils.ensureUserAndDoLogin(authenticator, serviceRegistererUser)
+        })
     })
 
     test.describe('add user', () => {
@@ -361,28 +398,29 @@ test.describe('users api', function () {
     })
 
     test.describe('get user', () => {
-      test.it('should return user data if user has "service" role', () => {
-        return getUser(serviceUser.name)
+      test.it('should return a forbidden error', () => {
+        return getUser(adminUserId)
           .then((response) => {
-            const user = response.body
             return Promise.all([
-              test.expect(user._id).to.not.be.undefined(),
-              test.expect(user.name).to.equal(serviceUser.name),
-              test.expect(user.role).to.equal(serviceUser.role),
-              test.expect(user.email).to.equal(serviceUser.email),
-              test.expect(user.createdAt).to.not.be.undefined(),
-              test.expect(user.updatedAt).to.not.be.undefined()
+              test.expect(response.body.message).to.contain('Not authorized'),
+              test.expect(response.statusCode).to.equal(403)
             ])
           })
       })
 
-      test.it('should return a forbidden error if user has a role different to "service"', () => {
-        return getUser(newUser.name).then(response => {
-          return Promise.all([
-            test.expect(response.body.message).to.contain('Not authorized'),
-            test.expect(response.statusCode).to.equal(403)
-          ])
-        })
+      test.it('should return user data if user is himself', () => {
+        return getUser(userId)
+          .then((response) => {
+            const user = response.body
+            return Promise.all([
+              test.expect(user._id).to.not.be.undefined(),
+              test.expect(user.name).to.equal(serviceRegistererUser.name),
+              test.expect(user.role).to.equal(serviceRegistererUser.role),
+              test.expect(user.email).to.equal(serviceRegistererUser.email),
+              test.expect(user.createdAt).to.not.be.undefined(),
+              test.expect(user.updatedAt).to.not.be.undefined()
+            ])
+          })
       })
     })
   })
