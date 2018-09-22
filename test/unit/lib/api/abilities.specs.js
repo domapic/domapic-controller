@@ -55,18 +55,16 @@ test.describe('abilities api', () => {
       test.it('should return ability, calling to correspondant command', () => {
         const fooId = 'foo-id'
         const fooResult = 'foo result'
-        commandsMocks.stubs.ability.get.resolves(fooResult)
+        commandsMocks.stubs.ability.getById.resolves(fooResult)
 
         return operations.getAbility.handler({
           path: {
-            id: fooId
+            _id: fooId
           }})
           .then((result) => {
             return Promise.all([
               test.expect(result).to.equal(fooResult),
-              test.expect(commandsMocks.stubs.ability.get).to.have.been.calledWith({
-                _id: fooId
-              })
+              test.expect(commandsMocks.stubs.ability.getById).to.have.been.calledWith(fooId)
             ])
           })
       })
@@ -119,13 +117,10 @@ test.describe('abilities api', () => {
         sandbox.restore()
       })
 
-      test.it('should call to add ability, passing the received body adding the user id', () => {
+      test.it('should call to add ability, passing the received user data and body', () => {
         return operations.addAbility.handler({}, fooBody, response, fooUserData)
           .then((result) => {
-            return test.expect(commandsMocks.stubs.ability.add).to.have.been.calledWith({
-              ...fooBody,
-              _user: fooUserData._id
-            })
+            return test.expect(commandsMocks.stubs.ability.add).to.have.been.calledWith(fooUserData, fooBody)
           })
       })
 
@@ -155,12 +150,12 @@ test.describe('abilities api', () => {
       const fooUserId = 'foo-user-id'
       const fooParams = {
         path: {
-          id: 'foo-ability-id'
+          _id: 'foo-ability-id'
         }
       }
 
       test.it('should resolve if logged user is owner of the ability', () => {
-        commandsMocks.stubs.ability.get.resolves({
+        commandsMocks.stubs.ability.getById.resolves({
           _user: fooUserId
         })
 
@@ -172,7 +167,7 @@ test.describe('abilities api', () => {
       })
 
       test.it('should reject if logged user is not owner of the ability', () => {
-        commandsMocks.stubs.ability.get.resolves({
+        commandsMocks.stubs.ability.getById.resolves({
           _user: fooUserId
         })
 
@@ -215,7 +210,7 @@ test.describe('abilities api', () => {
       test.it('should call to update ability, passing the received id and body', () => {
         return operations.updateAbility.handler({
           path: {
-            id: fooId
+            _id: fooId
           }
         }, fooBody, response)
           .then((result) => {
@@ -226,7 +221,7 @@ test.describe('abilities api', () => {
       test.it('should add a 204 header to response', () => {
         return operations.updateAbility.handler({
           path: {
-            id: fooId
+            _id: fooId
           }
         }, fooBody, response)
           .then(() => {
@@ -237,7 +232,7 @@ test.describe('abilities api', () => {
       test.it('should set the response header with the ability id', () => {
         return operations.updateAbility.handler({
           path: {
-            id: fooId
+            _id: fooId
           }
         }, fooBody, response)
           .then(() => {
@@ -248,7 +243,7 @@ test.describe('abilities api', () => {
       test.it('should resolve the promise with no value', () => {
         return operations.updateAbility.handler({
           path: {
-            id: fooId
+            _id: fooId
           }
         }, fooBody, response)
           .then((result) => {

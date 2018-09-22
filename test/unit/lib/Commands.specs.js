@@ -56,6 +56,7 @@ test.describe('Commands', () => {
         'add',
         'getFiltered',
         'get',
+        'getById',
         'update'
       )
     })
@@ -65,6 +66,7 @@ test.describe('Commands', () => {
         'add',
         'getFiltered',
         'get',
+        'getById',
         'update'
       )
     })

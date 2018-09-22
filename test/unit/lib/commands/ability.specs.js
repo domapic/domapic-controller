@@ -30,22 +30,58 @@ test.describe('ability commands', () => {
     })
 
     test.describe('add method', () => {
-      const fooAbilityData = {
-        name: 'foo-ability-name',
-        _service: 'foo-service-id'
+      const fooUserData = {
+        _id: 'foo-user-id',
       }
-      test.it('should create and save an Ability model with the received data', () => {
-        return commands.add(fooAbilityData)
+      const fooServiceData = {
+        _id: 'foo-service-id'
+      }
+      const fooAbilityData = {
+        name: 'foo-ability-name'
+      }
+
+      test.beforeEach(() => {
+        modelsMocks.stubs.Service.findOne.resolves(fooServiceData)
+      })
+
+      test.it('should call to find service related to logged user', () => {
+        return commands.add(fooUserData, fooAbilityData)
+          .then(() => {
+            return test.expect(modelsMocks.stubs.Service.findOne).to.have.been.calledWith({
+              _user: fooUserData._id
+            })
+          })
+      })
+
+      test.it('should reject the promise if no related service is found', () => {
+        modelsMocks.stubs.Service.findOne.resolves(null)
+        return commands.add(fooUserData, fooAbilityData)
+          .then(() => {
+            return test.assert.fail()
+          }, (err) => {
+            return Promise.all([
+              test.expect(err).to.be.an.instanceOf(Error),
+              test.expect(baseMocks.stubs.service.errors.Conflict).to.have.been.called()
+            ])
+          })
+      })
+
+      test.it('should create and save an Ability model with the received data, adding the service and user data', () => {
+        return commands.add(fooUserData, fooAbilityData)
           .then(() => {
             return Promise.all([
-              test.expect(modelsMocks.stubs.Ability).to.have.been.calledWith(fooAbilityData),
+              test.expect(modelsMocks.stubs.Ability).to.have.been.calledWith({
+                ...fooAbilityData,
+                _user: fooUserData._id,
+                _service: fooServiceData._id
+              }),
               test.expect(modelsMocks.stubs.ability.save).to.have.been.called()
             ])
           })
       })
 
       test.it('should resolve the promise with the new ability', () => {
-        return commands.add(fooAbilityData)
+        return commands.add(fooUserData, fooAbilityData)
           .then(ability => {
             return test.expect(modelsMocks.stubs.ability).to.equal(ability)
           })
@@ -55,7 +91,7 @@ test.describe('ability commands', () => {
         let saveError = new Error('save error')
         modelsMocks.stubs.ability.save.rejects(saveError)
         utilMocks.stubs.transformValidationErrors.rejects(saveError)
-        return commands.add(fooAbilityData)
+        return commands.add(fooUserData, fooAbilityData)
           .then(() => {
             return test.assert.fail()
           }, (err) => {
@@ -130,6 +166,33 @@ test.describe('ability commands', () => {
         return commands.get({
           _id: 'foo'
         })
+          .then(() => {
+            return test.assert.fail()
+          }, err => {
+            return test.expect(err).to.equal(fooError)
+          })
+      })
+    })
+
+    test.describe('getById method', () => {
+      test.it('should call to ability model findById method, and return the result', () => {
+        const fooId = 'foo-id'
+        const fooResult = 'foo'
+        modelsMocks.stubs.Ability.findById.resolves(fooResult)
+        return commands.getById(fooId)
+          .then((result) => {
+            return Promise.all([
+              test.expect(result).to.equal(fooResult),
+              test.expect(modelsMocks.stubs.Ability.findById).to.have.been.calledWith(fooId)
+            ])
+          })
+      })
+
+      test.it('should return a not found error if findById method throws an error', () => {
+        const fooError = new Error('foo error')
+        modelsMocks.stubs.Ability.findById.rejects(new Error())
+        baseMocks.stubs.service.errors.NotFound.returns(fooError)
+        return commands.getById('foo-id')
           .then(() => {
             return test.assert.fail()
           }, err => {
