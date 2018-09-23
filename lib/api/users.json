@@ -151,17 +151,17 @@
         }]
       }
     },
-    "/users/{name}": {
+    "/users/{_id}": {
       "get": {
         "parameters": [
           {
             "in": "path",
-            "name": "name",
+            "name": "_id",
             "schema": {
               "type": "string"
             },
             "required": true,
-            "description": "User name"
+            "description": "User id"
           }
         ],
         "tags": ["user"],
