@@ -15,6 +15,9 @@ const Mock = function () {
     },
     getUser: {
       handler: sandbox.stub().usingPromise().resolves()
+    },
+    getUserMe: {
+      handler: sandbox.stub().usingPromise().resolves()
     }
   }
 

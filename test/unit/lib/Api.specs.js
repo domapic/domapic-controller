@@ -41,6 +41,7 @@ test.describe('Api', () => {
           'getUsers',
           'addUser',
           'getUser',
+          'getUserMe',
           'getSecurityTokens',
           'getServices',
           'getService',

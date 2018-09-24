@@ -21,6 +21,13 @@ test.describe('users api', function () {
     })
   }
 
+  const getUserMe = function () {
+    return utils.request(`/users/me`, {
+      method: 'GET',
+      ...authenticator.credentials()
+    })
+  }
+
   const newUser = {
     name: 'foo-service',
     role: 'operator',
@@ -371,5 +378,30 @@ test.describe('users api', function () {
         })
       })
     })
+  })
+
+  test.describe('get users/me api', () => {
+    const testUser = (userData) => {
+      test.it(`should return ${userData.name} data when ${userData.name} is logged in`, () => {
+        return utils.doLogin(authenticator, userData)
+          .then(() => {
+            return getUserMe()
+              .then((response) => {
+                const user = response.body
+                return Promise.all([
+                  test.expect(user.name).to.equal(userData.name),
+                  test.expect(user.email).to.equal(userData.email),
+                  test.expect(user.role).to.equal(userData.role)
+                ])
+              })
+          })
+      })
+    }
+
+    testUser(newUser)
+    testUser(operatorUser)
+    testUser(serviceUser)
+    testUser(pluginUser)
+    testUser(serviceRegistererUser)
   })
 })

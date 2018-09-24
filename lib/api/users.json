@@ -151,6 +151,31 @@
         }]
       }
     },
+    "/users/me": {
+      "get": {
+        "tags": ["user"],
+        "summary": "Returns logged user data",
+        "description": "Returns profile information of the access token's resource owner",
+        "operationId": "getUserMe",
+        "responses": {
+          "200": {
+            "description": "user",
+            "content": {
+              "application/json": {
+                "schema" : {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          }
+        },
+        "security": [{
+          "jwt": []
+        }, {
+          "apiKey": []
+        }]
+      }
+    },
     "/users/{_id}": {
       "get": {
         "parameters": [
