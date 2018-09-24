@@ -108,6 +108,24 @@ test.describe('users api', () => {
       })
     })
 
+    test.describe('getUserMe handler', () => {
+      test.it('should return user, calling to getById command, passing the received userData _id', () => {
+        const fooId = 'foo-id'
+        const fooResult = 'foo result'
+        commandsMocks.stubs.user.getById.resolves(fooResult)
+
+        return operations.getUserMe.handler({}, {}, {}, {
+          _id: fooId
+        })
+          .then((result) => {
+            return Promise.all([
+              test.expect(result).to.equal(fooResult),
+              test.expect(commandsMocks.stubs.user.getById).to.have.been.calledWith(fooId)
+            ])
+          })
+      })
+    })
+
     test.describe('addUser auth', () => {
       test.it('should return true if provided user has "admin" role', () => {
         test.expect(operations.addUser.auth({
