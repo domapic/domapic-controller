@@ -101,6 +101,16 @@
   "paths": {
     "/users": {
       "get": {
+        "parameters": [
+          {
+            "in": "query",
+            "name": "name",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Service name"
+          }
+        ],
         "tags": ["user"],
         "summary": "Return users",
         "description": "Returns an array with all registered users",

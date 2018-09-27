@@ -34,13 +34,25 @@
             "description": "Ability is able to dispatch event",
             "type": "boolean"
           },
+          "eventDescription": {
+            "description": "Description of the ability event",
+            "type": "string"
+          },
           "action": {
             "description": "Ability is able to handle an action",
             "type": "boolean"
           },
+          "actionDescription": {
+            "description": "Description of the ability action",
+            "type": "string"
+          },
           "state": {
             "description": "Ability has an state",
             "type": "boolean"
+          },
+          "stateDescription": {
+            "description": "Description of the ability state",
+            "type": "string"
           },
           "type": {
             "description": "Type of ability data",
@@ -116,8 +128,11 @@
           "_user": "132defwer4321312",
           "description": "Rele control",
           "event": true,
+          "eventDescription": "Rele has changed state",
           "action": true,
+          "actionDescription": "Changes rele state",
           "state": true,
+          "stateDescription": "Current rele state",
           "type": "boolean",
           "createdAt": "2018-07-28T17:13:08.718Z",
           "updatedAt": "2018-07-28T17:13:09.730Z"
@@ -140,13 +155,25 @@
             "description": "Ability is able to dispatch event",
             "type": "boolean"
           },
+          "eventDescription": {
+            "description": "Description of the ability event",
+            "type": "string"
+          },
           "action": {
             "description": "Ability is able to handle an action",
             "type": "boolean"
           },
+          "actionDescription": {
+            "description": "Description of the ability action",
+            "type": "string"
+          },
           "state": {
             "description": "Ability has an state",
             "type": "boolean"
+          },
+          "stateDescription": {
+            "description": "Description of the ability state",
+            "type": "string"
           },
           "type": {
             "description": "Type of ability data",
@@ -211,8 +238,11 @@
           "name": "foo-ability-name",
           "description": "Rele control",
           "event": true,
+          "eventDescription": "Rele has changed state",
           "action": true,
+          "actionDescription": "Changes rele state",
           "state": true,
+          "stateDescription": "Current rele state",
           "type": "boolean"
         }
       },
@@ -223,11 +253,26 @@
           "description": {
             "description": "Description of the ability",
             "type": "string"
+          },
+          "eventDescription": {
+            "description": "Description of the ability event",
+            "type": "string"
+          },
+          "actionDescription": {
+            "description": "Description of the ability action",
+            "type": "string"
+          },
+          "stateDescription": {
+            "description": "Description of the ability state",
+            "type": "string"
           }
         },
         "additionalProperties": false,
         "example": {
-          "description": "Rele control"
+          "description": "Rele control",
+          "eventDescription": "Rele has changed state",
+          "actionDescription": "Changes rele state",
+          "stateDescription": "Current rele state",
         }
       },
       "Abilities": {
