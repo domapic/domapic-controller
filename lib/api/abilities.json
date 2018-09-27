@@ -272,7 +272,7 @@
           "description": "Rele control",
           "eventDescription": "Rele has changed state",
           "actionDescription": "Changes rele state",
-          "stateDescription": "Current rele state",
+          "stateDescription": "Current rele state"
         }
       },
       "Abilities": {
