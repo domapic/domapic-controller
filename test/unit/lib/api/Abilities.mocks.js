@@ -18,6 +18,9 @@ const Mock = function () {
     },
     updateAbility: {
       handler: sandbox.stub().usingPromise().resolves()
+    },
+    deleteAbility: {
+      handler: sandbox.stub().usingPromise().resolves()
     }
   }
 

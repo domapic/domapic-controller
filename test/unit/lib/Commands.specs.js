@@ -69,7 +69,8 @@ test.describe('Commands', () => {
         'getFiltered',
         'get',
         'getById',
-        'update'
+        'update',
+        'remove'
       )
     })
   })
