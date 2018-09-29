@@ -91,7 +91,7 @@ test.describe('security tokens api', function () {
       })
 
       test.it('should return all existant security tokens aplying received type filter', () => {
-        const type = 'apikey'
+        const type = 'apiKey'
         return getAuthTokens({
           type
         }).then(response => {
@@ -191,7 +191,7 @@ test.describe('security tokens api', function () {
 
       test.it('should return a forbidden error if requested user has not a "service" role', () => {
         return getAuthTokens({
-          type: 'apikey',
+          type: 'apiKey',
           user: operatorUserId
         }).then((response) => {
           return Promise.all([
@@ -201,9 +201,9 @@ test.describe('security tokens api', function () {
         })
       })
 
-      test.it('should return tokens data if requested user has "service" role and requested type is "apikey"', () => {
+      test.it('should return tokens data if requested user has "service" role and requested type is "apiKey"', () => {
         return getAuthTokens({
-          type: 'apikey',
+          type: 'apiKey',
           user: serviceUserId
         }).then((response) => {
           return Promise.all([
@@ -213,7 +213,7 @@ test.describe('security tokens api', function () {
         })
       })
 
-      test.it('should return a forbidden error if requested type if different to "apikey"', () => {
+      test.it('should return a forbidden error if requested type if different to "apiKey"', () => {
         return getAuthTokens({
           type: 'jwt',
           user: serviceUserId

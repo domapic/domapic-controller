@@ -47,22 +47,24 @@ test.describe('apiKey security', () => {
     })
 
     test.describe('authenticate auth', () => {
-      test.it('should return true when user has role "admin"', () => {
-        test.expect(security.authenticateAuth({
+      test.it('should resolve when user has role "admin"', () => {
+        return security.authenticateAuth({
           role: 'admin'
-        })).to.be.true()
+        }).then(() => {
+          return test.expect(true).to.be.true()
+        })
       })
 
       test.describe('when user is not an administrator', () => {
         test.it('should resolve the promise if provided user matches with logged user name', () => {
-          return security.authenticateAuth({name: 'foo-name'}, {}, {user: 'foo-name'})
+          return security.authenticateAuth({_id: 'foo-id'}, {}, {user: 'foo-id'})
             .then(() => {
               return test.expect(true).to.be.true()
             })
         })
 
-        test.it('should reject the promise if provided user does not match with logged user name', () => {
-          return security.authenticateAuth({name: 'foo-different-name'}, {}, {user: 'foo-name'})
+        test.it('should reject the promise if provided user does not match with logged user id', () => {
+          return security.authenticateAuth({_id: 'foo-different-id'}, {}, {user: 'foo-other-id'})
             .then(() => {
               return test.assert.fail()
             }, () => {
@@ -85,16 +87,14 @@ test.describe('apiKey security', () => {
           _user: 'fooId',
           token: 'fooToken'
         }
-        commandsMocks.stubs.user.get.resolves(fooUserData)
+        commandsMocks.stubs.user.getById.resolves(fooUserData)
         commandsMocks.stubs.securityToken.add.resolves(fooApiKey)
         return security.authenticateHandler(null, {
-          user: 'foo-name'
+          user: 'foo-id'
         }, null, fooUserData).then(result => {
           return Promise.all([
-            test.expect(commandsMocks.stubs.user.get).to.have.been.calledWith({
-              name: 'foo-name'
-            }),
-            test.expect(commandsMocks.stubs.securityToken.add).to.have.been.calledWith(fooUserData, 'apikey'),
+            test.expect(commandsMocks.stubs.user.getById).to.have.been.calledWith('foo-id'),
+            test.expect(commandsMocks.stubs.securityToken.add).to.have.been.calledWith(fooUserData, 'apiKey'),
             test.expect(result).to.equal(fooApiKey.token)
           ])
         })
@@ -111,9 +111,9 @@ test.describe('apiKey security', () => {
       test.describe('when user is not an administrator', () => {
         test.it('should get user data from api key and resolve the promise if the token belongs to himself', () => {
           commandsMocks.stubs.securityToken.getUser.resolves({
-            name: 'foo-name'
+            _id: 'foo-id'
           })
-          return security.revokeAuth({name: 'foo-name'}, {}, {apiKey: 'fooApiKey'})
+          return security.revokeAuth({_id: 'foo-id'}, {}, {apiKey: 'fooApiKey'})
             .then(() => {
               return test.expect(true).to.be.true()
             })
@@ -121,9 +121,9 @@ test.describe('apiKey security', () => {
 
         test.it('should get user data from refresh token and reject the promise if the token do not belongs to himself', () => {
           commandsMocks.stubs.securityToken.getUser.resolves({
-            name: 'foo-name'
+            _id: 'foo-id'
           })
-          return security.revokeAuth({name: 'foo-different-name'}, {}, {apiKey: 'apiKey'})
+          return security.revokeAuth({_id: 'foo-different-id'}, {}, {apiKey: 'apiKey'})
             .then(() => {
               return test.assert.fail()
             }, () => {

@@ -156,7 +156,7 @@ test.describe('users api', function () {
           role: 'admidsn'
         }).then((response) => {
           return Promise.all([
-            test.expect(response.body.message).to.contain('is not one of enum values: admin,operator,service,service-registerer,plugin'),
+            test.expect(response.body.message).to.contain('is not one of enum values: admin,operator,service,plugin,service-registerer'),
             test.expect(response.statusCode).to.equal(422)
           ])
         })

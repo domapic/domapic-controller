@@ -356,17 +356,17 @@
         }]
       }
     },
-    "/abilities/{_id}": {
+    "/abilities/{id}": {
       "get": {
         "parameters": [
           {
             "in": "path",
-            "name": "_id",
+            "name": "id",
             "schema": {
               "type": "string"
             },
             "required": true,
-            "description": "Ability _id"
+            "description": "Ability id"
           }
         ],
         "tags": ["ability"],
@@ -395,12 +395,12 @@
         "parameters": [
           {
             "in": "path",
-            "name": "_id",
+            "name": "id",
             "schema": {
               "type": "string"
             },
             "required": true,
-            "description": "Ability _id"
+            "description": "Ability id"
           }
         ],
         "tags": ["ability"],

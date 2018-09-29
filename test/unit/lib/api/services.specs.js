@@ -46,7 +46,7 @@ test.describe('services api', () => {
 
         return operations.getService.handler({
           path: {
-            _id: fooId
+            id: fooId
           }})
           .then((result) => {
             return Promise.all([
@@ -138,7 +138,7 @@ test.describe('services api', () => {
       const fooUserId = 'foo-user-id'
       const fooParams = {
         path: {
-          _id: 'foo-service-id'
+          id: 'foo-service-id'
         }
       }
 
@@ -197,7 +197,7 @@ test.describe('services api', () => {
       test.it('should call to update service, passing the received name and body', () => {
         return operations.updateService.handler({
           path: {
-            _id: fooId
+            id: fooId
           }
         }, fooBody, response)
           .then((result) => {
@@ -208,7 +208,7 @@ test.describe('services api', () => {
       test.it('should add a 204 header to response', () => {
         return operations.updateService.handler({
           path: {
-            _id: fooId
+            id: fooId
           }
         }, fooBody, response)
           .then(() => {
@@ -219,7 +219,7 @@ test.describe('services api', () => {
       test.it('should set the response header with the service name', () => {
         return operations.updateService.handler({
           path: {
-            _id: fooId
+            id: fooId
           }
         }, fooBody, response)
           .then(() => {
@@ -230,7 +230,7 @@ test.describe('services api', () => {
       test.it('should resolve the promise with no value', () => {
         return operations.updateService.handler({
           path: {
-            _id: fooId
+            id: fooId
           }
         }, fooBody, response)
           .then((result) => {

@@ -29,6 +29,7 @@ test.describe('Commands', () => {
       return test.expect(commands.user).to.have.all.keys(
         'add',
         'getAll',
+        'getFiltered',
         'get',
         'getById',
         'init',
