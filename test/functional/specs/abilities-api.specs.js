@@ -334,12 +334,12 @@ test.describe('abilities api', function () {
 
       test.it('should return a forbidden error', () => {
         return deleteAbility(serviceUserAbility._id)
-        .then((response) => {
-          return Promise.all([
-            test.expect(response.body.message).to.contain('Not authorized'),
-            test.expect(response.statusCode).to.equal(403)
-          ])
-        })
+          .then((response) => {
+            return Promise.all([
+              test.expect(response.body.message).to.contain('Not authorized'),
+              test.expect(response.statusCode).to.equal(403)
+            ])
+          })
       })
 
       test.it('should return a forbidden response when ability does not exist', () => {
@@ -453,12 +453,12 @@ test.describe('abilities api', function () {
       test.describe('delete ability', () => {
         test.it('should return a forbidden error', () => {
           return deleteAbility(serviceUserAbility._id)
-          .then(response => {
-            return Promise.all([
-              test.expect(response.body.message).to.contain('Not authorized'),
-              test.expect(response.statusCode).to.equal(403)
-            ])
-          })
+            .then(response => {
+              return Promise.all([
+                test.expect(response.body.message).to.contain('Not authorized'),
+                test.expect(response.statusCode).to.equal(403)
+              ])
+            })
         })
       })
     })
