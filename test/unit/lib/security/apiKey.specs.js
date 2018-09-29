@@ -75,7 +75,7 @@ test.describe('apiKey security', () => {
             role: 'operator'
           }
           commandsMocks.stubs.user.getById.resolves(fooUserData)
-          return security.authenticateAuth({ 
+          return security.authenticateAuth({
             role: 'service-registerer',
             _id: 'foo-user-id'
           }, {}, {user: 'foo-id'})
