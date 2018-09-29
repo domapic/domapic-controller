@@ -7,9 +7,10 @@ test.describe('users api', function () {
   let authenticator = utils.Authenticator()
   let adminUserId
 
-  const getUsers = function () {
+  const getUsers = function (query) {
     return utils.request('/users', {
       method: 'GET',
+      query,
       ...authenticator.credentials()
     })
   }
@@ -375,6 +376,16 @@ test.describe('users api', function () {
           password: 'foo'
         }).then(response => {
           return test.expect(response.statusCode).to.equal(403)
+        })
+      })
+    })
+
+    test.describe('get users', () => {
+      test.it('should return users if query role has "service" value', () => {
+        return getUsers({
+          role: 'service'
+        }).then(response => {
+          return test.expect(response.statusCode).to.equal(200)
         })
       })
     })
