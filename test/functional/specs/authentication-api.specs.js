@@ -42,21 +42,15 @@ test.describe('authentication api', function () {
   }
 
   const removeApiKey = apiKey => {
-    return utils.request('/auth/apikey', {
+    return utils.request(`/auth/apikey/${apiKey}`, {
       method: 'DELETE',
-      body: {
-        apiKey
-      },
       ...authenticator.credentials()
     })
   }
 
   const removeRefreshToken = refreshToken => {
-    return utils.request('/auth/jwt', {
+    return utils.request(`/auth/jwt/${refreshToken}`, {
       method: 'DELETE',
-      body: {
-        refreshToken
-      },
       ...authenticator.credentials()
     })
   }

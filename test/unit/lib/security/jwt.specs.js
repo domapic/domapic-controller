@@ -135,7 +135,7 @@ test.describe('jwt security', () => {
           commandsMocks.stubs.securityToken.getUser.resolves({
             _id: 'foo-id'
           })
-          return security.revokeAuth({_id: 'foo-id'}, {}, {refreshToken: 'fooRefreshToken'})
+          return security.revokeAuth({_id: 'foo-id'}, {path: {refreshToken: 'fooRefreshToken'}})
             .then(() => {
               return test.expect(true).to.be.true()
             })
@@ -145,7 +145,7 @@ test.describe('jwt security', () => {
           commandsMocks.stubs.securityToken.getUser.resolves({
             _id: 'foo-id'
           })
-          return security.revokeAuth({_id: 'foo-different-id'}, {}, {refreshToken: 'fooRefreshToken'})
+          return security.revokeAuth({_id: 'foo-different-id'}, {path: {refreshToken: 'fooRefreshToken'}})
             .then(() => {
               return test.assert.fail()
             }, () => {
@@ -155,7 +155,7 @@ test.describe('jwt security', () => {
 
         test.it('should reject the promise if retrieving user data returns an error', () => {
           commandsMocks.stubs.securityToken.getUser.rejects(new Error())
-          return security.revokeAuth({name: 'foo-name'}, {}, {refreshToken: 'fooRefreshToken'})
+          return security.revokeAuth({name: 'foo-name'}, {path: {refreshToken: 'fooRefreshToken'}})
             .then(() => {
               return test.assert.fail()
             }, () => {
@@ -169,7 +169,7 @@ test.describe('jwt security', () => {
       test.it('should call to remove refresh token', () => {
         const fooToken = 'fooRefreshToken'
         commandsMocks.stubs.securityToken.remove.resolves()
-        return security.revokeHandler(null, {refreshToken: fooToken})
+        return security.revokeHandler({path: {refreshToken: fooToken}})
           .then(() => {
             return test.expect(commandsMocks.stubs.securityToken.remove).to.have.been.calledWith(fooToken)
           })
@@ -178,7 +178,7 @@ test.describe('jwt security', () => {
       test.it('should reject the promise if remove refresh token returns an error', () => {
         const fooError = new Error('foo error')
         commandsMocks.stubs.securityToken.remove.rejects(fooError)
-        return security.revokeHandler(null, {refreshToken: 'fooToken'})
+        return security.revokeHandler({path: {refreshToken: 'fooToken'}})
           .then(() => {
             return test.assert.fail()
           }, error => {

@@ -137,6 +137,8 @@ test.describe('apiKey security', () => {
       test.it('should return true when user has role "admin"', () => {
         test.expect(security.revokeAuth({
           role: 'admin'
+        }, {
+          path: {}
         })).to.be.true()
       })
 
@@ -145,7 +147,7 @@ test.describe('apiKey security', () => {
           commandsMocks.stubs.securityToken.getUser.resolves({
             _id: 'foo-id'
           })
-          return security.revokeAuth({_id: 'foo-id'}, {}, {apiKey: 'fooApiKey'})
+          return security.revokeAuth({_id: 'foo-id'}, {path: {apiKey: 'fooApiKey'}})
             .then(() => {
               return test.expect(true).to.be.true()
             })
@@ -155,7 +157,7 @@ test.describe('apiKey security', () => {
           commandsMocks.stubs.securityToken.getUser.resolves({
             _id: 'foo-id'
           })
-          return security.revokeAuth({_id: 'foo-different-id'}, {}, {apiKey: 'apiKey'})
+          return security.revokeAuth({_id: 'foo-different-id'}, {path: {apiKey: 'apiKey'}})
             .then(() => {
               return test.assert.fail()
             }, () => {
@@ -165,7 +167,7 @@ test.describe('apiKey security', () => {
 
         test.it('should reject the promise if retrieving user data returns an error', () => {
           commandsMocks.stubs.securityToken.getUser.rejects(new Error())
-          return security.revokeAuth({name: 'foo-name'}, {}, {apiKey: 'apiKey'})
+          return security.revokeAuth({name: 'foo-name'}, {path: {apiKey: 'apiKey'}})
             .then(() => {
               return test.assert.fail()
             }, () => {
@@ -179,7 +181,7 @@ test.describe('apiKey security', () => {
       test.it('should call to remove api key', () => {
         const fooToken = 'fooApiKey'
         commandsMocks.stubs.securityToken.remove.resolves()
-        return security.revokeHandler(null, {apiKey: fooToken})
+        return security.revokeHandler({path: {apiKey: fooToken}})
           .then(() => {
             return test.expect(commandsMocks.stubs.securityToken.remove).to.have.been.calledWith(fooToken)
           })
@@ -188,7 +190,7 @@ test.describe('apiKey security', () => {
       test.it('should reject the promise if remove refresh token returns an error', () => {
         const fooError = new Error('foo error')
         commandsMocks.stubs.securityToken.remove.rejects(fooError)
-        return security.revokeHandler(null, {apiKey: 'fooToken'})
+        return security.revokeHandler({path: {apiKey: 'fooToken'}})
           .then(() => {
             return test.assert.fail()
           }, error => {
