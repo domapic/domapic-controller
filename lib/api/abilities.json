@@ -290,6 +290,27 @@
             "$ref": "#/components/headers/ContentLocation"
           }
         }
+      },
+      "NotFoundError" : {
+        "description": "Not Found",
+        "content": {
+          "application/json": {
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/Error"
+                },
+                {
+                  "example": {
+                    "statusCode": 404,
+                    "error": "Not Found",
+                    "message": "Item not found"
+                  }
+                }
+              ]
+            }
+          }
+        }
       }
     }
   },
@@ -347,6 +368,9 @@
         "responses": {
           "201": {
             "$ref": "#/components/responses/Ability"
+          },
+          "409": {
+            "$ref": "#/components/responses/ConflictError"
           }
         },
         "security": [{
@@ -383,6 +407,9 @@
                 }
               }
             }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
           }
         },
         "security": [{
@@ -421,6 +448,9 @@
         "responses": {
           "204": {
             "$ref": "#/components/responses/Ability"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
           }
         },
         "security": [{

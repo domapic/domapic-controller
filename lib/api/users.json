@@ -222,6 +222,9 @@
                 }
               }
             }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
           }
         },
         "security": [{

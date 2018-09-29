@@ -241,6 +241,9 @@
                 }
               }
             }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
           }
         },
         "security": [{
@@ -279,6 +282,9 @@
         "responses": {
           "204": {
             "$ref": "#/components/responses/Service"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
           }
         },
         "security": [{
