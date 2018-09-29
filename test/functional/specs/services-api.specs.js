@@ -76,7 +76,7 @@ test.describe('services api', function () {
   }
 
   const fooService = {
-    id: 'foo-service-id',
+    processId: 'foo-service-id',
     description: 'foo-description',
     package: 'foo-package',
     version: '1.0.0',
@@ -102,12 +102,12 @@ test.describe('services api', function () {
         return utils.ensureUserAndDoLogin(authenticator, serviceUser)
       })
 
-      test.it('should return a bad data error if no id is provided', () => {
+      test.it('should return a bad data error if no processId is provided', () => {
         const service = {...fooService}
-        delete service.id
+        delete service.processId
         return addService(service).then((response) => {
           return Promise.all([
-            test.expect(response.body.message).to.contain('requires property "id"'),
+            test.expect(response.body.message).to.contain('requires property "processId"'),
             test.expect(response.statusCode).to.equal(422)
           ])
         })
@@ -180,7 +180,7 @@ test.describe('services api', function () {
                 test.expect(service.version).to.equal(fooService.version),
                 test.expect(service.url).to.equal(fooService.url),
                 test.expect(service.apiKey).to.be.undefined(),
-                test.expect(service.id).to.equal(fooService.id),
+                test.expect(service.processId).to.equal(fooService.processId),
                 test.expect(service.createdAt).to.not.be.undefined(),
                 test.expect(service.updatedAt).to.not.be.undefined()
               ])
@@ -271,13 +271,13 @@ test.describe('services api', function () {
           })
       })
 
-      test.it('should return a bad data response if trying to update id', () => {
+      test.it('should return a bad data response if trying to update processId', () => {
         return updateService(serviceUserService._id, {
-          id: 'foo-new-id'
+          processId: 'foo-new-processId'
         })
           .then((response) => {
             return Promise.all([
-              test.expect(response.body.message).to.contain('additionalProperty "id" exists in instance when not allowed'),
+              test.expect(response.body.message).to.contain('additionalProperty "processId" exists in instance when not allowed'),
               test.expect(response.statusCode).to.equal(422)
             ])
           })
@@ -327,7 +327,7 @@ test.describe('services api', function () {
                 const data = response.body
                 return Promise.all([
                   test.expect(data.name).to.equal(serviceUser.name),
-                  test.expect(data.id).to.equal(fooService.id),
+                  test.expect(data.processId).to.equal(fooService.processId),
                   test.expect(data.description).to.equal(fooUpdatedService.description),
                   test.expect(data.package).to.equal(fooUpdatedService.package),
                   test.expect(data.version).to.equal(fooUpdatedService.version),

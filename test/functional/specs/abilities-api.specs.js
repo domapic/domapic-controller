@@ -84,7 +84,7 @@ test.describe('abilities api', function () {
   }
 
   const fooService = {
-    id: 'foo-service-id',
+    processId: 'foo-service-id',
     description: 'foo-description',
     package: 'foo-package',
     version: '1.0.0',
