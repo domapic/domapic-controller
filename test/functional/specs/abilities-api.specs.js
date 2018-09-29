@@ -45,6 +45,13 @@ test.describe('abilities api', function () {
     })
   }
 
+  const deleteAbility = function (abilityId) {
+    return utils.request(`/abilities/${abilityId}`, {
+      method: 'DELETE',
+      ...authenticator.credentials()
+    })
+  }
+
   const adminUser = {
     name: 'foo-admin-2',
     role: 'admin',
@@ -124,8 +131,10 @@ test.describe('abilities api', function () {
       })
 
       test.it('should return a bad data error if a not valid name is provided', () => {
-        const ability = {...fooAbility}
-        ability.name = 'Foo-$"·$Wrong-name'
+        const ability = {
+          ...fooAbility,
+          name: 'Foo-$"·$Wrong-name'
+        }
         return addAbility(ability).then((response) => {
           return Promise.all([
             test.expect(response.body.message).to.contain('does not match pattern'),
@@ -247,7 +256,7 @@ test.describe('abilities api', function () {
         })
       })
 
-      test.it('should return a forbidden response when abililty does not exist', () => {
+      test.it('should return a forbidden response when ability does not exist', () => {
         return updateAbility('foo-unexistant-ability-id', {
           description: 'foo-description'
         })
@@ -290,6 +299,73 @@ test.describe('abilities api', function () {
                   test.expect(data.name).to.equal(fooAbility.name),
                   test.expect(data.description).to.equal(fooNewDescription),
                   test.expect(patchResponse.statusCode).to.equal(204)
+                ])
+              })
+          })
+      })
+    })
+  })
+
+  test.describe('delete ability', () => {
+    let serviceUserAbility
+    const abilityToRemove = {
+      ...fooAbility,
+      name: 'foo-ability-to-remove'
+    }
+
+    test.before(() => {
+      return utils.ensureUserAndDoLogin(authenticator, serviceUser)
+        .then(() => {
+          return addAbility(abilityToRemove)
+            .then(() => {
+              return getAbilities()
+                .then(getResponse => {
+                  serviceUserAbility = getResponse.body.find(ability => ability.name === abilityToRemove.name)
+                  return Promise.resolve()
+                })
+            })
+        })
+    })
+
+    test.describe('when ability do not belongs to logged user', () => {
+      test.before(() => {
+        return utils.ensureUserAndDoLogin(authenticator, serviceUser2)
+      })
+
+      test.it('should return a forbidden error', () => {
+        return deleteAbility(serviceUserAbility._id)
+        .then((response) => {
+          return Promise.all([
+            test.expect(response.body.message).to.contain('Not authorized'),
+            test.expect(response.statusCode).to.equal(403)
+          ])
+        })
+      })
+
+      test.it('should return a forbidden response when ability does not exist', () => {
+        return deleteAbility('foo-unexistant-ability-id')
+          .then((response) => {
+            return Promise.all([
+              test.expect(response.body.message).to.contain('Not authorized'),
+              test.expect(response.statusCode).to.equal(403)
+            ])
+          })
+      })
+    })
+
+    test.describe('when ability belongs to logged user', () => {
+      test.before(() => {
+        return utils.ensureUserAndDoLogin(authenticator, serviceUser)
+      })
+
+      test.it('should delete provided ability', () => {
+        return deleteAbility(serviceUserAbility._id)
+          .then((response) => {
+            return getAbility(serviceUserAbility._id)
+              .then((getResponse) => {
+                return Promise.all([
+                  test.expect(response.statusCode).to.equal(204),
+                  test.expect(getResponse.statusCode).to.equal(404)
                 ])
               })
           })
@@ -358,6 +434,31 @@ test.describe('abilities api', function () {
                 test.expect(response.statusCode).to.equal(404)
               ])
             })
+        })
+      })
+
+      test.describe('update ability', () => {
+        test.it('should return a forbidden error', () => {
+          return updateAbility(serviceUserAbility._id, {
+            description: 'foo-new-description'
+          }).then(response => {
+            return Promise.all([
+              test.expect(response.body.message).to.contain('Not authorized'),
+              test.expect(response.statusCode).to.equal(403)
+            ])
+          })
+        })
+      })
+
+      test.describe('delete ability', () => {
+        test.it('should return a forbidden error', () => {
+          return deleteAbility(serviceUserAbility._id)
+          .then(response => {
+            return Promise.all([
+              test.expect(response.body.message).to.contain('Not authorized'),
+              test.expect(response.statusCode).to.equal(403)
+            ])
+          })
         })
       })
     })
