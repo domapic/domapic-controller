@@ -30,30 +30,76 @@ test.describe('users api', () => {
         }, {}, {})).to.be.true()
       })
 
+      test.it('should return true if provided user has "service-registerer" role and received role in query is "service"', () => {
+        test.expect(operations.getUsers.auth({
+          role: 'service-registerer'
+        }, {
+          query: {
+            role: 'service'
+          }
+        }, {})).to.be.true()
+      })
+
+      test.it('should return false if provided user has "service-registerer" role and received role in query is different to "service"', () => {
+        test.expect(operations.getUsers.auth({
+          role: 'service-registerer'
+        }, {
+          query: {
+            role: 'admin'
+          }
+        }, {})).to.be.false()
+      })
+
+      test.it('should return false if provided user has "service-registerer" role and no role query is received', () => {
+        test.expect(operations.getUsers.auth({
+          role: 'service-registerer'
+        }, {
+          query: {}
+        }, {})).to.be.false()
+      })
+
       const testRole = function (role) {
         test.it(`should return false if provided user has "${role}" role`, () => {
           test.expect(operations.getUsers.auth({
             role
-          }, {}, {})).to.be.false()
+          }, {
+            query: {}
+          }, {})).to.be.false()
         })
       }
 
       testRole('service')
       testRole('operator')
       testRole('plugin')
-      testRole('service-registerer')
     })
 
     test.describe('getUsers handler', () => {
       test.it('should return all users, calling to correspondant command', () => {
         const fooResult = 'foo result'
-        commandsMocks.stubs.user.getAll.resolves(fooResult)
+        commandsMocks.stubs.user.getFiltered.resolves(fooResult)
 
-        return operations.getUsers.handler()
+        return operations.getUsers.handler({query: {}})
           .then((result) => {
             return Promise.all([
               test.expect(result).to.equal(fooResult),
-              test.expect(commandsMocks.stubs.user.getAll).to.have.been.called()
+              test.expect(commandsMocks.stubs.user.getFiltered).to.have.been.called()
+            ])
+          })
+      })
+
+      test.it('should pass received query data to get users command', () => {
+        const fooResult = 'foo result'
+        const fooQuery = {
+          name: 'foo-name',
+          role: 'foo-role'
+        }
+        commandsMocks.stubs.user.getFiltered.resolves(fooResult)
+
+        return operations.getUsers.handler({query: fooQuery})
+          .then((result) => {
+            return Promise.all([
+              test.expect(result).to.equal(fooResult),
+              test.expect(commandsMocks.stubs.user.getFiltered).to.have.been.calledWith(fooQuery)
             ])
           })
       })
@@ -72,7 +118,7 @@ test.describe('users api', () => {
           _id: 'foo-id'
         }, {
           path: {
-            _id: 'foo-id'
+            id: 'foo-id'
           }
         }, {})).to.be.true()
       })
@@ -83,7 +129,7 @@ test.describe('users api', () => {
           _id: 'foo-id'
         }, {
           path: {
-            _id: 'foo-different-id'
+            id: 'foo-different-id'
           }
         }, {})).to.be.false()
       })
@@ -97,7 +143,7 @@ test.describe('users api', () => {
 
         return operations.getUser.handler({
           path: {
-            _id: fooId
+            id: fooId
           }})
           .then((result) => {
             return Promise.all([

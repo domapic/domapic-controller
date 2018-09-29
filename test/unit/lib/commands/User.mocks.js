@@ -9,6 +9,7 @@ const Mock = function () {
   const commandsStubs = {
     add: sandbox.stub().usingPromise().resolves(),
     getAll: sandbox.stub().usingPromise().resolves(),
+    getFiltered: sandbox.stub().usingPromise().resolves(),
     get: sandbox.stub().usingPromise().resolves(),
     getById: sandbox.stub().usingPromise().resolves(),
     remove: sandbox.stub().usingPromise().resolves(),

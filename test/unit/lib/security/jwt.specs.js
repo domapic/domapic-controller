@@ -133,9 +133,9 @@ test.describe('jwt security', () => {
       test.describe('when user is not an administrator', () => {
         test.it('should get user data from refresh token and resolve the promise if the token belongs to himself', () => {
           commandsMocks.stubs.securityToken.getUser.resolves({
-            email: 'fooEmail'
+            _id: 'foo-id'
           })
-          return security.revokeAuth({email: 'fooEmail'}, {}, {refreshToken: 'fooRefreshToken'})
+          return security.revokeAuth({_id: 'foo-id'}, {}, {refreshToken: 'fooRefreshToken'})
             .then(() => {
               return test.expect(true).to.be.true()
             })
@@ -143,9 +143,9 @@ test.describe('jwt security', () => {
 
         test.it('should get user data from refresh token and reject the promise if the token do not belongs to himself', () => {
           commandsMocks.stubs.securityToken.getUser.resolves({
-            name: 'foo-name'
+            _id: 'foo-id'
           })
-          return security.revokeAuth({name: 'foo-different-name'}, {}, {refreshToken: 'fooRefreshToken'})
+          return security.revokeAuth({_id: 'foo-different-id'}, {}, {refreshToken: 'fooRefreshToken'})
             .then(() => {
               return test.assert.fail()
             }, () => {

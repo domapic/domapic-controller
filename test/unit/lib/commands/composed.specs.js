@@ -60,7 +60,7 @@ test.describe('composed commands', () => {
           userCommandsMocks.stubs.commands.get.resolves(fooRegistererUser)
           return commands.initUsers()
             .then(() => {
-              return test.expect(securityTokenCommandsMocks.stubs.commands.add).to.have.been.calledWith(fooRegistererUser, 'apikey')
+              return test.expect(securityTokenCommandsMocks.stubs.commands.add).to.have.been.calledWith(fooRegistererUser, 'apiKey')
             })
         })
       })
@@ -85,7 +85,7 @@ test.describe('composed commands', () => {
           securityTokenCommandsMocks.stubs.commands.get.rejects(new Error())
           return commands.initUsers()
             .then(() => {
-              return test.expect(securityTokenCommandsMocks.stubs.commands.add).to.have.been.calledWith(fooRegistererUser, 'apikey')
+              return test.expect(securityTokenCommandsMocks.stubs.commands.add).to.have.been.calledWith(fooRegistererUser, 'apiKey')
             })
         })
       })

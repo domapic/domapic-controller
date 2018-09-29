@@ -214,17 +214,17 @@
         }]
       }
     },
-    "/services/{_id}": {
+    "/services/{id}": {
       "get": {
         "parameters": [
           {
             "in": "path",
-            "name": "_id",
+            "name": "id",
             "schema": {
               "type": "string"
             },
             "required": true,
-            "description": "Service _id"
+            "description": "Service id"
           }
         ],
         "tags": ["service"],
@@ -253,12 +253,12 @@
         "parameters": [
           {
             "in": "path",
-            "name": "_id",
+            "name": "id",
             "schema": {
               "type": "string"
             },
             "required": true,
-            "description": "Service _id"
+            "description": "Service id"
           }
         ],
         "tags": ["service"],

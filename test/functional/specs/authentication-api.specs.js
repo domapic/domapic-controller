@@ -4,6 +4,8 @@ const test = require('narval')
 const utils = require('./utils')
 
 test.describe('authentication api', function () {
+  let newUserId
+  let adminUserId
   const authenticator = utils.Authenticator()
   const newUser = {
     name: 'foo-user',
@@ -59,6 +61,13 @@ test.describe('authentication api', function () {
     })
   }
 
+  const getUserMe = () => {
+    return utils.request('/users/me', {
+      method: 'GET',
+      ...authenticator.credentials()
+    })
+  }
+
   const forceCreateUser = (userData = newUser) => {
     return utils.ensureUserAndDoLogin(authenticator, userData)
   }
@@ -88,7 +97,7 @@ test.describe('authentication api', function () {
 
     test.describe('create apikey api resource', () => {
       test.it('should return an authentication error', () => {
-        return getApiKey(newUser.name).then(response => {
+        return getApiKey(newUserId).then(response => {
           return Promise.all([
             test.expect(response.body.message).to.contain('Authentication required'),
             test.expect(response.statusCode).to.equal(401)
@@ -187,13 +196,24 @@ test.describe('authentication api', function () {
     test.describe('when user has not an "admin" role', () => {
       test.before(() => {
         return forceCreateUser(adminUser)
+          .then(() => {
+            return getUserMe()
+              .then(response => {
+                adminUserId = response.body._id
+                return Promise.resolve()
+              })
+          })
           .then(() => forceCreateUser(newUser))
           .then(() => getAccessToken({
             user: newUser.name,
             password: newUser.password
           }).then(response => {
             authenticator.login(newUser.name, response.body.accessToken, response.body.refreshToken)
-            return Promise.resolve()
+            return getUserMe()
+              .then(response => {
+                newUserId = response.body._id
+                return Promise.resolve()
+              })
           }))
       })
 
@@ -219,7 +239,7 @@ test.describe('authentication api', function () {
         })
       })
 
-      test.describe('create apikey api resource', () => {
+      test.describe('create apiKey api resource', () => {
         test.it('should return a forbidden error if no user is provided', () => {
           return getApiKey(null).then(response => {
             return test.expect(response.statusCode).to.equal(403)
@@ -227,7 +247,7 @@ test.describe('authentication api', function () {
         })
 
         test.it('should allow to create api keys for current logged user', () => {
-          return getApiKey(newUser.name).then(response => {
+          return getApiKey(newUserId).then(response => {
             return Promise.all([
               test.expect(response.body.apiKey.length).to.equal(64),
               test.expect(response.statusCode).to.equal(200)
@@ -236,7 +256,7 @@ test.describe('authentication api', function () {
         })
 
         test.it('should return a forbidden error when trying to create a new api key for another user', () => {
-          return getApiKey(adminUser.name).then(response => {
+          return getApiKey(adminUserId).then(response => {
             return test.expect(response.statusCode).to.equal(403)
           })
         })
@@ -250,7 +270,7 @@ test.describe('authentication api', function () {
         })
 
         test.it('should allow to delete api keys that belong to logged user', () => {
-          return getApiKey(newUser.name)
+          return getApiKey(newUserId)
             .then(response => {
               return removeApiKey(response.body.apiKey).then(response => {
                 return test.expect(response.statusCode).to.equal(204)
@@ -265,7 +285,7 @@ test.describe('authentication api', function () {
             password: adminUser.password
           }).then(response => {
             authenticator.login(adminUser.name, response.body.accessToken, response.body.refreshToken)
-            return getApiKey(adminUser.name).then(response => {
+            return getApiKey(adminUserId).then(response => {
               const apiKey = response.apiKey
               authenticator.login(tokens.name, tokens.accessToken, tokens.refreshToken)
               return removeApiKey(apiKey).then(response => {
@@ -320,21 +340,21 @@ test.describe('authentication api', function () {
 
       test.describe('create apikey api resource', () => {
         test.it('should allow to create api keys for current logged user', () => {
-          return getApiKey(adminUser.name).then(response => {
+          return getApiKey(adminUserId).then(response => {
             return test.expect(response.statusCode).to.equal(200)
           })
         })
 
         test.it('should allow to create api keys for any other users', () => {
-          return getApiKey(newUser.name).then(response => {
+          return getApiKey(newUserId).then(response => {
             return test.expect(response.statusCode).to.equal(200)
           })
         })
       })
 
-      test.describe('remove apikey api resource', () => {
+      test.describe('remove apiKey api resource', () => {
         test.it('should allow to delete api keys that belong to logged user', () => {
-          return getApiKey(adminUser.name).then(response => {
+          return getApiKey(adminUserId).then(response => {
             return removeApiKey(response.body.apiKey).then(response => {
               return test.expect(response.statusCode).to.equal(204)
             })
@@ -342,7 +362,7 @@ test.describe('authentication api', function () {
         })
 
         test.it('should allow to delete api keys that belong to any other user', () => {
-          return getApiKey(newUser.name).then(response => {
+          return getApiKey(newUserId).then(response => {
             return removeApiKey(response.body.apiKey).then(response => {
               return test.expect(response.statusCode).to.equal(204)
             })
@@ -374,7 +394,7 @@ test.describe('authentication api', function () {
     })
   })
 
-  test.describe('when authenticated using apikey', () => {
+  test.describe('when authenticated using apiKey', () => {
     test.describe('when user has not an "admin" role', () => {
       test.before(() => {
         return forceCreateUser(adminUser)
@@ -384,7 +404,7 @@ test.describe('authentication api', function () {
             password: newUser.password
           }).then(response => {
             authenticator.login(newUser.name, response.body.accessToken, response.body.refreshToken)
-            return getApiKey(newUser.name).then(response => {
+            return getApiKey(newUserId).then(response => {
               authenticator.loginApiKey(newUser.name, response.body.apiKey)
               return Promise.resolve()
             })
@@ -421,7 +441,7 @@ test.describe('authentication api', function () {
         })
 
         test.it('should allow to create api keys for current logged user', () => {
-          return getApiKey(newUser.name).then(response => {
+          return getApiKey(newUserId).then(response => {
             return Promise.all([
               test.expect(response.body.apiKey.length).to.equal(64),
               test.expect(response.statusCode).to.equal(200)
@@ -430,7 +450,7 @@ test.describe('authentication api', function () {
         })
 
         test.it('should return a forbidden error when trying to create a new api key for another user', () => {
-          return getApiKey(adminUser.name).then(response => {
+          return getApiKey(adminUserId).then(response => {
             return test.expect(response.statusCode).to.equal(403)
           })
         })
@@ -444,7 +464,7 @@ test.describe('authentication api', function () {
         })
 
         test.it('should allow to delete api keys that belong to logged user', () => {
-          return getApiKey(newUser.name).then(response => {
+          return getApiKey(newUserId).then(response => {
             return removeApiKey(response.body.apiKey).then(response => {
               return test.expect(response.statusCode).to.equal(204)
             })
@@ -458,7 +478,7 @@ test.describe('authentication api', function () {
             password: adminUser.password
           }).then(response => {
             authenticator.login(adminUser.name, response.body.accessToken, response.body.refreshToken)
-            return getApiKey(adminUser.name).then(response => {
+            return getApiKey(adminUserId).then(response => {
               authenticator.loginApiKey(current.name, current.apiKey)
               return removeApiKey(response.body.apiKey).then(response => {
                 return test.expect(response.statusCode).to.equal(403)
@@ -511,7 +531,7 @@ test.describe('authentication api', function () {
             password: adminUser.password
           }).then(response => {
             authenticator.login(adminUser.name, response.body.accessToken, response.body.refreshToken)
-            return getApiKey(adminUser.name).then(response => {
+            return getApiKey(adminUserId).then(response => {
               authenticator.loginApiKey(adminUser.name, response.body.apiKey)
               return Promise.resolve()
             })
@@ -520,13 +540,13 @@ test.describe('authentication api', function () {
 
       test.describe('create apikey api resource', () => {
         test.it('should allow to create api keys for current logged user', () => {
-          return getApiKey(adminUser.name).then(response => {
+          return getApiKey(adminUserId).then(response => {
             return test.expect(response.statusCode).to.equal(200)
           })
         })
 
         test.it('should allow to create api keys for any other users', () => {
-          return getApiKey(newUser.name).then(response => {
+          return getApiKey(newUserId).then(response => {
             return test.expect(response.statusCode).to.equal(200)
           })
         })
@@ -534,7 +554,7 @@ test.describe('authentication api', function () {
 
       test.describe('remove apikey api resource', () => {
         test.it('should allow to delete api keys that belong to logged user', () => {
-          return getApiKey(adminUser.name).then(response => {
+          return getApiKey(adminUserId).then(response => {
             return removeApiKey(response.body.apiKey).then(response => {
               return test.expect(response.statusCode).to.equal(204)
             })
@@ -542,7 +562,7 @@ test.describe('authentication api', function () {
         })
 
         test.it('should allow to delete api keys that belong to any other user', () => {
-          return getApiKey(newUser.name).then(response => {
+          return getApiKey(newUserId).then(response => {
             return removeApiKey(response.body.apiKey).then(response => {
               return test.expect(response.statusCode).to.equal(204)
             })

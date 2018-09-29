@@ -26,7 +26,7 @@
           "role": {
             "description": "Role assigned to the user",
             "type": "string",
-            "enum": ["admin", "service", "plugin"]
+            "enum": ["admin", "operator", "service", "plugin", "service-registerer"]
           },
           "createdAt": {
             "description": "Creation date timestamp",
@@ -68,7 +68,7 @@
           "role": {
             "description": "Role assigned to the user",
             "type": "string",
-            "enum": ["admin", "operator", "service", "service-registerer", "plugin"]
+            "enum": ["admin", "operator", "service", "plugin", "service-registerer"]
           }
         },
         "required": ["name", "role"],
@@ -101,6 +101,25 @@
   "paths": {
     "/users": {
       "get": {
+        "parameters": [
+          {
+            "in": "query",
+            "name": "name",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Service name"
+          },
+          {
+            "in": "query",
+            "name": "role",
+            "schema": {
+              "type": "string",
+              "enum": ["admin", "operator", "service", "plugin", "service-registerer"]
+            },
+            "description": "Service name"
+          }
+        ],
         "tags": ["user"],
         "summary": "Return users",
         "description": "Returns an array with all registered users",
@@ -176,12 +195,12 @@
         }]
       }
     },
-    "/users/{_id}": {
+    "/users/{id}": {
       "get": {
         "parameters": [
           {
             "in": "path",
-            "name": "_id",
+            "name": "id",
             "schema": {
               "type": "string"
             },

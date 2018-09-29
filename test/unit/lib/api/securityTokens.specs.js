@@ -67,7 +67,7 @@ test.describe('securityTokens api', () => {
             role: 'service'
           })
           return operations.getSecurityTokens.auth({ role: 'service-registerer', _id: '' }, { query: {
-            type: 'apikey',
+            type: 'apiKey',
             user: 'foo-id'
           }}, {}).then(result => {
             return test.expect(true).to.be.true()
@@ -81,7 +81,7 @@ test.describe('securityTokens api', () => {
           })
           baseMocks.stubs.service.errors.Forbidden.returns(forbiddenError)
           return operations.getSecurityTokens.auth({ role: 'service-registerer', _id: '' }, { query: {
-            type: 'apikey',
+            type: 'apiKey',
             user: 'foo-id'
           }}, {}).then(result => {
             return test.assert.fail()

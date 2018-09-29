@@ -59,7 +59,7 @@ test.describe('abilities api', () => {
 
         return operations.getAbility.handler({
           path: {
-            _id: fooId
+            id: fooId
           }})
           .then((result) => {
             return Promise.all([
@@ -210,7 +210,7 @@ test.describe('abilities api', () => {
       test.it('should call to update ability, passing the received id and body', () => {
         return operations.updateAbility.handler({
           path: {
-            _id: fooId
+            id: fooId
           }
         }, fooBody, response)
           .then((result) => {
@@ -221,7 +221,7 @@ test.describe('abilities api', () => {
       test.it('should add a 204 header to response', () => {
         return operations.updateAbility.handler({
           path: {
-            _id: fooId
+            id: fooId
           }
         }, fooBody, response)
           .then(() => {
@@ -232,7 +232,7 @@ test.describe('abilities api', () => {
       test.it('should set the response header with the ability id', () => {
         return operations.updateAbility.handler({
           path: {
-            _id: fooId
+            id: fooId
           }
         }, fooBody, response)
           .then(() => {
@@ -243,7 +243,7 @@ test.describe('abilities api', () => {
       test.it('should resolve the promise with no value', () => {
         return operations.updateAbility.handler({
           path: {
-            _id: fooId
+            id: fooId
           }
         }, fooBody, response)
           .then((result) => {
