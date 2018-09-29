@@ -246,5 +246,32 @@ test.describe('ability commands', () => {
           })
       })
     })
+
+    test.describe('remove method', () => {
+      const fooId = 'foo-id'
+
+      test.it('should call to ability model findOneAndRemove method', () => {
+        const fooResult = 'foo'
+        modelsMocks.stubs.Ability.findOneAndRemove.resolves(fooResult)
+        return commands.remove(fooId)
+          .then((result) => {
+            return test.expect(modelsMocks.stubs.Ability.findOneAndRemove).to.have.been.calledWith({
+              _id: fooId
+            })
+          })
+      })
+
+      test.it('should return a not found error if no ability is found', () => {
+        const fooError = new Error('foo error')
+        modelsMocks.stubs.Ability.findOneAndRemove.resolves(null)
+        baseMocks.stubs.service.errors.NotFound.returns(fooError)
+        return commands.remove(fooId)
+          .then(() => {
+            return test.assert.fail()
+          }, err => {
+            return test.expect(err).to.equal(fooError)
+          })
+      })
+    })
   })
 })

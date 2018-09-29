@@ -291,6 +291,9 @@
           }
         }
       },
+      "Deleted": {
+        "description": "Entity deleted"
+      },
       "NotFoundError" : {
         "description": "Not Found",
         "content": {
@@ -448,6 +451,36 @@
         "responses": {
           "204": {
             "$ref": "#/components/responses/Ability"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          }
+        },
+        "security": [{
+          "jwt": []
+        }, {
+          "apiKey": []
+        }]
+      },
+      "delete": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "Ability id"
+          }
+        ],
+        "tags": ["ability"],
+        "summary": "Delete ability",
+        "description": "Delete ability",
+        "operationId": "deleteAbility",
+        "responses": {
+          "204": {
+            "$ref": "#/components/responses/Deleted"
           },
           "404": {
             "$ref": "#/components/responses/NotFoundError"

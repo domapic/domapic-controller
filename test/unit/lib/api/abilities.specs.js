@@ -251,6 +251,96 @@ test.describe('abilities api', () => {
           })
       })
     })
+
+    test.describe('deleteAbility auth', () => {
+      const fooUserId = 'foo-user-id'
+      const fooParams = {
+        path: {
+          _id: 'foo-ability-id'
+        }
+      }
+
+      test.it('should resolve if logged user is owner of the ability', () => {
+        commandsMocks.stubs.ability.getById.resolves({
+          _user: fooUserId
+        })
+
+        return operations.deleteAbility.auth({
+          _id: fooUserId
+        }, fooParams, {}).then(() => {
+          return test.expect(true).to.be.true()
+        })
+      })
+
+      test.it('should reject if logged user is not owner of the ability', () => {
+        commandsMocks.stubs.ability.getById.resolves({
+          _user: fooUserId
+        })
+
+        return operations.deleteAbility.auth({
+          _id: 'another-user-id'
+        }, fooParams, {}).then(() => {
+          return test.assert.fail()
+        }, (error) => {
+          return test.expect(error).to.be.an.instanceof(Error)
+        })
+      })
+    })
+
+    test.describe('deleteAbility handler', () => {
+      const fooId = 'foo-ability-id'
+      const fooAbility = {
+        _id: fooId,
+        name: 'ability-name'
+      }
+      let sandbox
+      let response
+
+      test.beforeEach(() => {
+        sandbox = test.sinon.createSandbox()
+        response = {
+          status: sandbox.stub()
+        }
+        commandsMocks.stubs.ability.remove.resolves(fooAbility)
+      })
+
+      test.afterEach(() => {
+        sandbox.restore()
+      })
+
+      test.it('should call to delete ability, passing the received id', () => {
+        return operations.deleteAbility.handler({
+          path: {
+            id: fooId
+          }
+        }, {}, response)
+          .then((result) => {
+            return test.expect(commandsMocks.stubs.ability.remove).to.have.been.calledWith(fooId)
+          })
+      })
+
+      test.it('should add a 204 header to response', () => {
+        return operations.deleteAbility.handler({
+          path: {
+            id: fooId
+          }
+        }, {}, response)
+          .then(() => {
+            return test.expect(response.status).to.have.been.calledWith(204)
+          })
+      })
+
+      test.it('should resolve the promise with no value', () => {
+        return operations.deleteAbility.handler({
+          path: {
+            id: fooId
+          }
+        }, {}, response)
+          .then((result) => {
+            return test.expect(result).to.be.undefined()
+          })
+      })
+    })
   })
 
   test.describe('openapi', () => {
