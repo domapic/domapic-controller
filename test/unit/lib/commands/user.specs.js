@@ -80,6 +80,37 @@ test.describe('user commands', () => {
       })
     })
 
+    test.describe('getFiltered method', () => {
+      const fooFilter = {
+        _role: 'foo-role'
+      }
+      const fooUsers = [{
+        token: 'foo'
+      }]
+
+      test.it('should call to find users and return the result', () => {
+        modelsMocks.stubs.User.find.resolves(fooUsers)
+        return commands.getFiltered(fooFilter)
+          .then((result) => {
+            return Promise.all([
+              test.expect(result).to.equal(fooUsers),
+              test.expect(modelsMocks.stubs.User.find).to.have.been.calledWith(fooFilter)
+            ])
+          })
+      })
+
+      test.it('should call to find users with an empty filter if it is not provided', () => {
+        modelsMocks.stubs.User.find.resolves(fooUsers)
+        return commands.getFiltered()
+          .then((result) => {
+            return Promise.all([
+              test.expect(result).to.equal(fooUsers),
+              test.expect(modelsMocks.stubs.User.find).to.have.been.calledWith({})
+            ])
+          })
+      })
+    })
+
     test.describe('get method', () => {
       test.it('should call to user model get method, and return the result', () => {
         const fooResult = 'foo'

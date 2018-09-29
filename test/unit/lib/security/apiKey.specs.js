@@ -55,7 +55,39 @@ test.describe('apiKey security', () => {
         })
       })
 
-      test.describe('when user is not an administrator', () => {
+      test.describe('when user has service-registerer role', () => {
+        test.it('should resolve the promise if provided user has service role', () => {
+          const fooUserData = {
+            role: 'service'
+          }
+          commandsMocks.stubs.user.getById.resolves(fooUserData)
+          return security.authenticateAuth({
+            role: 'service-registerer',
+            _id: 'foo-user-id'
+          }, {}, {user: 'foo-id'})
+            .then(() => {
+              return test.expect(true).to.be.true()
+            })
+        })
+
+        test.it('should reject the promise if provided has not service role', () => {
+          const fooUserData = {
+            role: 'operator'
+          }
+          commandsMocks.stubs.user.getById.resolves(fooUserData)
+          return security.authenticateAuth({ 
+            role: 'service-registerer',
+            _id: 'foo-user-id'
+          }, {}, {user: 'foo-id'})
+            .then(() => {
+              return test.assert.fail()
+            }, () => {
+              return test.expect(true).to.be.true()
+            })
+        })
+      })
+
+      test.describe('when user is not an administrator or service-registerer', () => {
         test.it('should resolve the promise if provided user matches with logged user name', () => {
           return security.authenticateAuth({_id: 'foo-id'}, {}, {user: 'foo-id'})
             .then(() => {
@@ -63,7 +95,7 @@ test.describe('apiKey security', () => {
             })
         })
 
-        test.it('should reject the promise if provided user does not match with logged user id', () => {
+        test.it('should reject the promise if provided user does not match with logged user', () => {
           return security.authenticateAuth({_id: 'foo-different-id'}, {}, {user: 'foo-other-id'})
             .then(() => {
               return test.assert.fail()
