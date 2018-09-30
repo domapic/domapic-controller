@@ -36,7 +36,7 @@ Install Domapic plugins to connect Domapic with other domotic systems or online 
 
 ## Prerequisites
 
-Domapic controller is built with Node.js, and uses MongoDB as database, so, first of all, you need to have installed them in your system. Follow the instructions on next links if you need help to install them:
+Domapic controller is built with Node.js, and uses MongoDB as database, so, first of all, you need to have installed them in your system:
 - [Installing Node.js and npm](https://nodejs.org/es/download/package-manager/)
 - [Installing MongoDB](https://docs.mongodb.com/manual/installation/)
 
@@ -53,7 +53,7 @@ npm i domapic-controller -g
 ### Start the server
 
 ```bash
-domapic-controller start controller --db=mongodb://localhost:27017/domapic --save
+domapic-controller start controller
 ```
 
 The controller process will be started at background (using [PM2][pm2-url] as manager). Now you can browse to [http://localhost:3000](http://localhost:3000) to check that the server has started successfully. A __Swagger UI__ describing the server api will be available at that url.
