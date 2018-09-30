@@ -5,10 +5,14 @@
   "main": "server.js",
   "keywords": [
     "domotic",
+    "controller",
+    "server",
+    "iot",
     "api",
-    "openapi",
-    "openapi3",
-    "swagger-ui"
+    "microservice",
+    "rest",
+    "swagger-ui",
+    "openapi"
   ],
   "bin": {
     "domapic-controller": "./bin/domapic-controller"
@@ -19,11 +23,20 @@
     "coveralls": "cat ./.coverage/unit/lcov.info | coveralls"
   },
   "dependencies": {
-    "domapic-base": "1.0.0-beta.4"
+    "domapic-base": "1.0.0-beta.11",
+    "inquirer": "6.2.0",
+    "inquirer-autocomplete-prompt": "1.0.1",
+    "md5": "2.2.1",
+    "mongoose": "5.2.3",
+    "rand-token": "0.4.0",
+    "url-regex": "4.1.1"
   },
   "devDependencies": {
-    "coveralls": "3.0.1",
-    "narval": "1.2.0"
+    "coveralls": "3.0.2",
+    "narval": "2.2.1",
+    "request": "2.87.0",
+    "request-promise": "4.2.2",
+    "mockery": "2.1.0"
   },
   "author": {
     "name": "Javier Brea",

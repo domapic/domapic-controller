@@ -1,7 +1,5 @@
 'use strict'
 
-const domapic = require('domapic-base')
+const controller = require('./lib/controller')
 
-new domapic.Service().then((service) => {
-  return service.server.start()
-})
+controller.start()
