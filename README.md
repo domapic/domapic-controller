@@ -2,7 +2,7 @@
 
 # Domapic Controller
 
-> Controller for Domapic systems
+> Controller server for Domapic systems
 
 [![Build status][travisci-image]][travisci-url] [![Coverage Status][coveralls-image]][coveralls-url] [![Quality Gate][quality-gate-image]][quality-gate-url] [![js-standard-style][standard-image]][standard-url]
 
@@ -15,13 +15,96 @@
 ## Table of Contents
 
 * [Introduction](#introduction)
+* [Prerequisites](#Prerequisites)
+* [Quick Start](#quick-start)
+	* [Installation](#installation)
+	* [Start the server](#start-the-server)
+	* [Display logs](#display-logs)
+	* [Get API Key to connect Domapic Services](#get-api-key-to-connect-domapic-services)
+	* [Stop and restart](#stop-and-restart)
 
 ---
 
 ## Introduction
 
-Control all your Domapic services and make them interact using Domapic Controller interface.
-Register plugins to connnect Domapic with other Domotic systems or online services.
+Controller server for Domapic domotic systems.
+
+Control all your Domapic Services and program them to interact automatically using provided interface.
+Install Domapic plugins to connect Domapic with other domotic systems or online services.
+
+## Prerequisites
+
+Domapic controller is built with Node.js, and uses MongoDB as database, so, first of all, you need to have installed them in your system. Follow the instructions on next links if you need help to install them:
+- [Installing Node.js and npm](https://nodejs.org/es/download/package-manager/)
+- [Installing MongoDB](https://docs.mongodb.com/manual/installation/)
+
+## Quick start
+
+### Installation
+
+Install Domapic-controller globally using npm:
+
+```bash
+npm i domapic-controller -g
+```
+
+### Start the server
+
+```bash
+domapic-controller start controller --db=mongodb://localhost:27017/domapic --save
+```
+
+The controller process will be started at background (using [PM2][pm2-url] as manager). Now you can browse to [http://localhost:3000](http://localhost:3000) to check that the server has started successfully. A __Swagger UI__ describing the server api will be available at that url.
+
+> Note that, with basic options, server will be started over `http` protocol, and security will be disabled for localhost requests. Read about all [options](#options) and [security](#security) to start the controller with stricter security options.
+
+### Display logs
+
+```bash
+domapic-controller logs controller
+```
+
+This command will display last logs of server, and will continue displaying logs until CTRL-C is pressed.
+
+Server logs are saved too into a daily file. These files are rotated automatically and only last ten days files are kept. You´ll find these files in the `~/.domapic/controller/logs` folder.
+
+Server logs are managed by [PM2][pm2-url] too, so, it is recommended to install [_PM2 log rotate_][pm2-log-rotate-url] to avoid pm2 logs file growing too much.
+
+### Get API Key to connect Domapic Services
+
+Checking the server log you´ll find something like:
+
+```text
+2018-09-29 19:35:55.042: [controller] [info] Connected to database "mongodb://localhost:27017/domapic"
+2018-09-29 19:35:56.855: [controller] [info] 
+-----------------------------------------------------------------
+Use the next api key to register services: 6hka5b0jnT9HOMJjUNquqOLneFGxYYtfOygguKoACUIviRvTJLV4IzglcybePQLB
+-----------------------------------------------------------------
+2018-09-29 19:35:56.878: [controller] [WARN] Caution. Starting server without ssl protocol. Use it only in secured and trusted networks
+2018-09-29 19:35:56.885: [controller] [info] Server started and listening at port 3000
+```
+
+Copy the provided api key and place it in a safe place, and use it later when starting your Domapic Services, in order to allow them to automatically register themself in the controller and connect with it.
+
+### Stop and restart
+
+```bash
+domapic-controller stop controller
+```
+
+This command will stop the server, and, if you used the `--save` option when you started it for first time, you´ll be able to start it again with same settings simply executing:
+
+```bash
+domapic-controller start controller
+```
+
+If you want your server to be started automatically on system reload, use the pm2 save command:
+
+```bash
+pm2 save
+```
+
+
 
 [domapic-base-logo-image]: http://domapic.com/assets/domapic-logo.png
 
@@ -46,3 +129,6 @@ Register plugins to connnect Domapic with other Domotic systems or online servic
 
 [website-image]: https://img.shields.io/website-up-down-green-red/http/domapic.com.svg?label=domapic.com
 [website-url]: http://domapic.com/
+
+[pm2-log-rotate-url]: https://github.com/keymetrics/pm2-logrotate
+[pm2-url]: http://pm2.keymetrics.io/
