@@ -31,7 +31,7 @@
 
 Controller server for Domapic domotic systems.
 
-Control all your Domapic Services and program them to interact automatically using provided interface.
+Control all your Domapic Services and program them to interact automatically using the provided web interface.
 Install Domapic plugins to connect Domapic with other domotic systems or online services.
 
 ## Prerequisites
@@ -142,6 +142,39 @@ Example of setting options from command line:
 ```shell
 domapic-controller start --name=fooName --authDisabled=192.168.1.128/25 --logLevel=debug --color=false
 ```
+
+## Security
+
+The Domapic Controller can be securized in order to expose it from local network to internet, and act as a remote controller for all your local network Domapic Services.
+
+Follow the next steps to securize your Controller before exposing it to the internet:
+
+* __Setup an administrator user:__
+	
+	> The Controller is distributed with a default administrator user, which name is "admin", and password is "admin". Delete it and setup your own administrator user:
+
+	```
+	domapic-controller --name=controller user remove admin
+	```
+
+	```
+	domapic-controller --name=controller user add
+	```
+
+	You will be prompted for user name, role, email and password. Using your real email will allow you to use OAuth to login at Domapic Cloud and acces to your server through it.
+
+* __Enable ssl:__
+	
+	Enable ssl for your Controller Server generating an SSL certificate. Use options `--sslCert` and `--sslKey` to define the paths to each file, and remember to use the `--save` option to store that settings for next server restarts. From now, your server will start using *https* instead of *http*.
+
+* __Provide a custom secret for JWT authentication:__
+	
+	Domapic controller provides two methods of authentication, jwt and api keys. The first one will be used by allowed human users to access to the provided web user interface (still in development). Provide a custom secret using the `--secret` option to make this method securer. Remember to use the `--save` option to store the secret for next restarts.
+
+* __Disable the authentication whitelist:__
+	
+	Authentication can be disabled for desired IPs or IP ranges using the `--authDisabled` option. By default, authentication is disabled only for the 172.0.0.1 IP, in order to make easier the first configuration, but you can disable it for all your local network, etc. Because of security reasons, this is not recommended. Use always the built-in api keys method to identify your Domapic Services.
+	If you want to force the authentication requirement even for localhost, use the `--authDisabled` as a flag, without specifying any IP.
 
 [domapic-base-logo-image]: http://domapic.com/assets/domapic-logo.png
 
