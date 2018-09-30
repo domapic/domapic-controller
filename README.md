@@ -15,13 +15,15 @@
 ## Table of Contents
 
 * [Introduction](#introduction)
-* [Prerequisites](#Prerequisites)
+* [Prerequisites](#prerequisites)
 * [Quick Start](#quick-start)
 	* [Installation](#installation)
 	* [Start the server](#start-the-server)
 	* [Display logs](#display-logs)
 	* [Get API Key to connect Domapic Services](#get-api-key-to-connect-domapic-services)
 	* [Stop and restart](#stop-and-restart)
+* [Options](#options)
+* [Security](#security)
 
 ---
 
@@ -104,7 +106,42 @@ If you want your server to be started automatically on system reload, use the pm
 pm2 save
 ```
 
+## Options
 
+### Help
+
+Use next command to display help with detailed information about all available commands and options:
+
+```shell
+# Display all available commands:
+domapic-controller --help
+
+# Display all options for an specific command (domapic-controller [command] --help):
+domapic-controller start --help
+
+```
+
+### Start command options:
+
+option | description | default
+--- | --- | ---
+`--name` | Service instance name. Name can be defined too as first argument | -
+`--db` | MongoDB connection uri | mongodb://localhost:27017/domapic
+`--port` | Http port used | 3000
+`--hostName` | Hostname for the server | -
+`--sslCert` | Path to an ssl certificate | -
+`--sslKey` | Path to an ssl key | - 
+`--authDisabled` | Array of IPs or CIDR IP ranges with authentication disabled | ['127.0.0.1', '::1/128']
+`--secret` | Secret to be used in authentication encoding | -
+`--color` | Use ANSI colors in traces | true
+`--logLevel` | Tracing level. Choices are 'log', 'trace', 'debug', 'info', 'warn' and 'error' | info
+`--path` | Path to be used as home path, instead of user´s default (.domapic folder will be created inside) | ~
+`--saveConfig` | Save current options for next execution (except `name` and `path`) | false
+
+Example of setting options from command line:
+```shell
+domapic-controller start --name=fooName --authDisabled=192.168.1.128/25 --logLevel=debug --color=false
+```
 
 [domapic-base-logo-image]: http://domapic.com/assets/domapic-logo.png
 
