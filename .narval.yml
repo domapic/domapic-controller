@@ -55,6 +55,7 @@ docker-images:
       - 3000
     add:
       - package.json
+      - npm-shrinkwrap.json
     install: test/functional/commands/install.sh
   - name: mongodb-image
     from: mongo:3.6.4

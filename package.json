@@ -1,14 +1,18 @@
 {
   "name": "domapic-controller",
-  "version": "1.0.0-beta.1",
+  "version": "1.0.0-alpha.1",
   "description": "Controller for Domapic systems",
   "main": "server.js",
   "keywords": [
     "domotic",
+    "controller",
+    "server",
+    "iot",
     "api",
-    "openapi",
-    "openapi3",
-    "swagger-ui"
+    "microservice",
+    "rest",
+    "swagger-ui",
+    "openapi"
   ],
   "bin": {
     "domapic-controller": "./bin/domapic-controller"
