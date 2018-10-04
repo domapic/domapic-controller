@@ -85,6 +85,11 @@ test.describe('service model', () => {
         return model.url.validate('http://www.foo.com')
       })
 
+      test.it('should not throw an error if provided url is valid', () => {
+        model = service.Model(baseMocks.stubs.service)
+        return model.url.validate('http://service-container:3000')
+      })
+
       test.it('should not throw an error if provided url is a valid IP', () => {
         model = service.Model(baseMocks.stubs.service)
         return model.url.validate('https://192.168.1.100:3400')

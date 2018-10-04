@@ -1,6 +1,6 @@
 {
   "name": "domapic-controller",
-  "version": "1.0.0-alpha.1",
+  "version": "1.0.0-alpha.2",
   "description": "Controller for Domapic systems",
   "main": "server.js",
   "keywords": [
@@ -29,7 +29,7 @@
     "md5": "2.2.1",
     "mongoose": "5.2.3",
     "rand-token": "0.4.0",
-    "url-regex": "4.1.1"
+    "isuri": "2.0.3"
   },
   "devDependencies": {
     "coveralls": "3.0.2",
