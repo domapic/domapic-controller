@@ -14,6 +14,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 - Exclude document being updated from unique fields validation
 
+### Changed
+- Pass user id as string to authentication handlers
+
 ## [1.0.0.alpha.2] - 2018-10-04
 ### Changed
 - Change url validator

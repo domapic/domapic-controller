@@ -105,7 +105,7 @@ test.describe('utils', () => {
             })
         })
         test.it('should reject the promise if an error occurs', () => {
-          const errorMessage = "foo error message"
+          const errorMessage = 'foo error message'
           documentsError = new Error(fooErrorMessage)
           return validator('foo-value')
             .then(() => {
