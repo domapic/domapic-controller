@@ -55,6 +55,78 @@ test.describe('utils', () => {
             return test.expect(true).to.be.true()
           })
       })
+
+      test.describe('when document is being updated', () => {
+        let sandbox
+        let fooThis
+        let documentsFound
+        let documentsError
+
+        test.beforeEach(() => {
+          documentsFound = 0
+          documentsError = null
+          sandbox = test.sinon.createSandbox()
+          fooThis = {
+            model: {
+              where: sandbox.stub().returns({
+                countDocuments: cb => {
+                  cb(documentsError, documentsFound)
+                }
+              })
+            },
+            _conditions: {
+              _id: 'foo-id'
+            },
+            isNew: false
+          }
+
+          validator = validator.bind(fooThis)
+        })
+
+        test.afterEach(() => {
+          sandbox.restore()
+        })
+
+        test.it('should call to find documents that match with field and value, but not with query conditions', () => {
+          return validator('foo-value')
+            .then(() => {
+              return test.expect(fooThis.model.where).to.have.been.calledWith({
+                $and: [
+                  {
+                    foo: new RegExp('^foo-value$', 'i')
+                  },
+                  {
+                    _id: {
+                      $ne: 'foo-id'
+                    }
+                  }
+                ]
+              })
+            })
+        })
+        test.it('should reject the promise if an error occurs', () => {
+          const errorMessage = 'foo error message'
+          documentsError = new Error(fooErrorMessage)
+          return validator('foo-value')
+            .then(() => {
+              return test.assert.fail()
+            }, (error) => {
+              return test.expect(error.message).to.equal(errorMessage)
+            })
+        })
+        test.it('should reject the promise if documents count is upper than zero', () => {
+          documentsFound = 1
+          return validator('foo-value')
+            .then(() => {
+              return test.assert.fail()
+            }, (error) => {
+              return test.expect(error.message).to.equal(fooErrorMessage)
+            })
+        })
+        test.it('should resolve the promise if documents count is less than zero', () => {
+          return validator('foo-value')
+        })
+      })
     })
   })
 

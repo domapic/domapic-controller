@@ -84,11 +84,28 @@ test.describe('services api', function () {
     url: 'https://192.168.1.1'
   }
 
+  const fooService2 = {
+    processId: 'foo-service-id',
+    description: 'foo-description',
+    package: 'foo-package',
+    version: '1.0.0',
+    apiKey: 'dasasfdfsdf423efwsasdfds',
+    url: 'https://192.168.1.42'
+  }
+
   const fooUpdatedService = {
     description: 'foo updated description',
     package: 'foo updated package',
     version: 'foo updated version',
     apiKey: 'foo updated api key',
+    url: 'https://2.2.2.2'
+  }
+
+  const fooUpdatedServiceRepeatedUrl = {
+    description: 'foo updated description 2',
+    package: 'foo updated package 2',
+    version: 'foo updated version 2',
+    apiKey: 'foo updated api key 2',
     url: 'https://2.2.2.2'
   }
 
@@ -215,13 +232,21 @@ test.describe('services api', function () {
     let serviceUserService
 
     test.before(() => {
-      return utils.ensureUserAndDoLogin(authenticator, serviceUser)
+      return utils.ensureUserAndDoLogin(authenticator, serviceUser2)
         .then(() => {
-          return getServices()
-            .then(getResponse => {
-              serviceUserService = getResponse.body.find(service => service.name === serviceUser.name)
-              return Promise.resolve()
-            })
+          return addService(fooService2).then(res => {
+            if (res.statusCode !== 201) {
+              return Promise.reject(new Error())
+            }
+            return utils.ensureUserAndDoLogin(authenticator, serviceUser)
+              .then(() => {
+                return getServices()
+                  .then(getResponse => {
+                    serviceUserService = getResponse.body.find(service => service.name === serviceUser.name)
+                    return Promise.resolve()
+                  })
+              })
+          })
         })
     })
 
@@ -309,7 +334,7 @@ test.describe('services api', function () {
 
       test.it('should return a bad data response if repeated url is provided', () => {
         return updateService(serviceUserService._id, {
-          url: fooService.url
+          url: fooService2.url
         })
           .then((response) => {
             return Promise.all([
@@ -333,6 +358,26 @@ test.describe('services api', function () {
                   test.expect(data.version).to.equal(fooUpdatedService.version),
                   test.expect(data.apiKey).to.be.undefined(),
                   test.expect(data.url).to.equal(fooUpdatedService.url),
+                  test.expect(patchResponse.statusCode).to.equal(204)
+                ])
+              })
+          })
+      })
+
+      test.it('should update all provided service data even when url is same than before', () => {
+        return updateService(serviceUserService._id, fooUpdatedServiceRepeatedUrl)
+          .then((patchResponse) => {
+            return getService(serviceUserService._id)
+              .then((response) => {
+                const data = response.body
+                return Promise.all([
+                  test.expect(data.name).to.equal(serviceUser.name),
+                  test.expect(data.processId).to.equal(fooService.processId),
+                  test.expect(data.description).to.equal(fooUpdatedServiceRepeatedUrl.description),
+                  test.expect(data.package).to.equal(fooUpdatedServiceRepeatedUrl.package),
+                  test.expect(data.version).to.equal(fooUpdatedServiceRepeatedUrl.version),
+                  test.expect(data.apiKey).to.be.undefined(),
+                  test.expect(data.url).to.equal(fooUpdatedServiceRepeatedUrl.url),
                   test.expect(patchResponse.statusCode).to.equal(204)
                 ])
               })
