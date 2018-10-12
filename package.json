@@ -27,6 +27,7 @@
     "inquirer": "6.2.0",
     "inquirer-autocomplete-prompt": "1.0.1",
     "isuri": "2.0.3",
+    "jsonschema": "1.2.4",
     "md5": "2.2.1",
     "mongoose": "5.2.3",
     "rand-token": "0.4.0"
