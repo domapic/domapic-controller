@@ -106,7 +106,10 @@ test.describe('abilities api', function () {
     event: true,
     state: true,
     format: 'email',
-    type: 'boolean'
+    type: 'boolean',
+    actionDescription: 'foo action description',
+    eventDescription: 'foo event description',
+    stateDescription: 'foo state description'
   }
 
   test.before(() => {
@@ -216,6 +219,9 @@ test.describe('abilities api', function () {
                   test.expect(ability.state).to.equal(fooAbility.state),
                   test.expect(ability.format).to.equal(fooAbility.format),
                   test.expect(ability.type).to.equal(fooAbility.type),
+                  test.expect(ability.stateDescription).to.equal(fooAbility.stateDescription),
+                  test.expect(ability.eventDescription).to.equal(fooAbility.eventDescription),
+                  test.expect(ability.actionDescription).to.equal(fooAbility.actionDescription),
                   test.expect(ability.createdAt).to.not.be.undefined(),
                   test.expect(ability.updatedAt).to.not.be.undefined()
                 ])
@@ -288,8 +294,14 @@ test.describe('abilities api', function () {
 
       test.it('should update all provided ability data if pass validation', () => {
         const fooNewDescription = 'foo-new-ability-description'
+        const fooNewActionDescription = 'foo-new-ability-action-description'
+        const fooNewStateDescription = 'foo-new-ability-state-description'
+        const fooNewEventDescription = 'foo-new-ability-event-description'
         return updateAbility(serviceUserAbility._id, {
-          description: fooNewDescription
+          description: fooNewDescription,
+          actionDescription: fooNewActionDescription,
+          eventDescription: fooNewEventDescription,
+          stateDescription: fooNewStateDescription
         })
           .then((patchResponse) => {
             return getAbility(serviceUserAbility._id)
@@ -298,6 +310,9 @@ test.describe('abilities api', function () {
                 return Promise.all([
                   test.expect(data.name).to.equal(fooAbility.name),
                   test.expect(data.description).to.equal(fooNewDescription),
+                  test.expect(data.actionDescription).to.equal(fooNewActionDescription),
+                  test.expect(data.stateDescription).to.equal(fooNewStateDescription),
+                  test.expect(data.eventDescription).to.equal(fooNewEventDescription),
                   test.expect(patchResponse.statusCode).to.equal(204)
                 ])
               })
