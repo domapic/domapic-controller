@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 ### Changed
 ### Fixed
+- Expose ability description fields to api
 ### Removed
 
 ## [1.0.0-alpha.3] - 2018-10-09

@@ -23,13 +23,13 @@
     "coveralls": "cat ./.coverage/unit/lcov.info | coveralls"
   },
   "dependencies": {
-    "domapic-base": "1.0.0-beta.11",
+    "domapic-base": "^1.0.0-beta.12",
     "inquirer": "6.2.0",
     "inquirer-autocomplete-prompt": "1.0.1",
+    "isuri": "2.0.3",
     "md5": "2.2.1",
     "mongoose": "5.2.3",
-    "rand-token": "0.4.0",
-    "isuri": "2.0.3"
+    "rand-token": "0.4.0"
   },
   "devDependencies": {
     "coveralls": "3.0.2",
