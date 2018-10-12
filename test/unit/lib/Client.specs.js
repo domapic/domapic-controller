@@ -1,5 +1,6 @@
 
 const test = require('narval')
+const _ = require('lodash')
 
 const mocks = require('../mocks')
 
@@ -20,7 +21,13 @@ test.describe('Client', () => {
 
   test.describe('instance', () => {
     test.it('should be an object', () => {
-      return test.expect(client).to.deep.equal({})
+      return test.expect(_.isObject(client)).to.be.true()
+    })
+
+    test.it('should contain all client operations', () => {
+      return test.expect(client).to.have.all.keys(
+        'sendAction'
+      )
     })
   })
 })

@@ -21,6 +21,9 @@ const Mock = function () {
     },
     deleteAbility: {
       handler: sandbox.stub().usingPromise().resolves()
+    },
+    abilityAction: {
+      handler: sandbox.stub().usingPromise().resolves()
     }
   }
 
