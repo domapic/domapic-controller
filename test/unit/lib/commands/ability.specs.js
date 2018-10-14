@@ -294,7 +294,6 @@ test.describe('ability commands', () => {
       }
 
       test.it('should call to ability model findById method', () => {
-        const fooId = 'foo-id'
         modelsMocks.stubs.Ability.findById.resolves(fooAbility)
         return commands.validateAction(fooId, fooActionData)
           .then((result) => {
@@ -330,7 +329,6 @@ test.describe('ability commands', () => {
       })
 
       test.it('should call to validate data against a schema created with ability data description fields', () => {
-        const fooId = 'foo-id'
         const fooDataDescriptionFields = {
           type: 'foo-type',
           format: 'foo-format',
@@ -357,9 +355,6 @@ test.describe('ability commands', () => {
           'foo validation error message 2'
         ]
         const fooError = new Error('foo error')
-        const fooAbilityNoAction = {
-          action: false
-        }
         modelsMocks.stubs.Ability.findById.resolves(fooAbility)
         baseMocks.stubs.service.errors.BadData.returns(fooError)
         jsonSchemaValidatorStub.returns({

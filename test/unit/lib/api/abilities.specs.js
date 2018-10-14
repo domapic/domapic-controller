@@ -344,9 +344,6 @@ test.describe('abilities api', () => {
 
     test.describe('abilityAction handler', () => {
       const fooId = 'foo-ability-id'
-      const fooAbility = {
-        _id: fooId
-      }
       const fooActionData = {
         data: 'foo-data'
       }
