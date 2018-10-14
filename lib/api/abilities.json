@@ -2,6 +2,9 @@
   "tags": [{
     "name": "ability",
     "description": "Domapic service ability"
+  },{
+    "name": "action",
+    "description": "Domapic service ability action"
   }],
   "components": {
     "schemas": {
@@ -280,11 +283,38 @@
         "items": {
           "$ref": "#/components/schemas/Ability"
         }
+      },
+      "AbilityData": {
+        "description": "Data that abilities actions, states and events can handle",
+        "type": "object",
+        "properties": {
+          "data": {
+            "oneOf": [{
+              "type": "string"
+            }, {
+              "type": "boolean"
+            }, {
+              "type": "number"
+            }]
+          }
+        },
+        "additionalProperties": false,
+        "example": {
+          "data": "Foo data"
+        }
       }
     },
     "responses": {
       "Ability": {
         "description": "Ability added or modified",
+        "headers": {
+          "location": {
+            "$ref": "#/components/headers/ContentLocation"
+          }
+        }
+      },
+      "AbilityAction": {
+        "description": "Ability action successfully dispatched",
         "headers": {
           "location": {
             "$ref": "#/components/headers/ContentLocation"
@@ -481,6 +511,49 @@
         "responses": {
           "204": {
             "$ref": "#/components/responses/Deleted"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          }
+        },
+        "security": [{
+          "jwt": []
+        }, {
+          "apiKey": []
+        }]
+      }
+    },
+    "/abilities/{id}/action": {
+      "post": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "Ability id"
+          }
+        ],
+        "tags": ["ability", "action"],
+        "summary": "Dispatches an ability action",
+        "description": "Dispatches a request to the correspondant ability action. If command is an state, controller will make a request to the ability in order to return the state. Event command can be used by the service only, in order to inform about changes",
+        "operationId": "abilityAction",
+        "requestBody": {
+          "description": "Data of the action",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AbilityData"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "$ref": "#/components/responses/AbilityAction"
           },
           "404": {
             "$ref": "#/components/responses/NotFoundError"

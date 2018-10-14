@@ -49,7 +49,8 @@ test.describe('Commands', () => {
 
     test.it('should contain all composed commands', () => {
       return test.expect(commands.composed).to.have.all.keys(
-        'initUsers'
+        'initUsers',
+        'dispatchAbilityAction'
       )
     })
 
@@ -70,7 +71,8 @@ test.describe('Commands', () => {
         'get',
         'getById',
         'update',
-        'remove'
+        'remove',
+        'validateAction'
       )
     })
   })

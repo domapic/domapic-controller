@@ -14,6 +14,8 @@ test.describe('composed commands', () => {
     let baseMocks
     let userCommandsMocks
     let securityTokenCommandsMocks
+    let abilityCommandsMocks
+    let serviceCommandsMocks
 
     test.beforeEach(() => {
       baseMocks = new mocks.Base()
@@ -22,10 +24,14 @@ test.describe('composed commands', () => {
       utilMocks = new mocks.Utils()
       userCommandsMocks = new mocks.commands.User()
       securityTokenCommandsMocks = new mocks.commands.SecurityToken()
+      abilityCommandsMocks = new mocks.commands.Ability()
+      serviceCommandsMocks = new mocks.commands.Service()
 
       commands = composed.Commands(baseMocks.stubs.service, modelsMocks.stubs, clientMocks.stubs, {
         user: userCommandsMocks.stubs.commands,
-        securityToken: securityTokenCommandsMocks.stubs.commands
+        securityToken: securityTokenCommandsMocks.stubs.commands,
+        ability: abilityCommandsMocks.stubs.commands,
+        service: serviceCommandsMocks.stubs.commands
       })
     })
 
@@ -36,6 +42,8 @@ test.describe('composed commands', () => {
       userCommandsMocks.restore()
       securityTokenCommandsMocks.restore()
       utilMocks.restore()
+      abilityCommandsMocks.restore()
+      serviceCommandsMocks.restore()
     })
 
     test.describe('initUsers method', () => {
@@ -103,6 +111,37 @@ test.describe('composed commands', () => {
               ])
             })
         })
+      })
+    })
+
+    test.describe('dispatchAbilityAction method', () => {
+      const fooAbility = {
+        _id: 'foo-id',
+        _service: 'foo-service-id'
+      }
+      const fooService = {
+        _id: 'foo-service-id'
+      }
+      const fooActionData = {
+        data: 'foo-data'
+      }
+
+      test.it('should call to ability validateAction command', () => {
+        abilityCommandsMocks.stubs.commands.validateAction.resolves(fooAbility)
+        return commands.dispatchAbilityAction('foo-id', fooActionData)
+          .then(() => {
+            return test.expect(abilityCommandsMocks.stubs.commands.validateAction).to.have.been.calledWith('foo-id', fooActionData)
+          })
+      })
+
+      test.it('should call to send action, passing service data, ability data and action data', () => {
+        abilityCommandsMocks.stubs.commands.validateAction.resolves(fooAbility)
+        serviceCommandsMocks.stubs.commands.getById.resolves(fooService)
+
+        return commands.dispatchAbilityAction('foo-id', fooActionData)
+          .then(() => {
+            return test.expect(clientMocks.stubs.sendAction).to.have.been.calledWith(fooService, fooAbility, fooActionData)
+          })
       })
     })
   })

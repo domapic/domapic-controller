@@ -10,6 +10,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 ### Removed
 
+## [1.0.0-alpha.4] - 2018-10-14
+### Added
+- Add service action api
+
+### Fixed
+- Expose ability description fields to api
+
 ## [1.0.0-alpha.3] - 2018-10-09
 ### Fixed
 - Exclude document being updated from unique fields validation

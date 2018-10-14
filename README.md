@@ -161,7 +161,7 @@ Follow the next steps to securize your Controller before exposing it to the inte
 	domapic-controller --name=controller user add
 	```
 
-	You will be prompted for user name, role, email and password. Using your real email will allow you to use OAuth to login at Domapic Cloud and acces to your server through it.
+	You will be prompted for user name, role, email and password. Using your real email will allow you to use OAuth to login at Domapic Cloud and access to your controller through it.
 
 * __Enable ssl:__
 	

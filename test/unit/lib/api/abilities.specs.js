@@ -341,6 +341,72 @@ test.describe('abilities api', () => {
           })
       })
     })
+
+    test.describe('abilityAction handler', () => {
+      const fooId = 'foo-ability-id'
+      const fooActionData = {
+        data: 'foo-data'
+      }
+      let sandbox
+      let response
+
+      test.beforeEach(() => {
+        sandbox = test.sinon.createSandbox()
+        response = {
+          status: sandbox.stub(),
+          header: sandbox.stub()
+        }
+        commandsMocks.stubs.composed.dispatchAbilityAction.resolves()
+      })
+
+      test.afterEach(() => {
+        sandbox.restore()
+      })
+
+      test.it('should call dispatch ability action, passing the received id', () => {
+        return operations.abilityAction.handler({
+          path: {
+            id: fooId
+          }
+        }, fooActionData, response)
+          .then(() => {
+            return test.expect(commandsMocks.stubs.composed.dispatchAbilityAction).to.have.been.calledWith(fooId, fooActionData)
+          })
+      })
+
+      test.it('should add a 201 header to response', () => {
+        return operations.abilityAction.handler({
+          path: {
+            id: fooId
+          }
+        }, fooActionData, response)
+          .then(() => {
+            return test.expect(response.status).to.have.been.calledWith(201)
+          })
+      })
+
+      test.it('should set the response header with the correspondant ability state uri', () => {
+        return operations.abilityAction.handler({
+          path: {
+            id: fooId
+          }
+        }, fooActionData, response)
+          .then(() => {
+            return test.expect(response.header).to.have.been.calledWith('location', '/api/abilities/foo-ability-id/state')
+          })
+      })
+
+      test.it('should resolve the promise with no value', () => {
+        return operations.abilityAction.handler({
+          path: {
+            id: fooId
+          }
+        }, fooActionData, response)
+          .then((result) => {
+            return test.expect(result).to.be.undefined()
+          })
+      })
+    })
   })
 
   test.describe('openapi', () => {
