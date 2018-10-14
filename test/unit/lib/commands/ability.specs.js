@@ -1,5 +1,6 @@
 
 const test = require('narval')
+const jsonschema = require('jsonschema')
 
 const mocks = require('../../mocks')
 
@@ -7,22 +8,31 @@ const ability = require('../../../../lib/commands/ability')
 
 test.describe('ability commands', () => {
   test.describe('Commands instance', () => {
+    let sandbox
     let commands
     let utilMocks
     let modelsMocks
     let clientMocks
     let baseMocks
+    let jsonSchemaValidatorStub
 
     test.beforeEach(() => {
+      sandbox = test.sinon.createSandbox()
       baseMocks = new mocks.Base()
       modelsMocks = new mocks.Models()
       clientMocks = new mocks.Client()
       utilMocks = new mocks.Utils()
-
+      jsonSchemaValidatorStub = sandbox.stub().returns({
+        errors: []
+      })
+      sandbox.stub(jsonschema, 'Validator').returns({
+        validate: jsonSchemaValidatorStub
+      })
       commands = ability.Commands(baseMocks.stubs.service, modelsMocks.stubs, clientMocks.stubs)
     })
 
     test.afterEach(() => {
+      sandbox.restore()
       baseMocks.restore()
       modelsMocks.restore()
       clientMocks.restore()
@@ -270,6 +280,108 @@ test.describe('ability commands', () => {
             return test.assert.fail()
           }, err => {
             return test.expect(err).to.equal(fooError)
+          })
+      })
+    })
+
+    test.describe('validateAction method', () => {
+      const fooId = 'foo-id'
+      const fooAbility = {
+        action: true
+      }
+      const fooActionData = {
+        data: 'foo-data'
+      }
+
+      test.it('should call to ability model findById method', () => {
+        const fooId = 'foo-id'
+        modelsMocks.stubs.Ability.findById.resolves(fooAbility)
+        return commands.validateAction(fooId, fooActionData)
+          .then((result) => {
+            return test.expect(modelsMocks.stubs.Ability.findById).to.have.been.calledWith(fooId)
+          })
+      })
+
+      test.it('should return a not found error if findById method throws an error', () => {
+        const fooError = new Error('foo error')
+        modelsMocks.stubs.Ability.findById.rejects(new Error())
+        baseMocks.stubs.service.errors.NotFound.returns(fooError)
+        return commands.validateAction('foo-id', fooActionData)
+          .then(() => {
+            return test.assert.fail()
+          }, err => {
+            return test.expect(err).to.equal(fooError)
+          })
+      })
+
+      test.it('should return a not found error if ability has not defined action', () => {
+        const fooError = new Error('foo error')
+        const fooAbilityNoAction = {
+          action: false
+        }
+        modelsMocks.stubs.Ability.findById.resolves(fooAbilityNoAction)
+        baseMocks.stubs.service.errors.NotFound.returns(fooError)
+        return commands.validateAction('foo-id', fooActionData)
+          .then(() => {
+            return test.assert.fail()
+          }, err => {
+            return test.expect(err).to.equal(fooError)
+          })
+      })
+
+      test.it('should call to validate data against a schema created with ability data description fields', () => {
+        const fooId = 'foo-id'
+        const fooDataDescriptionFields = {
+          type: 'foo-type',
+          format: 'foo-format',
+          enum: 'foo-enum',
+          maxLength: 'foo-max-length',
+          minLength: 'foo-min-length',
+          pattern: 'foo-pattern',
+          multipleOf: 'foo-multiple-of',
+          minimum: 'minimum',
+          maximum: 'maximum',
+          exclusiveMaximum: 'foo-exclusive-maximum',
+          exclusiveMinimum: 'foo-exclusive-minimum'
+        }
+        modelsMocks.stubs.Ability.findById.resolves({...fooAbility, ...fooDataDescriptionFields})
+        return commands.validateAction(fooId, fooActionData)
+          .then((result) => {
+            return test.expect(jsonSchemaValidatorStub).to.have.been.calledWith('foo-data', fooDataDescriptionFields)
+          })
+      })
+
+      test.it('should reject with a BadData Error containing the validation message if validation fails', () => {
+        const fooValidationErrorMessages = [
+          'foo validation error message 1',
+          'foo validation error message 2'
+        ]
+        const fooError = new Error('foo error')
+        const fooAbilityNoAction = {
+          action: false
+        }
+        modelsMocks.stubs.Ability.findById.resolves(fooAbility)
+        baseMocks.stubs.service.errors.BadData.returns(fooError)
+        jsonSchemaValidatorStub.returns({
+          errors: fooValidationErrorMessages
+        })
+        return commands.validateAction('foo-id', fooActionData)
+          .then(() => {
+            return test.assert.fail()
+          }, err => {
+            return Promise.all([
+              test.expect(baseMocks.stubs.service.errors.BadData).to.have.been.calledWith(fooValidationErrorMessages.join('. ')),
+              test.expect(err).to.equal(fooError)
+            ])
+          })
+      })
+
+      test.it('should resolve the promise with the ability', () => {
+        const fooId = 'foo-id'
+        modelsMocks.stubs.Ability.findById.resolves(fooAbility)
+        return commands.validateAction(fooId, fooActionData)
+          .then(result => {
+            return test.expect(result).to.equal(fooAbility)
           })
       })
     })
