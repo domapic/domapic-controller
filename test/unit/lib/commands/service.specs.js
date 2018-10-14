@@ -154,7 +154,22 @@ test.describe('service commands', () => {
           .then((result) => {
             return Promise.all([
               test.expect(result).to.equal(fooResult),
-              test.expect(modelsMocks.stubs.Service.findById).to.have.been.calledWith(fooId)
+              test.expect(modelsMocks.stubs.Service.findById).to.have.been.calledWith(fooId, 'name processId description package _user version url updatedAt createdAt')
+            ])
+          })
+      })
+
+      test.it('should not filter fields if allFields option is received', () => {
+        const fooId = 'foo-id'
+        const fooResult = 'foo'
+        modelsMocks.stubs.Service.findById.resolves(fooResult)
+        return commands.getById(fooId, {
+          allFields: true
+        })
+          .then((result) => {
+            return Promise.all([
+              test.expect(result).to.equal(fooResult),
+              test.expect(modelsMocks.stubs.Service.findById).to.have.been.calledWith(fooId, undefined)
             ])
           })
       })

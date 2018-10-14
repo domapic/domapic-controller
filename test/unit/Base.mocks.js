@@ -6,6 +6,10 @@ const domapicBase = require('domapic-base')
 const Mock = function () {
   const sandbox = test.sinon.createSandbox()
 
+  const connectionStub = {
+    post: sandbox.stub().usingPromise().resolves()
+  }
+
   const serviceStubs = {
     server: {
       addAuthentication: sandbox.stub().usingPromise().resolves(),
@@ -27,6 +31,10 @@ const Mock = function () {
       MethodNotAllowed: sandbox.stub().returns(new Error()),
       Forbidden: sandbox.stub().returns(new Error()),
       Conflict: sandbox.stub().returns(new Error())
+    },
+    client: {
+      Connection: sandbox.stub().returns(connectionStub),
+      connection: connectionStub
     }
   }
 
