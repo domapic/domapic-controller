@@ -1,6 +1,6 @@
 {
   "name": "domapic-controller",
-  "version": "1.0.0-alpha.4",
+  "version": "1.0.0-alpha.5",
   "description": "Controller for Domapic systems",
   "main": "server.js",
   "keywords": [
@@ -23,19 +23,19 @@
     "coveralls": "cat ./.coverage/unit/lcov.info | coveralls"
   },
   "dependencies": {
-    "domapic-base": "1.0.0-beta.12",
+    "domapic-base": "1.0.0-beta.13",
     "inquirer": "6.2.0",
     "inquirer-autocomplete-prompt": "1.0.1",
     "isuri": "2.0.3",
     "jsonschema": "1.2.4",
     "md5": "2.2.1",
-    "mongoose": "5.2.3",
+    "mongoose": "5.3.3",
     "rand-token": "0.4.0"
   },
   "devDependencies": {
     "coveralls": "3.0.2",
     "narval": "2.2.1",
-    "request": "2.87.0",
+    "request": "2.88.0",
     "request-promise": "4.2.2",
     "mockery": "2.1.0"
   },

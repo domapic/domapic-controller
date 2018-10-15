@@ -380,5 +380,56 @@ test.describe('ability commands', () => {
           })
       })
     })
+
+    test.describe('validateState method', () => {
+      const fooId = 'foo-id'
+      const fooAbility = {
+        state: true
+      }
+
+      test.it('should call to ability model findById method', () => {
+        modelsMocks.stubs.Ability.findById.resolves(fooAbility)
+        return commands.validateState(fooId)
+          .then((result) => {
+            return test.expect(modelsMocks.stubs.Ability.findById).to.have.been.calledWith(fooId)
+          })
+      })
+
+      test.it('should return a not found error if findById method throws an error', () => {
+        const fooError = new Error('foo error')
+        modelsMocks.stubs.Ability.findById.rejects(new Error())
+        baseMocks.stubs.service.errors.NotFound.returns(fooError)
+        return commands.validateState('foo-id')
+          .then(() => {
+            return test.assert.fail()
+          }, err => {
+            return test.expect(err).to.equal(fooError)
+          })
+      })
+
+      test.it('should return a not found error if ability has not defined state', () => {
+        const fooError = new Error('foo error')
+        const fooAbilityNoState = {
+          state: false
+        }
+        modelsMocks.stubs.Ability.findById.resolves(fooAbilityNoState)
+        baseMocks.stubs.service.errors.NotFound.returns(fooError)
+        return commands.validateState('foo-id')
+          .then(() => {
+            return test.assert.fail()
+          }, err => {
+            return test.expect(err).to.equal(fooError)
+          })
+      })
+
+      test.it('should resolve the promise with the ability', () => {
+        const fooId = 'foo-id'
+        modelsMocks.stubs.Ability.findById.resolves(fooAbility)
+        return commands.validateState(fooId)
+          .then(result => {
+            return test.expect(result).to.equal(fooAbility)
+          })
+      })
+    })
   })
 })

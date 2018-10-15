@@ -4,7 +4,7 @@ const testUtils = require('narval/utils')
 
 const utils = require('./utils')
 
-test.describe('ability action api', function () {
+test.describe('ability state api', function () {
   this.timeout(10000)
   let authenticator = utils.Authenticator()
   let abilityId
@@ -43,11 +43,10 @@ test.describe('ability action api', function () {
   const fooAbility = {
     name: 'foo-ability-name',
     description: 'foo-description',
-    action: true,
+    action: false,
     event: false,
-    state: false,
-    format: 'email',
-    type: 'string',
+    state: true,
+    type: 'boolean',
     actionDescription: 'foo action description'
   }
 
@@ -63,30 +62,24 @@ test.describe('ability action api', function () {
         }))
   })
 
-  test.describe('ability action api', () => {
+  test.describe('ability state api', () => {
     test.it('should return a not found error if ability id is unknown', () => {
-      return utils.request(`/abilities/foo-ability-id/action`, {
-        method: 'POST',
-        body: {
-          data: 'foo@foo.com'
-        },
+      return utils.request(`/abilities/foo-ability-id/state`, {
+        method: 'GET',
         ...authenticator.credentials()
       }).then(response => {
         return test.expect(response.statusCode).to.equal(404)
       })
     })
 
-    test.it('should return a not found error if ability has not a related action', () => {
+    test.it('should return a not found error if ability has not a related state', () => {
       return addAbility({...fooAbility,
-        name: 'foo-ability-no-action-name',
-        action: false
+        name: 'foo-ability-no-state-name',
+        state: false
       }).then(addResponse => {
         const noActionAbilityId = addResponse.headers.location.split('/').pop()
-        return utils.request(`/abilities/${noActionAbilityId}/action`, {
-          method: 'POST',
-          body: {
-            data: 'foo@foo.com'
-          },
+        return utils.request(`/abilities/${noActionAbilityId}/state`, {
+          method: 'GET',
           ...authenticator.credentials()
         }).then(response => {
           return Promise.all([
@@ -97,34 +90,16 @@ test.describe('ability action api', function () {
       })
     })
 
-    test.it('should return a bad data error if action data is not valid', () => {
-      return utils.request(`/abilities/${abilityId}/action`, {
-        method: 'POST',
-        body: {
-          data: 'foo'
-        },
-        ...authenticator.credentials()
-      }).then(response => {
-        return Promise.all([
-          test.expect(response.statusCode).to.equal(422),
-          test.expect(response.body.message).to.contain('instance does not conform to the "email" format')
-        ])
-      })
-    })
-
-    test.it('should make a request to the service action url', () => {
-      return utils.request(`/abilities/${abilityId}/action`, {
-        method: 'POST',
-        body: {
-          data: 'foo@foo.com'
-        },
+    test.it('should make a request to the service state url', () => {
+      return utils.request(`/abilities/${abilityId}/state`, {
+        method: 'GET',
         ...authenticator.credentials()
       }).then(response => {
         return testUtils.logs.combined('controller')
           .then(controllerLogs => {
             return Promise.all([
-              test.expect(controllerLogs).to.contain(`Sending action to service "${serviceId}", ability "${abilityId}". Data: "foo@foo.com"`),
-              test.expect(controllerLogs).to.contain(`Send Request POST | https://192.168.1.1/api/abilities/foo-ability-name/action`),
+              test.expect(controllerLogs).to.contain(`Sending request to get state from service "${serviceId}", ability "${abilityId}"`),
+              test.expect(controllerLogs).to.contain(`Send Request GET | https://192.168.1.1/api/abilities/foo-ability-name/state`),
               test.expect(response.statusCode).to.equal(502),
               test.expect(response.body.message).to.equal('Service not available')
             ])

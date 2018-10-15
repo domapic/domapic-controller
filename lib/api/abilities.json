@@ -5,6 +5,9 @@
   },{
     "name": "action",
     "description": "Domapic service ability action"
+  },{
+    "name": "state",
+    "description": "Domapic service ability state"
   }],
   "components": {
     "schemas": {
@@ -538,7 +541,7 @@
         ],
         "tags": ["ability", "action"],
         "summary": "Dispatches an ability action",
-        "description": "Dispatches a request to the correspondant ability action. If command is an state, controller will make a request to the ability in order to return the state. Event command can be used by the service only, in order to inform about changes",
+        "description": "Dispatches a request to the correspondant ability action.",
         "operationId": "abilityAction",
         "requestBody": {
           "description": "Data of the action",
@@ -554,6 +557,45 @@
         "responses": {
           "201": {
             "$ref": "#/components/responses/AbilityAction"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          }
+        },
+        "security": [{
+          "jwt": []
+        }, {
+          "apiKey": []
+        }]
+      }
+    },
+    "/abilities/{id}/state": {
+      "get": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "Ability id"
+          }
+        ],
+        "tags": ["ability", "state"],
+        "summary": "Get ability state",
+        "description": "Controller makes a request to the ability in order to return the state.",
+        "operationId": "abilityState",
+        "responses": {
+          "200": {
+            "description": "Get ability state success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AbilityData"
+                }
+              }
+            }
           },
           "404": {
             "$ref": "#/components/responses/NotFoundError"

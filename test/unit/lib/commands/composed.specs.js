@@ -144,5 +144,33 @@ test.describe('composed commands', () => {
           })
       })
     })
+
+    test.describe('getAbilityState method', () => {
+      const fooAbility = {
+        _id: 'foo-id',
+        _service: 'foo-service-id'
+      }
+      const fooService = {
+        _id: 'foo-service-id'
+      }
+
+      test.it('should call to ability validateState command', () => {
+        abilityCommandsMocks.stubs.commands.validateState.resolves(fooAbility)
+        return commands.getAbilityState('foo-id')
+          .then(() => {
+            return test.expect(abilityCommandsMocks.stubs.commands.validateState).to.have.been.calledWith('foo-id')
+          })
+      })
+
+      test.it('should call to get state, passing service data and ability data', () => {
+        abilityCommandsMocks.stubs.commands.validateState.resolves(fooAbility)
+        serviceCommandsMocks.stubs.commands.getById.resolves(fooService)
+
+        return commands.getAbilityState('foo-id')
+          .then(() => {
+            return test.expect(clientMocks.stubs.getState).to.have.been.calledWith(fooService, fooAbility)
+          })
+      })
+    })
   })
 })

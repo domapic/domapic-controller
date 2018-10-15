@@ -13,7 +13,8 @@ const Mock = function () {
     getById: sandbox.stub().usingPromise().resolves(),
     update: sandbox.stub().usingPromise().resolves(),
     remove: sandbox.stub().usingPromise().resolves(),
-    validateAction: sandbox.stub().usingPromise().resolves()
+    validateAction: sandbox.stub().usingPromise().resolves(),
+    validateState: sandbox.stub().usingPromise().resolves()
   }
 
   const stubs = {
