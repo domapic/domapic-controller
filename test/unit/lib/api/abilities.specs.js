@@ -417,8 +417,8 @@ test.describe('abilities api', () => {
             id: fooId
           }
         }).then(() => {
-            return test.expect(commandsMocks.stubs.composed.getAbilityState).to.have.been.calledWith(fooId)
-          })
+          return test.expect(commandsMocks.stubs.composed.getAbilityState).to.have.been.calledWith(fooId)
+        })
       })
     })
   })
