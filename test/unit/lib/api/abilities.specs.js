@@ -407,6 +407,20 @@ test.describe('abilities api', () => {
           })
       })
     })
+
+    test.describe('getState handler', () => {
+      const fooId = 'foo-ability-id'
+
+      test.it('should call get ability state, passing the received id', () => {
+        return operations.abilityState.handler({
+          path: {
+            id: fooId
+          }
+        }).then(() => {
+            return test.expect(commandsMocks.stubs.composed.getAbilityState).to.have.been.calledWith(fooId)
+          })
+      })
+    })
   })
 
   test.describe('openapi', () => {
