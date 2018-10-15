@@ -24,6 +24,9 @@ const Mock = function () {
     },
     abilityAction: {
       handler: sandbox.stub().usingPromise().resolves()
+    },
+    abilityState: {
+      handler: sandbox.stub().usingPromise().resolves()
     }
   }
 
