@@ -75,5 +75,63 @@ test.describe('Client', () => {
           })
       })
     })
+
+    test.describe('getState method', () => {
+      const fooServiceData = {
+        url: 'foo-service-url',
+        apiKey: 'foo-service-apiKey'
+      }
+      const fooAbility = {
+        name: 'foo-ability-name'
+      }
+
+      test.beforeEach(() => {
+        baseMocks.stubs.service.client.connection.get.resolves({})
+      })
+
+      test.it('should call to create a new Connection, passing the service url and apiKey', () => {
+        return client.getState(fooServiceData, fooAbility)
+          .then(() => {
+            return test.expect(baseMocks.stubs.service.client.Connection).to.have.been.calledWith(fooServiceData.url, {
+              apiKey: fooServiceData.apiKey
+            })
+          })
+      })
+
+      test.it('should call to get ability action handler, passing the data', () => {
+        return client.getState(fooServiceData, fooAbility)
+          .then(() => {
+            return test.expect(baseMocks.stubs.service.client.connection.get).to.have.been.calledWith('abilities/foo-ability-name/state')
+          })
+      })
+
+      test.it('should convert received ServerUnavailable errors to BadGateway errors', () => {
+        const fooBadGatewayError = new Error('foo error')
+        const fooServerUnavailableError = new Error('server unavailable')
+        fooServerUnavailableError.typeof = 'ServerUnavailable'
+
+        baseMocks.stubs.service.errors.BadGateway.returns(fooBadGatewayError)
+        baseMocks.stubs.service.client.connection.get.rejects(fooServerUnavailableError)
+
+        return client.getState(fooServiceData, fooAbility)
+          .then(response => {
+            return test.assert.fail()
+          }, (err) => {
+            return test.expect(err).to.equal(fooBadGatewayError)
+          })
+      })
+
+      test.it('should reject with any other received error', () => {
+        const fooError = new Error()
+        baseMocks.stubs.service.client.connection.get.rejects(fooError)
+
+        return client.getState(fooServiceData, fooAbility)
+          .then(response => {
+            return test.assert.fail()
+          }, (err) => {
+            return test.expect(err).to.equal(fooError)
+          })
+      })
+    })
   })
 })

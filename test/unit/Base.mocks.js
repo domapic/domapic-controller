@@ -7,7 +7,8 @@ const Mock = function () {
   const sandbox = test.sinon.createSandbox()
 
   const connectionStub = {
-    post: sandbox.stub().usingPromise().resolves()
+    post: sandbox.stub().usingPromise().resolves(),
+    get: sandbox.stub().usingPromise().resolves()
   }
 
   const serviceStubs = {
