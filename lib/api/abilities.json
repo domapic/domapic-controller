@@ -5,6 +5,9 @@
   },{
     "name": "action",
     "description": "Domapic service ability action"
+  },{
+    "name": "state",
+    "description": "Domapic service ability state"
   }],
   "components": {
     "schemas": {
