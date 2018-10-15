@@ -6,12 +6,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [unreleased]
 ### Added
+### Changed
+### Fixed
+### Removed
+
+## [1.0.0-alpha.5] - 2018-10-15
+### Added
 - Add ability state api
+
 ### Changed
 - Upgrade dependencies
 - Returns BadGateway error instead of ClientTimeOut error when service is not available
-### Fixed
-### Removed
 
 ## [1.0.0-alpha.4] - 2018-10-14
 ### Added
