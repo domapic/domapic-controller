@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [unreleased]
 ### Added
 ### Changed
+- Upgrade dependencies
+- Returns BadGateway error instead of ClientTimeOut error when service is not available
 ### Fixed
 ### Removed
 

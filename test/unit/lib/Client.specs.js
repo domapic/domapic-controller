@@ -47,19 +47,19 @@ test.describe('Client', () => {
           })
       })
 
-      test.it('should convert received ServerUnavailable errors to ClientTimeOut errors', () => {
-        const fooClientTimeOutError = new Error('foo error')
+      test.it('should convert received ServerUnavailable errors to BadGateway errors', () => {
+        const fooBadGatewayError = new Error('foo error')
         const fooServerUnavailableError = new Error('server unavailable')
         fooServerUnavailableError.typeof = 'ServerUnavailable'
 
-        baseMocks.stubs.service.errors.ClienTimeOut.returns(fooClientTimeOutError)
+        baseMocks.stubs.service.errors.BadGateway.returns(fooBadGatewayError)
         baseMocks.stubs.service.client.connection.post.rejects(fooServerUnavailableError)
 
         return client.sendAction(fooServiceData, fooAbility, fooData)
           .then(response => {
             return test.assert.fail()
           }, (err) => {
-            return test.expect(err).to.equal(fooClientTimeOutError)
+            return test.expect(err).to.equal(fooBadGatewayError)
           })
       })
 

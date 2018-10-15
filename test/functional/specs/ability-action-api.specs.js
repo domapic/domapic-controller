@@ -125,7 +125,7 @@ test.describe('ability action api', function () {
             return Promise.all([
               test.expect(controllerLogs).to.contain(`Sending action to service "${serviceId}", ability "${abilityId}". Data: "foo@foo.com"`),
               test.expect(controllerLogs).to.contain(`Send Request POST | https://192.168.1.1/api/abilities/foo-ability-name/action`),
-              test.expect(response.statusCode).to.equal(408),
+              test.expect(response.statusCode).to.equal(502),
               test.expect(response.body.message).to.equal('Service not available')
             ])
           })

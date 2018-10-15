@@ -31,8 +31,9 @@ const Mock = function () {
       MethodNotAllowed: sandbox.stub().returns(new Error()),
       Forbidden: sandbox.stub().returns(new Error()),
       Conflict: sandbox.stub().returns(new Error()),
-      ClienTimeOut: sandbox.stub().returns(new Error()),
-      ServerUnavailable: sandbox.stub().returns(new Error())
+      ClientTimeOut: sandbox.stub().returns(new Error()),
+      ServerUnavailable: sandbox.stub().returns(new Error()),
+      BadGateway: sandbox.stub().returns(new Error())
     },
     client: {
       Connection: sandbox.stub().returns(connectionStub),
