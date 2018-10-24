@@ -172,5 +172,38 @@ test.describe('composed commands', () => {
           })
       })
     })
+
+    test.describe('triggerAbilityEvent method', () => {
+      const fooAbility = {
+        _id: 'foo-ability-id',
+        _service: 'foo-service-id'
+      }
+      const fooService = {
+        _id: 'foo-service-id'
+      }
+      const fooEventData = {
+        data: 'foo-data'
+      }
+
+      test.it('should call to ability validateEvent command', () => {
+        abilityCommandsMocks.stubs.commands.validateEvent.resolves(fooAbility)
+        serviceCommandsMocks.stubs.commands.getById.resolves(fooService)
+
+        return commands.triggerAbilityEvent('foo-id', fooEventData)
+          .then(() => {
+            return test.expect(abilityCommandsMocks.stubs.commands.validateEvent).to.have.been.calledWith('foo-id', fooEventData)
+          })
+      })
+
+      test.it('should call to get related service, passing ability data', () => {
+        abilityCommandsMocks.stubs.commands.validateEvent.resolves(fooAbility)
+        serviceCommandsMocks.stubs.commands.getById.resolves(fooService)
+
+        return commands.triggerAbilityEvent('foo-id', fooEventData)
+          .then(() => {
+            return test.expect(serviceCommandsMocks.stubs.commands.getById).to.have.been.calledWith(fooAbility._service)
+          })
+      })
+    })
   })
 })
