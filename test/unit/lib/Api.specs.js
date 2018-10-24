@@ -53,7 +53,8 @@ test.describe('Api', () => {
           'addAbility',
           'deleteAbility',
           'abilityAction',
-          'abilityState'
+          'abilityState',
+          'abilityEvent'
         )
       })
     })
