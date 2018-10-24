@@ -421,6 +421,107 @@ test.describe('abilities api', () => {
         })
       })
     })
+
+    test.describe('abilityEvent auth', () => {
+      const fooUserId = 'foo-user-id'
+      const fooParams = {
+        path: {
+          _id: 'foo-ability-id'
+        }
+      }
+
+      test.it('should resolve if logged user is owner of the ability', () => {
+        commandsMocks.stubs.ability.getById.resolves({
+          _user: fooUserId
+        })
+
+        return operations.abilityEvent.auth({
+          _id: fooUserId
+        }, fooParams, {}).then(() => {
+          return test.expect(true).to.be.true()
+        })
+      })
+
+      test.it('should reject if logged user is not owner of the ability', () => {
+        commandsMocks.stubs.ability.getById.resolves({
+          _user: fooUserId
+        })
+
+        return operations.abilityEvent.auth({
+          _id: 'another-user-id'
+        }, fooParams, {}).then(() => {
+          return test.assert.fail()
+        }, (error) => {
+          return test.expect(error).to.be.an.instanceof(Error)
+        })
+      })
+    })
+
+    test.describe('abilityEvent handler', () => {
+      const fooId = 'foo-ability-id'
+      const fooActionData = {
+        data: 'foo-data'
+      }
+      let sandbox
+      let response
+
+      test.beforeEach(() => {
+        sandbox = test.sinon.createSandbox()
+        response = {
+          status: sandbox.stub(),
+          header: sandbox.stub()
+        }
+        commandsMocks.stubs.composed.triggerAbilityEvent.resolves()
+      })
+
+      test.afterEach(() => {
+        sandbox.restore()
+      })
+
+      test.it('should call to trigger ability event, passing the received id and body', () => {
+        return operations.abilityEvent.handler({
+          path: {
+            id: fooId
+          }
+        }, fooActionData, response)
+          .then(() => {
+            return test.expect(commandsMocks.stubs.composed.triggerAbilityEvent).to.have.been.calledWith(fooId, fooActionData)
+          })
+      })
+
+      test.it('should add a 201 header to response', () => {
+        return operations.abilityEvent.handler({
+          path: {
+            id: fooId
+          }
+        }, fooActionData, response)
+          .then(() => {
+            return test.expect(response.status).to.have.been.calledWith(201)
+          })
+      })
+
+      test.it('should set the response header with the correspondant ability state uri', () => {
+        return operations.abilityEvent.handler({
+          path: {
+            id: fooId
+          }
+        }, fooActionData, response)
+          .then(() => {
+            return test.expect(response.header).to.have.been.calledWith('location', '/api/abilities/foo-ability-id/state')
+          })
+      })
+
+      test.it('should resolve the promise with no value', () => {
+        return operations.abilityEvent.handler({
+          path: {
+            id: fooId
+          }
+        }, fooActionData, response)
+          .then((result) => {
+            return test.expect(result).to.be.undefined()
+          })
+      })
+    })
   })
 
   test.describe('openapi', () => {
