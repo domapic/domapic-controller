@@ -14,6 +14,7 @@ const UsersApi = require('./lib/api/Users.mocks')
 const SecurityTokensApi = require('./lib/api/SecurityTokens.mocks')
 const ServicesApi = require('./lib/api/Services.mocks')
 const AbilitiesApi = require('./lib/api/Abilities.mocks')
+const LogsApi = require('./lib/api/Logs.mocks')
 
 const Commands = require('./lib/Commands.mocks')
 const UserCommands = require('./lib/commands/User.mocks')
@@ -36,7 +37,8 @@ module.exports = {
     Users: UsersApi,
     SecurityTokens: SecurityTokensApi,
     Services: ServicesApi,
-    Abilities: AbilitiesApi
+    Abilities: AbilitiesApi,
+    Logs: LogsApi
   },
   commands: {
     User: UserCommands,

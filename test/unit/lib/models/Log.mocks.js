@@ -11,6 +11,7 @@ const Mock = function () {
   }
 
   const LogStub = sandbox.stub().returns(logStub)
+  LogStub.find = sandbox.stub().usingPromise().resolves()
 
   const stubs = {
     log: logStub,

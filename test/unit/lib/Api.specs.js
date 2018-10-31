@@ -11,6 +11,7 @@ test.describe('Api', () => {
   let usersMocks
   let servicesMocks
   let securityTokensMocks
+  let logMocks
   let api
 
   test.beforeEach(() => {
@@ -18,6 +19,7 @@ test.describe('Api', () => {
     usersMocks = new mocks.api.Users()
     securityTokensMocks = new mocks.api.SecurityTokens()
     servicesMocks = new mocks.api.Services()
+    logMocks = new mocks.api.Logs()
     api = Api(baseMocks.stubs.service)
   })
 
@@ -26,6 +28,7 @@ test.describe('Api', () => {
     usersMocks.restore()
     servicesMocks.restore()
     securityTokensMocks.restore()
+    logMocks.restore()
   })
 
   test.describe('instance', () => {
@@ -54,7 +57,8 @@ test.describe('Api', () => {
           'deleteAbility',
           'abilityAction',
           'abilityState',
-          'abilityEvent'
+          'abilityEvent',
+          'getLogs'
         )
       })
     })

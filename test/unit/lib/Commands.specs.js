@@ -82,7 +82,8 @@ test.describe('Commands', () => {
 
     test.it('should contain all log commands', () => {
       return test.expect(commands.log).to.have.all.keys(
-        'add'
+        'add',
+        'getAll'
       )
     })
   })

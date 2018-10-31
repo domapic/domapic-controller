@@ -48,5 +48,19 @@ test.describe('log commands', () => {
           })
       })
     })
+
+    test.describe('getAll method', () => {
+      test.it('should call to log model find method, and return the result', () => {
+        const fooResult = 'foo'
+        modelsMocks.stubs.Log.find.resolves(fooResult)
+        return commands.getAll()
+          .then((result) => {
+            return Promise.all([
+              test.expect(result).to.equal(fooResult),
+              test.expect(modelsMocks.stubs.Log.find).to.have.been.called()
+            ])
+          })
+      })
+    })
   })
 })

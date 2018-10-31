@@ -7,7 +7,8 @@ const Mock = function () {
   const sandbox = test.sinon.createSandbox()
 
   const commandsStubs = {
-    add: sandbox.stub().usingPromise().resolves()
+    add: sandbox.stub().usingPromise().resolves(),
+    getAll: sandbox.stub().usingPromise().resolves()
   }
 
   const stubs = {
