@@ -1,6 +1,6 @@
 {
   "tags": [{
-    "name": "logs",
+    "name": "log",
     "description": "Controller events and actions logs"
   }],
   "components": {
@@ -56,7 +56,7 @@
   "paths": {
     "/logs": {
       "get": {
-        "tags": ["logs"],
+        "tags": ["log", "action", "event", "ability"],
         "summary": "Return logs",
         "description": "Returns an array with all events and actions logs",
         "operationId": "getLogs",
