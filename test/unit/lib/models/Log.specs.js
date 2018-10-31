@@ -6,7 +6,6 @@ const log = require('../../../../lib/models/log')
 
 test.describe('log model', () => {
   test.describe('Model instance', () => {
-    let model
     let mongooseMocks
     let baseMocks
 
@@ -21,7 +20,7 @@ test.describe('log model', () => {
     })
 
     test.it('should create a mongoose model', () => {
-      model = log.Model(baseMocks.stubs.service)
+      log.Model(baseMocks.stubs.service)
       test.expect(mongooseMocks.stubs.model).to.have.been.called()
     })
   })

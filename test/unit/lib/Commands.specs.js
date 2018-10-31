@@ -79,5 +79,11 @@ test.describe('Commands', () => {
         'validateEvent'
       )
     })
+
+    test.it('should contain all log commands', () => {
+      return test.expect(commands.log).to.have.all.keys(
+        'add'
+      )
+    })
   })
 })
