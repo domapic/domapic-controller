@@ -121,11 +121,14 @@ test.describe('ability event api', function () {
         },
         ...authenticator.credentials()
       }).then(response => {
-        return testUtils.logs.combined('controller')
-          .then(controllerLogs => {
-            return Promise.all([
-              test.expect(controllerLogs).to.contain(`Received event from service "${serviceId}", ability "${abilityId}". Data: "foo@foo.com"`)
-            ])
+        return utils.waitOnestimatedStartTime(500)
+          .then(() => {
+            return testUtils.logs.combined('controller')
+              .then(controllerLogs => {
+                return Promise.all([
+                  test.expect(controllerLogs).to.contain(`Received event from service "${serviceId}", ability "${abilityId}". Data: "foo@foo.com"`)
+                ])
+              })
           })
       })
     })
