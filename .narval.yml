@@ -163,6 +163,14 @@ suites:
         specs:
           - test/functional/specs/ability-event-api.specs.js
       coverage: *base-coverage
+    - name: logs
+      describe: Logs api should work as expected
+      services: *base-services
+      test: 
+        <<: *base-test
+        specs:
+          - test/functional/specs/logs-api.specs.js
+      coverage: *base-coverage
     - name: users-cli
       describe: Users cli should be able to add and remove users
       before: *base-before

@@ -113,6 +113,32 @@ test.describe('ability event api', function () {
       })
     })
 
+    test.it('should save the received event into logs', () => {
+      const fooData = 'foo1@foo1.com'
+      return utils.request(`/abilities/${abilityId}/event`, {
+        method: 'POST',
+        body: {
+          data: fooData
+        },
+        ...authenticator.credentials()
+      }).then(response => {
+        return utils.waitOnestimatedStartTime(500)
+          .then(() => {
+            return utils.request(`/logs`, {
+              method: 'GET',
+              ...authenticator.credentials()
+            })
+              .then(logsResponse => {
+                const log = logsResponse.body.find(savedLog => savedLog.data === fooData)
+                return Promise.all([
+                  test.expect(log.type).to.equal('event'),
+                  test.expect(log._ability).to.equal(abilityId)
+                ])
+              })
+          })
+      })
+    })
+
     test.it('should trace the received event', () => {
       return utils.request(`/abilities/${abilityId}/event`, {
         method: 'POST',
