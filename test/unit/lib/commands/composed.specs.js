@@ -16,6 +16,7 @@ test.describe('composed commands', () => {
     let securityTokenCommandsMocks
     let abilityCommandsMocks
     let serviceCommandsMocks
+    let logCommandsMocks
 
     test.beforeEach(() => {
       baseMocks = new mocks.Base()
@@ -26,12 +27,14 @@ test.describe('composed commands', () => {
       securityTokenCommandsMocks = new mocks.commands.SecurityToken()
       abilityCommandsMocks = new mocks.commands.Ability()
       serviceCommandsMocks = new mocks.commands.Service()
+      logCommandsMocks = new mocks.commands.Log()
 
       commands = composed.Commands(baseMocks.stubs.service, modelsMocks.stubs, clientMocks.stubs, {
         user: userCommandsMocks.stubs.commands,
         securityToken: securityTokenCommandsMocks.stubs.commands,
         ability: abilityCommandsMocks.stubs.commands,
-        service: serviceCommandsMocks.stubs.commands
+        service: serviceCommandsMocks.stubs.commands,
+        log: logCommandsMocks.stubs.commands
       })
     })
 
@@ -44,6 +47,7 @@ test.describe('composed commands', () => {
       utilMocks.restore()
       abilityCommandsMocks.restore()
       serviceCommandsMocks.restore()
+      logCommandsMocks.restore()
     })
 
     test.describe('initUsers method', () => {
@@ -143,6 +147,20 @@ test.describe('composed commands', () => {
             return test.expect(clientMocks.stubs.sendAction).to.have.been.calledWith(fooService, fooAbility, fooActionData)
           })
       })
+
+      test.it('should call to log add command passing ability data and action data', () => {
+        abilityCommandsMocks.stubs.commands.validateAction.resolves(fooAbility)
+        serviceCommandsMocks.stubs.commands.getById.resolves(fooService)
+
+        return commands.dispatchAbilityAction('foo-id', fooActionData)
+          .then(() => {
+            return test.expect(logCommandsMocks.stubs.commands.add).to.have.been.calledWith({
+              _ability: fooAbility._id,
+              type: 'action',
+              data: fooActionData.data
+            })
+          })
+      })
     })
 
     test.describe('getAbilityState method', () => {
@@ -169,6 +187,53 @@ test.describe('composed commands', () => {
         return commands.getAbilityState('foo-id')
           .then(() => {
             return test.expect(clientMocks.stubs.getState).to.have.been.calledWith(fooService, fooAbility)
+          })
+      })
+    })
+
+    test.describe('triggerAbilityEvent method', () => {
+      const fooAbility = {
+        _id: 'foo-ability-id',
+        _service: 'foo-service-id'
+      }
+      const fooService = {
+        _id: 'foo-service-id'
+      }
+      const fooEventData = {
+        data: 'foo-data'
+      }
+
+      test.it('should call to ability validateEvent command', () => {
+        abilityCommandsMocks.stubs.commands.validateEvent.resolves(fooAbility)
+        serviceCommandsMocks.stubs.commands.getById.resolves(fooService)
+
+        return commands.triggerAbilityEvent('foo-id', fooEventData)
+          .then(() => {
+            return test.expect(abilityCommandsMocks.stubs.commands.validateEvent).to.have.been.calledWith('foo-id', fooEventData)
+          })
+      })
+
+      test.it('should call to get related service, passing ability data', () => {
+        abilityCommandsMocks.stubs.commands.validateEvent.resolves(fooAbility)
+        serviceCommandsMocks.stubs.commands.getById.resolves(fooService)
+
+        return commands.triggerAbilityEvent('foo-id', fooEventData)
+          .then(() => {
+            return test.expect(serviceCommandsMocks.stubs.commands.getById).to.have.been.calledWith(fooAbility._service)
+          })
+      })
+
+      test.it('should call to log add command passing ability data and event data', () => {
+        abilityCommandsMocks.stubs.commands.validateEvent.resolves(fooAbility)
+        serviceCommandsMocks.stubs.commands.getById.resolves(fooService)
+
+        return commands.triggerAbilityEvent('foo-id', fooEventData)
+          .then(() => {
+            return test.expect(logCommandsMocks.stubs.commands.add).to.have.been.calledWith({
+              _ability: fooAbility._id,
+              type: 'event',
+              data: fooEventData.data
+            })
           })
       })
     })

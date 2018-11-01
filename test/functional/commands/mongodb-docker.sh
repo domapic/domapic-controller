@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-if ! [ -d db ]; then
-  mkdir db
+if ! [ -d .shared/db ]; then
+  mkdir .shared/db
 fi
 mongod --version
-mongod --dbpath=db --bind_ip_all
+mongod --dbpath=.shared/db --bind_ip_all

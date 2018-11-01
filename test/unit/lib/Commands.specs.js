@@ -51,7 +51,8 @@ test.describe('Commands', () => {
       return test.expect(commands.composed).to.have.all.keys(
         'initUsers',
         'dispatchAbilityAction',
-        'getAbilityState'
+        'getAbilityState',
+        'triggerAbilityEvent'
       )
     })
 
@@ -74,7 +75,15 @@ test.describe('Commands', () => {
         'update',
         'remove',
         'validateAction',
-        'validateState'
+        'validateState',
+        'validateEvent'
+      )
+    })
+
+    test.it('should contain all log commands', () => {
+      return test.expect(commands.log).to.have.all.keys(
+        'add',
+        'getAll'
       )
     })
   })

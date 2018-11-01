@@ -10,6 +10,7 @@ test.describe('Models', () => {
   let securityTokenModelMocks
   let serviceModelMocks
   let abilityModelMocks
+  let logModelMocks
   let models
 
   test.beforeEach(() => {
@@ -18,6 +19,7 @@ test.describe('Models', () => {
     securityTokenModelMocks = new mocks.models.SecurityToken()
     serviceModelMocks = new mocks.models.Service()
     abilityModelMocks = new mocks.models.Ability()
+    logModelMocks = new mocks.models.Log()
     models = Models(baseMocks.stubs.service)
   })
 
@@ -27,6 +29,7 @@ test.describe('Models', () => {
     serviceModelMocks.restore()
     securityTokenModelMocks.restore()
     abilityModelMocks.restore()
+    logModelMocks.restore()
   })
 
   test.describe('instance', () => {
@@ -44,6 +47,10 @@ test.describe('Models', () => {
 
     test.it('should contain Ability model', () => {
       return test.expect(typeof models.Ability).to.equal('function')
+    })
+
+    test.it('should contain Log model', () => {
+      return test.expect(typeof models.Log).to.equal('function')
     })
   })
 })

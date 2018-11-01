@@ -1,0 +1,83 @@
+{
+  "tags": [{
+    "name": "log",
+    "description": "Controller events and actions logs"
+  }],
+  "components": {
+    "schemas": {
+      "Log": {
+        "description": "Log data",
+        "type": "object",
+        "properties": {
+          "_id": {
+            "description": "Unique id of the log",
+            "type": "string"
+          },
+          "_ability": {
+            "description": "Ability id",
+            "type": "string"
+          },
+          "data": {
+            "oneOf": [{
+              "type": "string"
+            }, {
+              "type": "boolean"
+            }, {
+              "type": "number"
+            }]
+          },
+          "type": {
+            "description": "Type of event",
+            "type": "string",
+            "enum": ["action", "event"]
+          },
+          "createdAt": {
+            "description": "Creation date timestamp",
+            "type": "string"
+          }
+        },
+        "additionalProperties": false,
+        "example": {
+          "_id": "1223123",
+          "_ability": "131231342334234",
+          "type": "event",
+          "data": "foo-data",
+          "createdAt": "2018-07-28T17:13:08.718Z"
+        }
+      },
+      "Logs": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/Log"
+        }
+      }
+    }
+  },
+  "paths": {
+    "/logs": {
+      "get": {
+        "tags": ["log", "action", "event", "ability"],
+        "summary": "Return logs",
+        "description": "Returns an array with all events and actions logs",
+        "operationId": "getLogs",
+        "responses": {
+          "200": {
+            "description": "Logs response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Logs"
+                }
+              }
+            }
+          }
+        },
+        "security": [{
+          "jwt": []
+        }, {
+          "apiKey": []
+        }]
+      }
+    }
+  }
+}

@@ -10,6 +10,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 ### Removed
 
+## [1.0.0-alpha.6] - 2018-11-1
+### Added
+- Add ability events api
+- Save abilities actions and events as logs into database
+- Add logs api
+
 ## [1.0.0-alpha.5] - 2018-10-15
 ### Added
 - Add ability state api

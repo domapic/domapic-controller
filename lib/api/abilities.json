@@ -1,13 +1,16 @@
 {
   "tags": [{
     "name": "ability",
-    "description": "Domapic service ability"
+    "description": "Service ability"
   },{
     "name": "action",
-    "description": "Domapic service ability action"
+    "description": "Service ability action"
   },{
     "name": "state",
-    "description": "Domapic service ability state"
+    "description": "Service ability state"
+  },{
+    "name": "event",
+    "description": "Service ability event"
   }],
   "components": {
     "schemas": {
@@ -324,6 +327,14 @@
           }
         }
       },
+      "AbilityEvent": {
+        "description": "Ability event successfully triggered",
+        "headers": {
+          "location": {
+            "$ref": "#/components/headers/ContentLocation"
+          }
+        }
+      },
       "Deleted": {
         "description": "Entity deleted"
       },
@@ -596,6 +607,49 @@
                 }
               }
             }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          }
+        },
+        "security": [{
+          "jwt": []
+        }, {
+          "apiKey": []
+        }]
+      }
+    },
+    "/abilities/{id}/event": {
+      "post": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "Ability id"
+          }
+        ],
+        "tags": ["ability", "event"],
+        "summary": "Triggers an ability event",
+        "description": "Used to inform that an ability event was triggered. Intended to be used only by services",
+        "operationId": "abilityEvent",
+        "requestBody": {
+          "description": "Data of the event",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AbilityData"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "$ref": "#/components/responses/AbilityEvent"
           },
           "404": {
             "$ref": "#/components/responses/NotFoundError"
