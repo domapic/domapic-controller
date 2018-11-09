@@ -56,8 +56,7 @@ test.describe('cli index', function () {
         customConfig: options,
         customCommands: {
           user: userCommand
-        },
-        type: 'controller'
+        }
       })
     })
   })
