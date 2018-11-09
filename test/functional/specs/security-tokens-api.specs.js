@@ -168,7 +168,7 @@ test.describe('security tokens api', function () {
     }
 
     testRole(operatorUser)
-    testRole(oduleUser)
+    testRole(moduleUser)
     testRole(pluginUser)
     testRole(serviceRegistererUser)
 

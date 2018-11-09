@@ -119,9 +119,9 @@ test.describe('users cli', function () {
 
     test.it('should add user to database when no email nor password are provided and role is module', () => {
       return executeCli('add', moduleUser).then(() => getUsers().then(response => {
-        const newUser = response.body.find(user => user.name === adminUser.name)
+        const newUser = response.body.find(user => user.name === moduleUser.name)
         return Promise.all([
-          test.expect(newUser.role).to.equal(adminUser.role),
+          test.expect(newUser.role).to.equal(moduleUser.role),
           test.expect(newUser.updatedAt).to.not.be.undefined(),
           test.expect(newUser.createdAt).to.not.be.undefined()
         ])
