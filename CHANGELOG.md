@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Upgrade domapic-base
 - Change "services" by "modules".
 ### Fixed
+- Allow "integer" and "float" as data types for abilities in api.
 ### Removed
 
 ## [1.0.0-alpha.7] - 2018-11-09
