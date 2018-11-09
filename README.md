@@ -1,4 +1,4 @@
-![Domapic Base][domapic-base-logo-image]
+![Domapic][domapic-logo-image]
 
 # Domapic Controller
 
@@ -176,7 +176,7 @@ Follow the next steps to securize your Controller before exposing it to the inte
 	Authentication can be disabled for desired IPs or IP ranges using the `--authDisabled` option. By default, authentication is disabled only for the 172.0.0.1 IP, in order to make easier the first configuration, but you can disable it for all your local network, etc. Because of security reasons, this is not recommended. Use always the built-in api keys method to identify your Domapic Services.
 	If you want to force the authentication requirement even for localhost, use the `--authDisabled` as a flag, without specifying any IP.
 
-[domapic-base-logo-image]: http://domapic.com/assets/domapic-logo.png
+[domapic-logo-image]: http://domapic.com/assets/domapic-logo.png
 
 [coveralls-image]: https://coveralls.io/repos/github/domapic/domapic-controller/badge.svg
 [coveralls-url]: https://coveralls.io/github/domapic/domapic-controller
