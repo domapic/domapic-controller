@@ -1,12 +1,11 @@
 
 const test = require('narval')
-const testUtils = require('narval/utils')
 
 const utils = require('./utils')
 
 test.describe('server', function () {
   test.it('should have printed a log with the service-registerer api key', () => {
-    return testUtils.logs.combined('controller')
+    return utils.readLogs()
       .then((log) => {
         return test.expect(log).to.contain(`Use the next api key to register services:`)
       })
@@ -47,7 +46,7 @@ test.describe('server', function () {
     }
 
     test.before(() => {
-      return testUtils.logs.combined('controller')
+      return utils.readLogs()
         .then((log) => {
           apiKey = /Use the next api key to register services: (\S*)\n/.exec(log)[1]
           authenticator.loginApiKey('service-registerer', apiKey)
