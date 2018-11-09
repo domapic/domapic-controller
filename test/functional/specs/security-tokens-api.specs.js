@@ -14,10 +14,10 @@ test.describe('security tokens api', function () {
     password: 'foo'
   }
 
-  const serviceUser = {
-    name: 'foo-service-user',
-    role: 'service',
-    email: 'service@foo.com',
+  const moduleUser = {
+    name: 'foo-module-user',
+    role: 'module',
+    email: 'module@foo.com',
     password: 'foo'
   }
 
@@ -168,28 +168,28 @@ test.describe('security tokens api', function () {
     }
 
     testRole(operatorUser)
-    testRole(serviceUser)
+    testRole(oduleUser)
     testRole(pluginUser)
     testRole(serviceRegistererUser)
 
     test.describe('When user has service-registerer role and request tokens of an user different to himself', () => {
       let operatorUserId
-      let serviceUserId
+      let moduleUserId
 
       test.before(() => {
         return utils.ensureUser(authenticator, operatorUser)
           .then(() => {
-            utils.ensureUser(authenticator, serviceUser)
+            utils.ensureUser(authenticator, moduleUser)
           }).then(() => {
             return getUsers().then(usersResponse => {
               operatorUserId = usersResponse.body.find(userData => userData.name === operatorUser.name)._id
-              serviceUserId = usersResponse.body.find(userData => userData.name === serviceUser.name)._id
+              moduleUserId = usersResponse.body.find(userData => userData.name === moduleUser.name)._id
               return utils.ensureUserAndDoLogin(authenticator, serviceRegistererUser)
             })
           })
       })
 
-      test.it('should return a forbidden error if requested user has not a "service" role', () => {
+      test.it('should return a forbidden error if requested user has not a "module" role', () => {
         return getAuthTokens({
           type: 'apiKey',
           user: operatorUserId
@@ -201,10 +201,10 @@ test.describe('security tokens api', function () {
         })
       })
 
-      test.it('should return tokens data if requested user has "service" role and requested type is "apiKey"', () => {
+      test.it('should return tokens data if requested user has "module" role and requested type is "apiKey"', () => {
         return getAuthTokens({
           type: 'apiKey',
-          user: serviceUserId
+          user: moduleUserId
         }).then((response) => {
           return Promise.all([
             test.expect(response.statusCode).to.equal(200),
@@ -216,7 +216,7 @@ test.describe('security tokens api', function () {
       test.it('should return a forbidden error if requested type if different to "apiKey"', () => {
         return getAuthTokens({
           type: 'jwt',
-          user: serviceUserId
+          user: moduleUserId
         }).then((response) => {
           return Promise.all([
             test.expect(response.body.message).to.contain('Not authorized'),

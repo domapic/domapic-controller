@@ -7,12 +7,12 @@ test.describe('ability event api', function () {
   this.timeout(10000)
   let authenticator = utils.Authenticator()
   let abilityId
-  let serviceId
+  let moduleId
 
-  const addService = function (serviceData) {
-    return utils.request('/services', {
+  const addModule = function (moduleData) {
+    return utils.request('/modules', {
       method: 'POST',
-      body: serviceData,
+      body: moduleData,
       ...authenticator.credentials()
     })
   }
@@ -25,13 +25,13 @@ test.describe('ability event api', function () {
     })
   }
 
-  const serviceUser = {
-    name: 'foo-service-user',
-    role: 'service'
+  const moduleUser = {
+    name: 'foo-module-user',
+    role: 'module'
   }
 
-  const fooService = {
-    processId: 'foo-service-id',
+  const fooModule = {
+    processId: 'foo-module-id',
     description: 'foo-description',
     package: 'foo-package',
     version: '1.0.0',
@@ -52,10 +52,10 @@ test.describe('ability event api', function () {
   }
 
   test.before(() => {
-    return utils.ensureUserAndDoLogin(authenticator, serviceUser)
-      .then(() => addService(fooService)
+    return utils.ensureUserAndDoLogin(authenticator, moduleUser)
+      .then(() => addModule(fooModule)
         .then((response) => {
-          serviceId = response.headers.location.split('/').pop()
+          moduleId = response.headers.location.split('/').pop()
           return addAbility(fooAbility).then((addResponse) => {
             abilityId = addResponse.headers.location.split('/').pop()
             return Promise.resolve()
@@ -151,7 +151,7 @@ test.describe('ability event api', function () {
             return utils.readLogs()
               .then(controllerLogs => {
                 return Promise.all([
-                  test.expect(controllerLogs).to.contain(`Received event from service "${serviceId}", ability "${abilityId}". Data: "foo@foo.com"`)
+                  test.expect(controllerLogs).to.contain(`Received event from module "${moduleId}", ability "${abilityId}". Data: "foo@foo.com"`)
                 ])
               })
           })

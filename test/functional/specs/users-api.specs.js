@@ -30,7 +30,7 @@ test.describe('users api', function () {
   }
 
   const newUser = {
-    name: 'foo-service',
+    name: 'foo-module',
     role: 'operator',
     email: 'foo2@foo.com',
     password: 'foo'
@@ -43,10 +43,10 @@ test.describe('users api', function () {
     password: 'foo'
   }
 
-  const serviceUser = {
-    name: 'foo-service-user',
-    role: 'service',
-    email: 'service@foo.com',
+  const moduleUser = {
+    name: 'foo-module-user',
+    role: 'module',
+    email: 'module@foo.com',
     password: 'foo'
   }
 
@@ -97,7 +97,7 @@ test.describe('users api', function () {
         })
       })
 
-      test.it('should return a bad data error if no email is provided, and role is not "service" or "plugin"', () => {
+      test.it('should return a bad data error if no email is provided, and role is not "module" or "plugin"', () => {
         return utils.createUser(authenticator, {
           name: 'foo-name',
           role: 'operator'
@@ -109,7 +109,7 @@ test.describe('users api', function () {
         })
       })
 
-      test.it('should return a bad data error if no password is provided, and role is not "service" or "plugin"', () => {
+      test.it('should return a bad data error if no password is provided, and role is not "module" or "plugin"', () => {
         return utils.createUser(authenticator, {
           name: 'foo-name',
           role: 'operator'
@@ -124,7 +124,7 @@ test.describe('users api', function () {
       test.it('should return a bad data error if a not valid name is provided', () => {
         return utils.createUser(authenticator, {
           name: 'FooName',
-          role: 'service'
+          role: 'module'
         }).then((response) => {
           return Promise.all([
             test.expect(response.body.message).to.contain('does not match pattern'),
@@ -133,10 +133,10 @@ test.describe('users api', function () {
         })
       })
 
-      test.it('should allow to create users with role "service" without password and email', () => {
+      test.it('should allow to create users with role "module" without password and email', () => {
         return utils.createUser(authenticator, {
-          name: 'foo-service-name',
-          role: 'service'
+          name: 'foo-module-name',
+          role: 'module'
         }).then((response) => {
           return test.expect(response.statusCode).to.equal(201)
         })
@@ -157,7 +157,7 @@ test.describe('users api', function () {
           role: 'admidsn'
         }).then((response) => {
           return Promise.all([
-            test.expect(response.body.message).to.contain('is not one of enum values: admin,operator,service,plugin,service-registerer'),
+            test.expect(response.body.message).to.contain('is not one of enum values: admin,operator,module,plugin,service-registerer'),
             test.expect(response.statusCode).to.equal(422)
           ])
         })
@@ -347,7 +347,7 @@ test.describe('users api', function () {
   }
 
   testRole(operatorUser)
-  testRole(serviceUser)
+  testRole(moduleUser)
   testRole(pluginUser)
   testRole(serviceRegistererUser)
 
@@ -357,18 +357,18 @@ test.describe('users api', function () {
     })
 
     test.describe('add user', () => {
-      test.it('should return 201 when adding a new user with role "service"', () => {
+      test.it('should return 201 when adding a new user with role "module"', () => {
         return utils.createUser(authenticator, {
-          name: 'foo-new-service',
-          role: 'service',
-          email: 'fooNewService@foo.com',
+          name: 'foo-new-module',
+          role: 'module',
+          email: 'fooNewModule@foo.com',
           password: 'foo'
         }).then(response => {
           return test.expect(response.statusCode).to.equal(201)
         })
       })
 
-      test.it('should return a forbidden error when adding a new user with role different to "service"', () => {
+      test.it('should return a forbidden error when adding a new user with role different to "module"', () => {
         return utils.createUser(authenticator, {
           name: 'foo-new-admin',
           role: 'admin',
@@ -381,9 +381,9 @@ test.describe('users api', function () {
     })
 
     test.describe('get users', () => {
-      test.it('should return users if query role has "service" value', () => {
+      test.it('should return users if query role has "module" value', () => {
         return getUsers({
-          role: 'service'
+          role: 'module'
         }).then(response => {
           return test.expect(response.statusCode).to.equal(200)
         })
@@ -411,7 +411,7 @@ test.describe('users api', function () {
 
     testUser(newUser)
     testUser(operatorUser)
-    testUser(serviceUser)
+    testUser(moduleUser)
     testUser(pluginUser)
     testUser(serviceRegistererUser)
   })
