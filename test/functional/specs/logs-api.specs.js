@@ -8,7 +8,8 @@ test.describe('logs api', function () {
   let authenticator = utils.Authenticator()
 
   test.before(() => {
-    return utils.doLogin(authenticator)
+    return utils.waitOnestimatedStartTime(3000)
+      .then(() => utils.doLogin(authenticator))
   })
 
   test.describe('logs api', () => {

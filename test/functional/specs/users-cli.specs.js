@@ -29,7 +29,6 @@ test.describe('users cli', function () {
         .concat(name)
         .concat('--')
         .concat([role, email, password])
-        .concat('--name=controller')
         .concat(`--path=${process.env.domapic_path}`))
 
       spawn.stdout.on('data', data => {

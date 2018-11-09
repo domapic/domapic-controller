@@ -3,6 +3,7 @@
 const path = require('path')
 const fs = require('fs')
 const querystring = require('querystring')
+const testUtils = require('narval/utils')
 
 const { omitBy, isUndefined } = require('lodash')
 const requestPromise = require('request-promise')
@@ -11,6 +12,7 @@ const SERVICE_HOST = process.env.controller_host_name
 const SERVICE_PORT = '3000'
 const DOMAPIC_PATH = process.env.domapic_path
 const ESTIMATED_START_TIME = 1000
+const SERVICE_NAME = 'domapic-controller'
 
 const superAdmin = {
   name: 'admin',
@@ -57,7 +59,7 @@ const request = function (uri, options = {}) {
 }
 
 const readStorage = function (folder = 'storage', file = 'service.json') {
-  return readFile(path.resolve(__dirname, '..', '..', '..', DOMAPIC_PATH, '.domapic', 'controller', folder, file))
+  return readFile(path.resolve(__dirname, '..', '..', '..', DOMAPIC_PATH, '.domapic', SERVICE_NAME, folder, file))
     .then((data) => {
       return Promise.resolve(JSON.parse(data))
     })
@@ -164,6 +166,8 @@ const ensureUserAndDoLogin = (authenticator, userData) => {
     }))
 }
 
+const readLogs = () => testUtils.logs.combined('controller')
+
 module.exports = {
   superAdmin,
   waitOnestimatedStartTime,
@@ -174,5 +178,6 @@ module.exports = {
   doLogin,
   createUser,
   ensureUser,
-  ensureUserAndDoLogin
+  ensureUserAndDoLogin,
+  readLogs
 }

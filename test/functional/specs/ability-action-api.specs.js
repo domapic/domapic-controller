@@ -1,6 +1,5 @@
 
 const test = require('narval')
-const testUtils = require('narval/utils')
 
 const utils = require('./utils')
 
@@ -120,7 +119,7 @@ test.describe('ability action api', function () {
         },
         ...authenticator.credentials()
       }).then(response => {
-        return testUtils.logs.combined('controller')
+        return utils.readLogs()
           .then(controllerLogs => {
             return Promise.all([
               test.expect(controllerLogs).to.contain(`Sending action to service "${serviceId}", ability "${abilityId}". Data: "foo@foo.com"`),

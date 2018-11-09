@@ -1,6 +1,5 @@
 
 const test = require('narval')
-const testUtils = require('narval/utils')
 
 const utils = require('./utils')
 
@@ -149,7 +148,7 @@ test.describe('ability event api', function () {
       }).then(response => {
         return utils.waitOnestimatedStartTime(500)
           .then(() => {
-            return testUtils.logs.combined('controller')
+            return utils.readLogs()
               .then(controllerLogs => {
                 return Promise.all([
                   test.expect(controllerLogs).to.contain(`Received event from service "${serviceId}", ability "${abilityId}". Data: "foo@foo.com"`)

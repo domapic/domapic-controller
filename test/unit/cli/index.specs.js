@@ -49,8 +49,9 @@ test.describe('cli index', function () {
       test.expect(baseMock.stubs.cli).to.have.been.called()
     })
 
-    test.it('should have passed the server script path when created the cli', () => {
+    test.it('should have passed the server script path, service type and package path when created the cli', () => {
       test.expect(baseMock.stubs.cli).to.have.been.calledWith({
+        packagePath: path.resolve(__dirname, '..', '..', '..'),
         script: path.resolve(__dirname, '..', '..', '..', 'server.js'),
         customConfig: options,
         customCommands: {
