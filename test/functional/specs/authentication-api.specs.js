@@ -9,7 +9,7 @@ test.describe('authentication api', function () {
   const authenticator = utils.Authenticator()
   const newUser = {
     name: 'foo-user',
-    role: 'service',
+    role: 'module',
     email: 'foo@foo.com',
     password: 'foo'
   }

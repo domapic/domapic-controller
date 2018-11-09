@@ -3,10 +3,10 @@ const test = require('narval')
 
 const mocks = require('../../mocks')
 
-const services = require('../../../../lib/api/services')
-const definition = require('../../../../lib/api/services.json')
+const modules = require('../../../../lib/api/modules')
+const definition = require('../../../../lib/api/modules.json')
 
-test.describe('services api', () => {
+test.describe('modules api', () => {
   test.describe('Operations instance', () => {
     let operations
     let commandsMocks
@@ -15,7 +15,7 @@ test.describe('services api', () => {
     test.beforeEach(() => {
       baseMocks = new mocks.Base()
       commandsMocks = new mocks.Commands()
-      operations = services.Operations(baseMocks.stubs.service, commandsMocks.stubs)
+      operations = modules.Operations(baseMocks.stubs.service, commandsMocks.stubs)
     })
 
     test.afterEach(() => {
@@ -23,51 +23,51 @@ test.describe('services api', () => {
       commandsMocks.restore()
     })
 
-    test.describe('getServices handler', () => {
-      test.it('should return all services', () => {
+    test.describe('getModules handler', () => {
+      test.it('should return all modules', () => {
         const fooResult = 'foo result'
-        commandsMocks.stubs.service.getFiltered.resolves(fooResult)
+        commandsMocks.stubs.module.getFiltered.resolves(fooResult)
 
-        return operations.getServices.handler()
+        return operations.getModules.handler()
           .then((result) => {
             return Promise.all([
               test.expect(result).to.equal(fooResult),
-              test.expect(commandsMocks.stubs.service.getFiltered).to.have.been.calledWith()
+              test.expect(commandsMocks.stubs.module.getFiltered).to.have.been.calledWith()
             ])
           })
       })
     })
 
-    test.describe('getService handler', () => {
-      test.it('should return service, calling to correspondant command', () => {
+    test.describe('getModule handler', () => {
+      test.it('should return module, calling to correspondant command', () => {
         const fooId = 'foo-id'
         const fooResult = 'foo result'
-        commandsMocks.stubs.service.getById.resolves(fooResult)
+        commandsMocks.stubs.module.getById.resolves(fooResult)
 
-        return operations.getService.handler({
+        return operations.getModule.handler({
           path: {
             id: fooId
           }})
           .then((result) => {
             return Promise.all([
               test.expect(result).to.equal(fooResult),
-              test.expect(commandsMocks.stubs.service.getById).to.have.been.calledWith(fooId)
+              test.expect(commandsMocks.stubs.module.getById).to.have.been.calledWith(fooId)
             ])
           })
       })
     })
 
-    test.describe('addService auth', () => {
+    test.describe('addModule auth', () => {
       const fooId = 'foo-id'
-      test.it('should return true if provided user has "service" role', () => {
-        test.expect(operations.addService.auth({
-          role: 'service'
+      test.it('should return true if provided user has "module" role', () => {
+        test.expect(operations.addModule.auth({
+          role: 'module'
         }, {}, {})).to.be.true()
       })
 
       const testRole = function (role) {
         test.it(`should return false if provided user has "${role}" role`, () => {
-          test.expect(operations.addService.auth({
+          test.expect(operations.addModule.auth({
             _id: fooId
           }, {}, {})).to.be.false()
         })
@@ -78,12 +78,12 @@ test.describe('services api', () => {
       testRole('service-registerer')
     })
 
-    test.describe('addService handler', () => {
+    test.describe('addModule handler', () => {
       const fooUserData = {
         _id: 'foo-user-id'
       }
-      const fooService = {
-        _id: 'foo-service-id',
+      const fooModule = {
+        _id: 'foo-module-id',
         name: 'foo-name'
       }
       const fooBody = {
@@ -98,68 +98,68 @@ test.describe('services api', () => {
           status: sandbox.stub(),
           header: sandbox.stub()
         }
-        commandsMocks.stubs.service.add.resolves(fooService)
+        commandsMocks.stubs.module.add.resolves(fooModule)
       })
 
       test.afterEach(() => {
         sandbox.restore()
       })
 
-      test.it('should call to add service, passing the received body and user data', () => {
-        return operations.addService.handler({}, fooBody, response, fooUserData)
+      test.it('should call to add module, passing the received body and user data', () => {
+        return operations.addModule.handler({}, fooBody, response, fooUserData)
           .then((result) => {
-            return test.expect(commandsMocks.stubs.service.add).to.have.been.calledWith(fooUserData, fooBody)
+            return test.expect(commandsMocks.stubs.module.add).to.have.been.calledWith(fooUserData, fooBody)
           })
       })
 
       test.it('should add a 201 header to response', () => {
-        return operations.addService.handler({}, fooBody, response, fooUserData)
+        return operations.addModule.handler({}, fooBody, response, fooUserData)
           .then(() => {
             return test.expect(response.status).to.have.been.calledWith(201)
           })
       })
 
-      test.it('should set the response header with the new service id', () => {
-        return operations.addService.handler({}, fooBody, response, fooUserData)
+      test.it('should set the response header with the new module id', () => {
+        return operations.addModule.handler({}, fooBody, response, fooUserData)
           .then(() => {
-            return test.expect(response.header).to.have.been.calledWith('location', '/api/services/foo-service-id')
+            return test.expect(response.header).to.have.been.calledWith('location', '/api/modules/foo-module-id')
           })
       })
 
       test.it('should resolve the promise with no value', () => {
-        return operations.addService.handler({}, fooBody, response)
+        return operations.addModule.handler({}, fooBody, response)
           .then((result) => {
             return test.expect(result).to.be.undefined()
           })
       })
     })
 
-    test.describe('updateService auth', () => {
+    test.describe('updateModule auth', () => {
       const fooUserId = 'foo-user-id'
       const fooParams = {
         path: {
-          id: 'foo-service-id'
+          id: 'foo-module-id'
         }
       }
 
-      test.it('should resolve if logged user is owner of the service', () => {
-        commandsMocks.stubs.service.getById.resolves({
+      test.it('should resolve if logged user is owner of the module', () => {
+        commandsMocks.stubs.module.getById.resolves({
           _user: fooUserId
         })
 
-        return operations.updateService.auth({
+        return operations.updateModule.auth({
           _id: fooUserId
         }, fooParams, {}).then(() => {
           return test.expect(true).to.be.true()
         })
       })
 
-      test.it('should reject if logged user is not owner of the service', () => {
-        commandsMocks.stubs.service.getById.resolves({
+      test.it('should reject if logged user is not owner of the module', () => {
+        commandsMocks.stubs.module.getById.resolves({
           _user: fooUserId
         })
 
-        return operations.updateService.auth({
+        return operations.updateModule.auth({
           _id: 'another-user-id'
         }, fooParams, {}).then(() => {
           return test.assert.fail()
@@ -169,14 +169,14 @@ test.describe('services api', () => {
       })
     })
 
-    test.describe('updateService handler', () => {
-      const fooId = 'foo-service-id'
+    test.describe('updateModule handler', () => {
+      const fooId = 'foo-module-id'
       const fooBody = {
         description: 'foo-description'
       }
-      const fooService = {
-        _id: 'foo-service-id',
-        name: 'foo-service-name'
+      const fooModule = {
+        _id: 'foo-module-id',
+        name: 'foo-module-name'
       }
       let sandbox
       let response
@@ -187,26 +187,26 @@ test.describe('services api', () => {
           status: sandbox.stub(),
           header: sandbox.stub()
         }
-        commandsMocks.stubs.service.update.resolves(fooService)
+        commandsMocks.stubs.module.update.resolves(fooModule)
       })
 
       test.afterEach(() => {
         sandbox.restore()
       })
 
-      test.it('should call to update service, passing the received name and body', () => {
-        return operations.updateService.handler({
+      test.it('should call to update module, passing the received name and body', () => {
+        return operations.updateModule.handler({
           path: {
             id: fooId
           }
         }, fooBody, response)
           .then((result) => {
-            return test.expect(commandsMocks.stubs.service.update).to.have.been.calledWith(fooId, fooBody)
+            return test.expect(commandsMocks.stubs.module.update).to.have.been.calledWith(fooId, fooBody)
           })
       })
 
       test.it('should add a 204 header to response', () => {
-        return operations.updateService.handler({
+        return operations.updateModule.handler({
           path: {
             id: fooId
           }
@@ -216,19 +216,19 @@ test.describe('services api', () => {
           })
       })
 
-      test.it('should set the response header with the service name', () => {
-        return operations.updateService.handler({
+      test.it('should set the response header with the module name', () => {
+        return operations.updateModule.handler({
           path: {
             id: fooId
           }
         }, fooBody, response)
           .then(() => {
-            return test.expect(response.header).to.have.been.calledWith('location', '/api/services/foo-service-id')
+            return test.expect(response.header).to.have.been.calledWith('location', '/api/modules/foo-module-id')
           })
       })
 
       test.it('should resolve the promise with no value', () => {
-        return operations.updateService.handler({
+        return operations.updateModule.handler({
           path: {
             id: fooId
           }
@@ -242,7 +242,7 @@ test.describe('services api', () => {
 
   test.describe('openapi', () => {
     test.it('should return an array containing the openapi definition', () => {
-      test.expect(services.openapi()).to.deep.equal([definition])
+      test.expect(modules.openapi()).to.deep.equal([definition])
     })
   })
 })

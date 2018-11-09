@@ -110,7 +110,7 @@ test.describe('security utils', () => {
 
     test.it('should return false if provided user has not "admin" role', () => {
       return test.expect(utils.onlyAdmin({
-        role: 'service'
+        role: 'module'
       })).to.be.false()
     })
   })

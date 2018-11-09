@@ -1,16 +1,16 @@
 {
   "tags": [{
     "name": "ability",
-    "description": "Service ability"
+    "description": "Module ability"
   },{
     "name": "action",
-    "description": "Service ability action"
+    "description": "Module ability action"
   },{
     "name": "state",
-    "description": "Service ability state"
+    "description": "Module ability state"
   },{
     "name": "event",
-    "description": "Service ability event"
+    "description": "Module ability event"
   }],
   "components": {
     "schemas": {
@@ -27,8 +27,8 @@
             "type": "string",
             "pattern": "^[a-zA-Z0-9_-]*$"
           },
-          "_service": {
-            "description": "Unique id of the service owner of the ability",
+          "_module": {
+            "description": "Unique id of the module owner of the ability",
             "type": "string"
           },
           "_user": {
@@ -66,7 +66,7 @@
           "type": {
             "description": "Type of ability data",
             "type": "string",
-            "enum": ["string", "boolean", "number"]
+            "enum": ["string", "boolean", "number", "integer", "float"]
           },
           "format": {
             "description": "Format of ability data",
@@ -128,12 +128,12 @@
             "type": "string"
           }
         },
-        "required": ["_id", "name", "_service", "type"],
+        "required": ["_id", "name", "_module", "type"],
         "additionalProperties": false,
         "example": {
           "_id": "1223123",
           "name": "foo-ability-name",
-          "_service": "fdaq3r341212fsf",
+          "_module": "fdaq3r341212fsf",
           "_user": "132defwer4321312",
           "description": "Rele control",
           "event": true,
@@ -187,7 +187,7 @@
           "type": {
             "description": "Type of ability data",
             "type": "string",
-            "enum": ["string", "boolean", "number"]
+            "enum": ["string", "boolean", "number", "integer", "float"]
           },
           "format": {
             "description": "Format of ability data",
@@ -367,11 +367,11 @@
         "parameters": [
           {
             "in": "query",
-            "name": "service",
+            "name": "module",
             "schema": {
               "type": "string"
             },
-            "description": "Service id owner of the ability"
+            "description": "Module id owner of the ability"
           }
         ],
         "tags": ["ability"],
@@ -634,7 +634,7 @@
         ],
         "tags": ["ability", "event"],
         "summary": "Triggers an ability event",
-        "description": "Used to inform that an ability event was triggered. Intended to be used only by services",
+        "description": "Used to inform that an ability event was triggered. Intended to be used only by modules",
         "operationId": "abilityEvent",
         "requestBody": {
           "description": "Data of the event",

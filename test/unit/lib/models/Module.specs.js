@@ -2,9 +2,9 @@ const test = require('narval')
 
 const mocks = require('../../mocks')
 
-const service = require('../../../../lib/models/service')
+const moduleModel = require('../../../../lib/models/module')
 
-test.describe('service model', () => {
+test.describe('module model', () => {
   test.describe('Model instance', () => {
     let model
     let mongooseMocks
@@ -25,7 +25,7 @@ test.describe('service model', () => {
 
     test.describe('name validation', () => {
       test.it('should call to validate that name is unique', () => {
-        model = service.Model(baseMocks.stubs.service)
+        model = moduleModel.Model(baseMocks.stubs.service)
         const fooDuplicatedError = new Error('foo duplicated error')
         utilsMocks.stubs.validateUniqueModel.rejects(fooDuplicatedError)
         return model.name.validate('foo-name')
@@ -38,7 +38,7 @@ test.describe('service model', () => {
 
       test.it('should throw an error if name validation returns false', () => {
         utilsMocks.stubs.isValidName.returns(false)
-        model = service.Model(baseMocks.stubs.service)
+        model = moduleModel.Model(baseMocks.stubs.service)
         return model.name.validate('Foo')
           .then(() => {
             return test.assert.fail()
@@ -49,7 +49,7 @@ test.describe('service model', () => {
 
       test.it('should not throw an error if name validation returns true', () => {
         utilsMocks.stubs.isValidName.returns(true)
-        model = service.Model(baseMocks.stubs.service)
+        model = moduleModel.Model(baseMocks.stubs.service)
         return Promise.all([
           model.name.validate('foo-name_123-foo2'),
           model.name.validate('javier.brea')
@@ -59,7 +59,7 @@ test.describe('service model', () => {
 
     test.describe('url validation', () => {
       test.it('should call to validate that url is unique', () => {
-        model = service.Model(baseMocks.stubs.service)
+        model = moduleModel.Model(baseMocks.stubs.service)
         const fooDuplicatedError = new Error('foo duplicated error')
         utilsMocks.stubs.validateUniqueModel.rejects(fooDuplicatedError)
         return model.url.validate('http://foo.com')
@@ -71,7 +71,7 @@ test.describe('service model', () => {
       })
 
       test.it('should throw an error if provided url is not valid', () => {
-        model = service.Model(baseMocks.stubs.service)
+        model = moduleModel.Model(baseMocks.stubs.service)
         return model.url.validate('foo')
           .then(() => {
             return test.assert.fail()
@@ -81,17 +81,17 @@ test.describe('service model', () => {
       })
 
       test.it('should not throw an error if provided url is valid', () => {
-        model = service.Model(baseMocks.stubs.service)
+        model = moduleModel.Model(baseMocks.stubs.service)
         return model.url.validate('http://www.foo.com')
       })
 
       test.it('should not throw an error if provided url is valid', () => {
-        model = service.Model(baseMocks.stubs.service)
+        model = moduleModel.Model(baseMocks.stubs.service)
         return model.url.validate('http://service-container:3000')
       })
 
       test.it('should not throw an error if provided url is a valid IP', () => {
-        model = service.Model(baseMocks.stubs.service)
+        model = moduleModel.Model(baseMocks.stubs.service)
         return model.url.validate('https://192.168.1.100:3400')
       })
     })

@@ -1,6 +1,5 @@
 
 const test = require('narval')
-const testUtils = require('narval/utils')
 
 const utils = require('./utils')
 
@@ -8,12 +7,12 @@ test.describe('ability state api', function () {
   this.timeout(10000)
   let authenticator = utils.Authenticator()
   let abilityId
-  let serviceId
+  let moduleId
 
-  const addService = function (serviceData) {
-    return utils.request('/services', {
+  const addModule = function (moduleData) {
+    return utils.request('/modules', {
       method: 'POST',
-      body: serviceData,
+      body: moduleData,
       ...authenticator.credentials()
     })
   }
@@ -26,13 +25,13 @@ test.describe('ability state api', function () {
     })
   }
 
-  const serviceUser = {
-    name: 'foo-service-user',
-    role: 'service'
+  const moduleUser = {
+    name: 'foo-module-user',
+    role: 'module'
   }
 
-  const fooService = {
-    processId: 'foo-service-id',
+  const fooModule = {
+    processId: 'foo-module-id',
     description: 'foo-description',
     package: 'foo-package',
     version: '1.0.0',
@@ -51,10 +50,10 @@ test.describe('ability state api', function () {
   }
 
   test.before(() => {
-    return utils.ensureUserAndDoLogin(authenticator, serviceUser)
-      .then(() => addService(fooService)
+    return utils.ensureUserAndDoLogin(authenticator, moduleUser)
+      .then(() => addModule(fooModule)
         .then((response) => {
-          serviceId = response.headers.location.split('/').pop()
+          moduleId = response.headers.location.split('/').pop()
           return addAbility(fooAbility).then((addResponse) => {
             abilityId = addResponse.headers.location.split('/').pop()
             return Promise.resolve()
@@ -90,18 +89,18 @@ test.describe('ability state api', function () {
       })
     })
 
-    test.it('should make a request to the service state url', () => {
+    test.it('should make a request to the module state url', () => {
       return utils.request(`/abilities/${abilityId}/state`, {
         method: 'GET',
         ...authenticator.credentials()
       }).then(response => {
-        return testUtils.logs.combined('controller')
+        return utils.readLogs()
           .then(controllerLogs => {
             return Promise.all([
-              test.expect(controllerLogs).to.contain(`Sending request to get state from service "${serviceId}", ability "${abilityId}"`),
+              test.expect(controllerLogs).to.contain(`Sending request to get state from module "${moduleId}", ability "${abilityId}"`),
               test.expect(controllerLogs).to.contain(`Send Request GET | https://192.168.1.1/api/abilities/foo-ability-name/state`),
               test.expect(response.statusCode).to.equal(502),
-              test.expect(response.body.message).to.equal('Service not available')
+              test.expect(response.body.message).to.equal('Module not available')
             ])
           })
       })
