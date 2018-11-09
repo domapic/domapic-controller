@@ -1,6 +1,5 @@
 
 const test = require('narval')
-const testUtils = require('narval/utils')
 
 const utils = require('./utils')
 
@@ -95,7 +94,7 @@ test.describe('ability state api', function () {
         method: 'GET',
         ...authenticator.credentials()
       }).then(response => {
-        return testUtils.logs.combined('controller')
+        return utils.readLogs()
           .then(controllerLogs => {
             return Promise.all([
               test.expect(controllerLogs).to.contain(`Sending request to get state from service "${serviceId}", ability "${abilityId}"`),
