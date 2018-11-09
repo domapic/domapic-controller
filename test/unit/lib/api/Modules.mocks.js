@@ -1,7 +1,7 @@
 
 const test = require('narval')
 
-const services = require('../../../../lib/api/services')
+const services = require('../../../../lib/api/modules')
 
 const Mock = function () {
   const sandbox = test.sinon.createSandbox()

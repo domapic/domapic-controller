@@ -3,8 +3,8 @@ const test = require('narval')
 
 const mocks = require('../../mocks')
 
-const services = require('../../../../lib/api/services')
-const definition = require('../../../../lib/api/services.json')
+const services = require('../../../../lib/api/modules')
+const definition = require('../../../../lib/api/modules.json')
 
 test.describe('services api', () => {
   test.describe('Operations instance', () => {

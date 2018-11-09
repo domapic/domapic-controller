@@ -2,7 +2,7 @@ const test = require('narval')
 
 const mocks = require('../../mocks')
 
-const service = require('../../../../lib/models/service')
+const service = require('../../../../lib/models/module')
 
 test.describe('service model', () => {
   test.describe('Model instance', () => {

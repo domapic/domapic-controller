@@ -2,7 +2,7 @@ const test = require('narval')
 
 const UserModel = require('./models/User.mocks')
 const SecurityTokenModel = require('./models/SecurityToken.mocks')
-const ServiceModel = require('./models/Service.mocks')
+const ModuleModel = require('./models/Module.mocks')
 const AbilityModel = require('./models/Ability.mocks')
 const LogModel = require('./models/Log.mocks')
 
@@ -10,7 +10,7 @@ const Mock = function () {
   const sandbox = test.sinon.createSandbox()
   const userModelMocks = new UserModel()
   const securityTokenMocks = new SecurityTokenModel()
-  const serviceModelMocks = new ServiceModel()
+  const serviceModelMocks = new ModuleModel()
   const abilityModelMocks = new AbilityModel()
   const logModelMocks = new LogModel()
 

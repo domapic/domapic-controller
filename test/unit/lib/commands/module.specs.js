@@ -3,7 +3,7 @@ const test = require('narval')
 
 const mocks = require('../../mocks')
 
-const service = require('../../../../lib/commands/service')
+const service = require('../../../../lib/commands/module')
 
 test.describe('service commands', () => {
   test.describe('Commands instance', () => {
