@@ -2,7 +2,7 @@
 
 # Domapic Controller
 
-> Controller server for Domapic systems
+> Controller for Domapic systems
 
 [![Build status][travisci-image]][travisci-url] [![Coverage Status][coveralls-image]][coveralls-url] [![Quality Gate][quality-gate-image]][quality-gate-url] [![js-standard-style][standard-image]][standard-url]
 
@@ -53,7 +53,7 @@ npm i domapic-controller -g
 ### Start the server
 
 ```bash
-domapic-controller start controller
+domapic-controller start
 ```
 
 The controller process will be started at background (using [PM2][pm2-url] as manager). Now you can browse to [http://localhost:3000](http://localhost:3000) to check that the server has started successfully. A __Swagger UI__ describing the server api will be available at that url.
@@ -63,7 +63,7 @@ The controller process will be started at background (using [PM2][pm2-url] as ma
 ### Display logs
 
 ```bash
-domapic-controller logs controller
+domapic-controller logs
 ```
 
 This command will display last logs of server, and will continue displaying logs until CTRL-C is pressed.
@@ -91,13 +91,13 @@ Copy the provided api key and place it in a safe place, and use it later when st
 ### Stop and restart
 
 ```bash
-domapic-controller stop controller
+domapic-controller stop
 ```
 
 This command will stop the server, and, if you used the `--save` option when you started it for first time, you´ll be able to start it again with same settings simply executing:
 
 ```bash
-domapic-controller start controller
+domapic-controller start
 ```
 
 If you want your server to be started automatically on system reload, use the pm2 save command:
@@ -125,7 +125,7 @@ domapic-controller start --help
 
 option | description | default
 --- | --- | ---
-`--name` | Service instance name. Name can be defined too as first argument | -
+`--name` | Custom service instance name. Name can be defined too as first argument. Default is "domapic-controller" | -
 `--db` | MongoDB connection uri | mongodb://localhost:27017/domapic
 `--port` | Http port used | 3000
 `--hostName` | Hostname for the server | -
@@ -154,11 +154,11 @@ Follow the next steps to securize your Controller before exposing it to the inte
 	> The Controller is distributed with a default administrator user, which name is "admin", and password is "admin". Delete it and setup your own administrator user:
 
 	```
-	domapic-controller --name=controller user remove admin
+	domapic-controller user remove admin
 	```
 
 	```
-	domapic-controller --name=controller user add
+	domapic-controller user add
 	```
 
 	You will be prompted for user name, role, email and password. Using your real email will allow you to use OAuth to login at Domapic Cloud and access to your controller through it.
