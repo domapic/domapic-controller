@@ -12,8 +12,7 @@ module.exports = domapic.cli({
   customConfig: options,
   customCommands: {
     user
-  },
-  type: 'controller'
+  }
 }).catch(err => {
   process.exitCode = 1
   if (!err.isDomapic) {
