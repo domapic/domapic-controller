@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 ### Changed
 - Upgrade domapic-base
+- Change "services" by "modules".
 ### Fixed
 ### Removed
 
