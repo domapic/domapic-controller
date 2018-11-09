@@ -31,8 +31,8 @@
 
 Controller server for Domapic domotic systems.
 
-Control all your Domapic Services and program them to interact automatically using the provided web interface.
-Install Domapic plugins to connect Domapic with other domotic systems or online services.
+Connect all your Domapic Modules and control them with a single application. <!-- and program them to interact automatically using the provided web interface
+Install Domapic plugins to connect Domapic with other domotic systems or online services. -->
 
 ## Prerequisites
 
@@ -68,7 +68,7 @@ domapic-controller logs
 
 This command will display last logs of server, and will continue displaying logs until CTRL-C is pressed.
 
-Server logs are saved too into a daily file. These files are rotated automatically and only last ten days files are kept. You´ll find these files in the `~/.domapic/controller/logs` folder.
+Server logs are saved too into a daily file. These files are rotated automatically and only last ten days files are kept. You´ll find these files in the `~/.domapic/domapic-controller/logs` folder.
 
 Server logs are managed by [PM2][pm2-url] too, so, it is recommended to install [_PM2 log rotate_][pm2-log-rotate-url] to avoid pm2 logs file growing too much.
 
@@ -82,11 +82,10 @@ Checking the server log you´ll find something like:
 -----------------------------------------------------------------
 Use the next api key to register services: 6hka5b0jnT9HOMJjUNquqOLneFGxYYtfOygguKoACUIviRvTJLV4IzglcybePQLB
 -----------------------------------------------------------------
-2018-09-29 19:35:56.878: [controller] [WARN] Caution. Starting server without ssl protocol. Use it only in secured and trusted networks
 2018-09-29 19:35:56.885: [controller] [info] Server started and listening at port 3000
 ```
 
-Copy the provided api key and place it in a safe place, and use it later when starting your Domapic Services, in order to allow them to automatically register themself in the controller and connect with it.
+Copy the provided api key and place it in a safe place, and use it later when starting your Domapic Services (plugins or modules), in order to allow them to automatically register themself into the controller and connect with it.
 
 ### Stop and restart
 
@@ -110,7 +109,7 @@ pm2 save
 
 ### Help
 
-Use next command to display help with detailed information about all available commands and options:
+Use the next command to display help with detailed information about all available commands and options:
 
 ```shell
 # Display all available commands:
