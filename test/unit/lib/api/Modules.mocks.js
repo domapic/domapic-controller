@@ -1,30 +1,30 @@
 
 const test = require('narval')
 
-const services = require('../../../../lib/api/modules')
+const modules = require('../../../../lib/api/modules')
 
 const Mock = function () {
   const sandbox = test.sinon.createSandbox()
 
   const operationsStubs = {
-    getServices: {
+    getModules: {
       handler: sandbox.stub().usingPromise().resolves()
     },
-    addService: {
+    addModule: {
       handler: sandbox.stub().usingPromise().resolves()
     },
-    getService: {
+    getModule: {
       handler: sandbox.stub().usingPromise().resolves()
     },
-    updateService: {
+    updateModule: {
       handler: sandbox.stub().usingPromise().resolves()
     }
   }
 
   const stubs = {
     operations: operationsStubs,
-    Operations: sandbox.stub(services, 'Operations').returns(operationsStubs),
-    openapi: sandbox.stub(services, 'openapi').returns([])
+    Operations: sandbox.stub(modules, 'Operations').returns(operationsStubs),
+    openapi: sandbox.stub(modules, 'openapi').returns([])
   }
 
   const restore = function () {

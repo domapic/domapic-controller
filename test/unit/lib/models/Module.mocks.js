@@ -1,25 +1,25 @@
 
 const test = require('narval')
 
-const service = require('../../../../lib/models/module')
+const serviceModel = require('../../../../lib/models/module')
 
 const Mock = function () {
   const sandbox = test.sinon.createSandbox()
 
-  const serviceStub = {
+  const moduleStub = {
     save: sandbox.stub().usingPromise().resolves()
   }
 
-  const ServiceStub = sandbox.stub().returns(serviceStub)
-  ServiceStub.find = sandbox.stub().usingPromise().resolves()
-  ServiceStub.findOne = sandbox.stub().usingPromise().resolves()
-  ServiceStub.findById = sandbox.stub().usingPromise().resolves()
-  ServiceStub.findOneAndUpdate = sandbox.stub().usingPromise().resolves()
+  const ModuleStub = sandbox.stub().returns(moduleStub)
+  ModuleStub.find = sandbox.stub().usingPromise().resolves()
+  ModuleStub.findOne = sandbox.stub().usingPromise().resolves()
+  ModuleStub.findById = sandbox.stub().usingPromise().resolves()
+  ModuleStub.findOneAndUpdate = sandbox.stub().usingPromise().resolves()
 
   const stubs = {
-    service: serviceStub,
-    Service: ServiceStub,
-    Model: sandbox.stub(service, 'Model').returns(ServiceStub)
+    module: moduleStub,
+    Module: ModuleStub,
+    Model: sandbox.stub(serviceModel, 'Model').returns(ModuleStub)
   }
 
   const restore = function () {

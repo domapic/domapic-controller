@@ -39,14 +39,14 @@ test.describe('abilities api', () => {
           })
       })
 
-      test.it('should pass service query as a filter if it is received', () => {
-        const fooService = 'foo-service'
+      test.it('should pass module query as a filter if it is received', () => {
+        const fooModule = 'foo-module'
         return operations.getAbilities.handler({
           query: {
-            service: fooService
+            module: fooModule
           }
         }).then(() => test.expect(commandsMocks.stubs.ability.getFiltered).to.have.been.calledWith({
-          _service: fooService
+          _module: fooModule
         }))
       })
     })
@@ -71,9 +71,9 @@ test.describe('abilities api', () => {
     })
 
     test.describe('addAbility auth', () => {
-      test.it('should return true if provided user has "service" role', () => {
+      test.it('should return true if provided user has "module" role', () => {
         test.expect(operations.addAbility.auth({
-          role: 'service'
+          role: 'module'
         }, {}, {})).to.be.true()
       })
 

@@ -45,7 +45,7 @@ test.describe('securityTokens api', () => {
         })
       }
 
-      testRole('service')
+      testRole('module')
       testRole('operator')
       testRole('plugin')
       testRole('service-registerer')
@@ -62,9 +62,9 @@ test.describe('securityTokens api', () => {
       })
 
       test.describe('when user has service-registerer role, and query type is apikey', () => {
-        test.it('should resolve the promise if received user in query has "service" role', () => {
+        test.it('should resolve the promise if received user in query has "module" role', () => {
           commandsMocks.stubs.user.get.resolves({
-            role: 'service'
+            role: 'module'
           })
           return operations.getSecurityTokens.auth({ role: 'service-registerer', _id: '' }, { query: {
             type: 'apiKey',
@@ -74,7 +74,7 @@ test.describe('securityTokens api', () => {
           })
         })
 
-        test.it('should reject the promise if received user in query has a role different to "service"', () => {
+        test.it('should reject the promise if received user in query has a role different to "module"', () => {
           const forbiddenError = new Error('forbidden')
           commandsMocks.stubs.user.get.resolves({
             role: 'admin'

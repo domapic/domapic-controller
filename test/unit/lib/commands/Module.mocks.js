@@ -1,7 +1,7 @@
 
 const test = require('narval')
 
-const service = require('../../../../lib/commands/module')
+const domapicModule = require('../../../../lib/commands/module')
 
 const Mock = function () {
   const sandbox = test.sinon.createSandbox()
@@ -16,7 +16,7 @@ const Mock = function () {
 
   const stubs = {
     commands: commandsStubs,
-    Commands: sandbox.stub(service, 'Commands').returns(commandsStubs)
+    Commands: sandbox.stub(domapicModule, 'Commands').returns(commandsStubs)
   }
 
   const restore = function () {

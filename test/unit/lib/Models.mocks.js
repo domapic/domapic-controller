@@ -10,7 +10,7 @@ const Mock = function () {
   const sandbox = test.sinon.createSandbox()
   const userModelMocks = new UserModel()
   const securityTokenMocks = new SecurityTokenModel()
-  const serviceModelMocks = new ModuleModel()
+  const moduleModelMocks = new ModuleModel()
   const abilityModelMocks = new AbilityModel()
   const logModelMocks = new LogModel()
 
@@ -19,8 +19,8 @@ const Mock = function () {
     User: userModelMocks.stubs.User,
     securityToken: securityTokenMocks.stubs.securityToken,
     SecurityToken: securityTokenMocks.stubs.SecurityToken,
-    service: serviceModelMocks.stubs.service,
-    Service: serviceModelMocks.stubs.Service,
+    module: moduleModelMocks.stubs.module,
+    Module: moduleModelMocks.stubs.Module,
     ability: abilityModelMocks.stubs.ability,
     Ability: abilityModelMocks.stubs.Ability,
     log: logModelMocks.stubs.log,
@@ -28,7 +28,7 @@ const Mock = function () {
   }
 
   const restore = function () {
-    serviceModelMocks.restore()
+    moduleModelMocks.restore()
     userModelMocks.restore()
     securityTokenMocks.restore()
     abilityModelMocks.restore()
