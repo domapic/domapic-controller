@@ -3,9 +3,9 @@ const test = require('narval')
 
 const mocks = require('../../mocks')
 
-const service = require('../../../../lib/commands/service')
+const moduleCommand = require('../../../../lib/commands/module')
 
-test.describe('service commands', () => {
+test.describe('module commands', () => {
   test.describe('Commands instance', () => {
     let commands
     let utilMocks
@@ -19,7 +19,7 @@ test.describe('service commands', () => {
       clientMocks = new mocks.Client()
       utilMocks = new mocks.Utils()
 
-      commands = service.Commands(baseMocks.stubs.service, modelsMocks.stubs, clientMocks.stubs)
+      commands = moduleCommand.Commands(baseMocks.stubs.service, modelsMocks.stubs, clientMocks.stubs)
     })
 
     test.afterEach(() => {
@@ -34,35 +34,35 @@ test.describe('service commands', () => {
         _id: 'foo-user-id',
         name: 'foo-user-name'
       }
-      const fooServiceData = {
+      const fooModuleData = {
         description: 'foo-description'
       }
-      test.it('should create and save a Service model with the received data, adding the received user data', () => {
-        return commands.add(fooUser, fooServiceData)
+      test.it('should create and save a Module model with the received data, adding the received user data', () => {
+        return commands.add(fooUser, fooModuleData)
           .then(() => {
             return Promise.all([
-              test.expect(modelsMocks.stubs.Service).to.have.been.calledWith({
-                ...fooServiceData,
+              test.expect(modelsMocks.stubs.Module).to.have.been.calledWith({
+                ...fooModuleData,
                 name: fooUser.name,
                 _user: fooUser._id
               }),
-              test.expect(modelsMocks.stubs.service.save).to.have.been.called()
+              test.expect(modelsMocks.stubs.module.save).to.have.been.called()
             ])
           })
       })
 
-      test.it('should resolve the promise with the new service', () => {
-        return commands.add(fooUser, fooServiceData)
-          .then(service => {
-            return test.expect(modelsMocks.stubs.service).to.equal(service)
+      test.it('should resolve the promise with the new module', () => {
+        return commands.add(fooUser, fooModuleData)
+          .then(moduleCommand => {
+            return test.expect(modelsMocks.stubs.module).to.equal(moduleCommand)
           })
       })
 
-      test.it('should call to transform the received error if saving service fails', () => {
+      test.it('should call to transform the received error if saving module fails', () => {
         let saveError = new Error('save error')
-        modelsMocks.stubs.service.save.rejects(saveError)
+        modelsMocks.stubs.module.save.rejects(saveError)
         utilMocks.stubs.transformValidationErrors.rejects(saveError)
-        return commands.add(fooUser, fooServiceData)
+        return commands.add(fooUser, fooModuleData)
           .then(() => {
             return test.assert.fail()
           }, (err) => {
@@ -78,61 +78,61 @@ test.describe('service commands', () => {
       const fooFilter = {
         _user: 'foo-id'
       }
-      const fooServices = [{
+      const fooModules = [{
         token: 'foo'
       }]
 
-      test.it('should call to find services and return the result', () => {
-        modelsMocks.stubs.Service.find.resolves(fooServices)
+      test.it('should call to find modules and return the result', () => {
+        modelsMocks.stubs.Module.find.resolves(fooModules)
         return commands.getFiltered(fooFilter)
           .then((result) => {
             return Promise.all([
-              test.expect(result).to.equal(fooServices),
-              test.expect(modelsMocks.stubs.Service.find).to.have.been.calledWith(fooFilter)
+              test.expect(result).to.equal(fooModules),
+              test.expect(modelsMocks.stubs.Module.find).to.have.been.calledWith(fooFilter)
             ])
           })
       })
 
-      test.it('should call to find services with an empty filter if it is not provided', () => {
-        modelsMocks.stubs.Service.find.resolves(fooServices)
+      test.it('should call to find modules with an empty filter if it is not provided', () => {
+        modelsMocks.stubs.Module.find.resolves(fooModules)
         return commands.getFiltered()
           .then((result) => {
             return Promise.all([
-              test.expect(result).to.equal(fooServices),
-              test.expect(modelsMocks.stubs.Service.find).to.have.been.calledWith({})
+              test.expect(result).to.equal(fooModules),
+              test.expect(modelsMocks.stubs.Module.find).to.have.been.calledWith({})
             ])
           })
       })
     })
 
     test.describe('get method', () => {
-      test.it('should call to service model findOne method, and return the result', () => {
+      test.it('should call to module model findOne method, and return the result', () => {
         const fooResult = 'foo'
-        modelsMocks.stubs.Service.findOne.resolves(fooResult)
+        modelsMocks.stubs.Module.findOne.resolves(fooResult)
         return commands.get({_id: 'id'})
           .then((result) => {
             return Promise.all([
               test.expect(result).to.equal(fooResult),
-              test.expect(modelsMocks.stubs.Service.findOne).to.have.been.called()
+              test.expect(modelsMocks.stubs.Module.findOne).to.have.been.called()
             ])
           })
       })
 
-      test.it('should call to service model get method with an empty object if it is not provided, and return the result', () => {
+      test.it('should call to module model get method with an empty object if it is not provided, and return the result', () => {
         const fooResult = []
-        modelsMocks.stubs.Service.findOne.resolves(fooResult)
+        modelsMocks.stubs.Module.findOne.resolves(fooResult)
         return commands.get()
           .then((result) => {
             return Promise.all([
               test.expect(result).to.equal(fooResult),
-              test.expect(modelsMocks.stubs.Service.findOne.getCall(0).args[0]).to.deep.equal({})
+              test.expect(modelsMocks.stubs.Module.findOne.getCall(0).args[0]).to.deep.equal({})
             ])
           })
       })
 
-      test.it('should return a not found error if no service is found', () => {
+      test.it('should return a not found error if no module is found', () => {
         const fooError = new Error('foo error')
-        modelsMocks.stubs.Service.findOne.resolves(null)
+        modelsMocks.stubs.Module.findOne.resolves(null)
         baseMocks.stubs.service.errors.NotFound.returns(fooError)
         return commands.get({
           _id: 'foo'
@@ -146,15 +146,15 @@ test.describe('service commands', () => {
     })
 
     test.describe('getById method', () => {
-      test.it('should call to service model findById method, and return the result', () => {
+      test.it('should call to module model findById method, and return the result', () => {
         const fooId = 'foo-id'
         const fooResult = 'foo'
-        modelsMocks.stubs.Service.findById.resolves(fooResult)
+        modelsMocks.stubs.Module.findById.resolves(fooResult)
         return commands.getById(fooId)
           .then((result) => {
             return Promise.all([
               test.expect(result).to.equal(fooResult),
-              test.expect(modelsMocks.stubs.Service.findById).to.have.been.calledWith(fooId, 'name processId description package _user version url updatedAt createdAt')
+              test.expect(modelsMocks.stubs.Module.findById).to.have.been.calledWith(fooId, 'name processId description package _user version url updatedAt createdAt')
             ])
           })
       })
@@ -162,21 +162,21 @@ test.describe('service commands', () => {
       test.it('should not filter fields if allFields option is received', () => {
         const fooId = 'foo-id'
         const fooResult = 'foo'
-        modelsMocks.stubs.Service.findById.resolves(fooResult)
+        modelsMocks.stubs.Module.findById.resolves(fooResult)
         return commands.getById(fooId, {
           allFields: true
         })
           .then((result) => {
             return Promise.all([
               test.expect(result).to.equal(fooResult),
-              test.expect(modelsMocks.stubs.Service.findById).to.have.been.calledWith(fooId, undefined)
+              test.expect(modelsMocks.stubs.Module.findById).to.have.been.calledWith(fooId, undefined)
             ])
           })
       })
 
       test.it('should return a not found error if findById method throws an error', () => {
         const fooError = new Error('foo error')
-        modelsMocks.stubs.Service.findById.rejects(new Error())
+        modelsMocks.stubs.Module.findById.rejects(new Error())
         baseMocks.stubs.service.errors.NotFound.returns(fooError)
         return commands.getById('foo-id')
           .then(() => {
@@ -191,23 +191,23 @@ test.describe('service commands', () => {
       const fooId = 'foo-id'
       const fooData = {description: 'foo-description'}
 
-      test.it('should call to service model findOneAndUpdate method, and return the result', () => {
+      test.it('should call to module model findOneAndUpdate method, and return the result', () => {
         const fooResult = 'foo'
-        modelsMocks.stubs.Service.findOneAndUpdate.resolves(fooResult)
+        modelsMocks.stubs.Module.findOneAndUpdate.resolves(fooResult)
         return commands.update(fooId, fooData)
           .then((result) => {
             return Promise.all([
               test.expect(result).to.equal(fooResult),
-              test.expect(modelsMocks.stubs.Service.findOneAndUpdate).to.have.been.calledWith({
+              test.expect(modelsMocks.stubs.Module.findOneAndUpdate).to.have.been.calledWith({
                 _id: fooId
               }, fooData)
             ])
           })
       })
 
-      test.it('should call to transform the received error if updating service fails', () => {
+      test.it('should call to transform the received error if updating module fails', () => {
         let updateError = new Error('update error')
-        modelsMocks.stubs.Service.findOneAndUpdate.rejects(updateError)
+        modelsMocks.stubs.Module.findOneAndUpdate.rejects(updateError)
         utilMocks.stubs.transformValidationErrors.rejects(updateError)
         return commands.update(fooId, fooData)
           .then(() => {
@@ -220,9 +220,9 @@ test.describe('service commands', () => {
           })
       })
 
-      test.it('should return a not found error if no service is found', () => {
+      test.it('should return a not found error if no module is found', () => {
         const fooError = new Error('foo error')
-        modelsMocks.stubs.Service.findOneAndUpdate.resolves(null)
+        modelsMocks.stubs.Module.findOneAndUpdate.resolves(null)
         baseMocks.stubs.service.errors.NotFound.returns(fooError)
         return commands.update(fooId, fooData)
           .then(() => {

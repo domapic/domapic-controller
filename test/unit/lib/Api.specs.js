@@ -9,7 +9,7 @@ const Api = require('../../../lib/Api')
 test.describe('Api', () => {
   let baseMocks
   let usersMocks
-  let servicesMocks
+  let modulesMocks
   let securityTokensMocks
   let logMocks
   let api
@@ -18,7 +18,7 @@ test.describe('Api', () => {
     baseMocks = new mocks.Base()
     usersMocks = new mocks.api.Users()
     securityTokensMocks = new mocks.api.SecurityTokens()
-    servicesMocks = new mocks.api.Services()
+    modulesMocks = new mocks.api.Modules()
     logMocks = new mocks.api.Logs()
     api = Api(baseMocks.stubs.service)
   })
@@ -26,7 +26,7 @@ test.describe('Api', () => {
   test.afterEach(() => {
     baseMocks.restore()
     usersMocks.restore()
-    servicesMocks.restore()
+    modulesMocks.restore()
     securityTokensMocks.restore()
     logMocks.restore()
   })
@@ -46,10 +46,10 @@ test.describe('Api', () => {
           'getUser',
           'getUserMe',
           'getSecurityTokens',
-          'getServices',
-          'getService',
-          'addService',
-          'updateService',
+          'getModules',
+          'getModule',
+          'addModule',
+          'updateModule',
           'getAbilities',
           'getAbility',
           'updateAbility',

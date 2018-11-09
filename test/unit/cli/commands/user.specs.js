@@ -172,11 +172,11 @@ test.describe('cli user command', () => {
         })
       })
 
-      test.describe('when role is one of "service", "service-registerer" or "plugin"', () => {
+      test.describe('when role is one of "module", "service-registerer" or "plugin"', () => {
         test.it('should not call inquirer to ask for email if it is not provided', () => {
           return user.command({
             userName: 'foo',
-            role: 'service',
+            role: 'module',
             action: 'add'
           }, baseMocks.stubs.service).then(() => {
             return test.expect(inquirerStub).to.not.have.been.called()
@@ -184,7 +184,7 @@ test.describe('cli user command', () => {
         })
       })
 
-      test.describe('when role is not one of "service", "service-registerer" or "plugin"', () => {
+      test.describe('when role is not one of "module", "service-registerer" or "plugin"', () => {
         test.it('should call inquirer to ask for email if it is not provided', () => {
           return user.command({
             userName: 'foo',

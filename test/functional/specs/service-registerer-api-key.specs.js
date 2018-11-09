@@ -15,9 +15,9 @@ test.describe('server', function () {
     const authenticator = utils.Authenticator()
     let apiKey
 
-    const fooServiceUser = {
-      name: 'foo-service-name',
-      role: 'service'
+    const fooModuleUser = {
+      name: 'foo-module-name',
+      role: 'module'
     }
 
     const getUsers = function (query) {
@@ -53,14 +53,14 @@ test.describe('server', function () {
         })
     })
 
-    test.it('should be able to add service users', () => {
-      return utils.createUser(authenticator, fooServiceUser).then((response) => {
+    test.it('should be able to add module users', () => {
+      return utils.createUser(authenticator, fooModuleUser).then((response) => {
         return test.expect(response.statusCode).to.equal(201)
       })
     })
 
-    test.it('should be able to add apiKeys for service users', () => {
-      return utils.ensureUserAndDoLogin(authenticator, fooServiceUser)
+    test.it('should be able to add apiKeys for module users', () => {
+      return utils.ensureUserAndDoLogin(authenticator, fooModuleUser)
         .then(() => {
           return getUserMe().then((response) => {
             const userId = response.body._id
@@ -105,9 +105,9 @@ test.describe('server', function () {
       })
     })
 
-    test.it('should be able to get service users', () => {
+    test.it('should be able to get module users', () => {
       return getUsers({
-        role: 'service'
+        role: 'module'
       }).then((response) => {
         return test.expect(response.statusCode).to.equal(200)
       })
