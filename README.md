@@ -47,7 +47,7 @@ Domapic controller is built with Node.js, and uses MongoDB as database, so, firs
 Install Domapic-controller globally using npm:
 
 ```bash
-npm i domapic-controller -g
+npm i domapic-controller -g --production
 ```
 
 ### Start the server
