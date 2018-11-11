@@ -60,17 +60,17 @@ test.describe('user model', () => {
     })
 
     test.describe('email validation', () => {
-      test.it('should require email if user has a role different to "service", "plugin", or "service-registerer"', () => {
+      test.it('should require email if user has a role different to "module", "plugin", or "service-registerer"', () => {
         model = user.Model(baseMocks.stubs.service)
         test.expect(model.email.required[0].call({
           role: 'admin'
         })).to.be.true()
       })
 
-      test.it('should not require email if user has a role equal to "service", "plugin", or "service-registerer"', () => {
+      test.it('should not require email if user has a role equal to "module", "plugin", or "service-registerer"', () => {
         model = user.Model(baseMocks.stubs.service)
         test.expect(model.email.required[0].call({
-          role: 'service'
+          role: 'module'
         })).to.be.false()
       })
 

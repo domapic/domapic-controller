@@ -26,7 +26,7 @@
           "role": {
             "description": "Role assigned to the user",
             "type": "string",
-            "enum": ["admin", "operator", "service", "plugin", "service-registerer"]
+            "enum": ["admin", "operator", "module", "plugin", "service-registerer"]
           },
           "createdAt": {
             "description": "Creation date timestamp",
@@ -68,7 +68,7 @@
           "role": {
             "description": "Role assigned to the user",
             "type": "string",
-            "enum": ["admin", "operator", "service", "plugin", "service-registerer"]
+            "enum": ["admin", "operator", "module", "plugin", "service-registerer"]
           }
         },
         "required": ["name", "role"],
@@ -115,7 +115,7 @@
             "name": "role",
             "schema": {
               "type": "string",
-              "enum": ["admin", "operator", "service", "plugin", "service-registerer"]
+              "enum": ["admin", "operator", "module", "plugin", "service-registerer"]
             },
             "description": "Service name"
           }

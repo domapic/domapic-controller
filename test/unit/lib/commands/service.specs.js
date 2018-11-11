@@ -154,7 +154,7 @@ test.describe('service commands', () => {
           .then((result) => {
             return Promise.all([
               test.expect(result).to.equal(fooResult),
-              test.expect(modelsMocks.stubs.Service.findById).to.have.been.calledWith(fooId, 'name processId description package _user version url updatedAt createdAt')
+              test.expect(modelsMocks.stubs.Service.findById).to.have.been.calledWith(fooId, 'name processId description package _user version url type updatedAt createdAt')
             ])
           })
       })

@@ -66,14 +66,14 @@ test.describe('abilities api', function () {
     password: 'foo'
   }
 
-  const serviceUser = {
-    name: 'foo-service-user',
-    role: 'service'
+  const moduleUser = {
+    name: 'foo-module-user',
+    role: 'module'
   }
 
-  const serviceUser2 = {
-    name: 'foo-service-user-2',
-    role: 'service'
+  const moduleUser2 = {
+    name: 'foo-module-user-2',
+    role: 'module'
   }
 
   const pluginUser = {
@@ -96,7 +96,8 @@ test.describe('abilities api', function () {
     package: 'foo-package',
     version: '1.0.0',
     apiKey: 'dasasfdfsdf423efwsfds',
-    url: 'https://192.168.1.1'
+    url: 'https://192.168.1.1',
+    type: 'module'
   }
 
   const fooAbility = {
@@ -117,9 +118,9 @@ test.describe('abilities api', function () {
   })
 
   test.describe('add ability', () => {
-    test.describe('when user has service role', () => {
+    test.describe('when user has module role', () => {
       test.before(() => {
-        return utils.ensureUserAndDoLogin(authenticator, serviceUser)
+        return utils.ensureUserAndDoLogin(authenticator, moduleUser)
       })
 
       test.it('should return a bad data error if no name is provided', () => {
@@ -233,14 +234,14 @@ test.describe('abilities api', function () {
   })
 
   test.describe('update ability', () => {
-    let serviceUserAbility
+    let moduleUserAbility
 
     test.before(() => {
-      return utils.ensureUserAndDoLogin(authenticator, serviceUser)
+      return utils.ensureUserAndDoLogin(authenticator, moduleUser)
         .then(() => {
           return getAbilities()
             .then(getResponse => {
-              serviceUserAbility = getResponse.body.find(ability => ability.name === fooAbility.name)
+              moduleUserAbility = getResponse.body.find(ability => ability.name === fooAbility.name)
               return Promise.resolve()
             })
         })
@@ -248,11 +249,11 @@ test.describe('abilities api', function () {
 
     test.describe('when ability do not belongs to logged user', () => {
       test.before(() => {
-        return utils.ensureUserAndDoLogin(authenticator, serviceUser2)
+        return utils.ensureUserAndDoLogin(authenticator, moduleUser2)
       })
 
       test.it('should return a forbidden error', () => {
-        return updateAbility(serviceUserAbility._id, {
+        return updateAbility(moduleUserAbility._id, {
           description: 'foo-description'
         }).then((response) => {
           return Promise.all([
@@ -277,11 +278,11 @@ test.describe('abilities api', function () {
 
     test.describe('when ability belongs to logged user', () => {
       test.before(() => {
-        return utils.ensureUserAndDoLogin(authenticator, serviceUser)
+        return utils.ensureUserAndDoLogin(authenticator, moduleUser)
       })
 
       test.it('should return a bad data response if trying to update name', () => {
-        return updateAbility(serviceUserAbility._id, {
+        return updateAbility(moduleUserAbility._id, {
           name: 'foo-new-name'
         })
           .then((response) => {
@@ -297,14 +298,14 @@ test.describe('abilities api', function () {
         const fooNewActionDescription = 'foo-new-ability-action-description'
         const fooNewStateDescription = 'foo-new-ability-state-description'
         const fooNewEventDescription = 'foo-new-ability-event-description'
-        return updateAbility(serviceUserAbility._id, {
+        return updateAbility(moduleUserAbility._id, {
           description: fooNewDescription,
           actionDescription: fooNewActionDescription,
           eventDescription: fooNewEventDescription,
           stateDescription: fooNewStateDescription
         })
           .then((patchResponse) => {
-            return getAbility(serviceUserAbility._id)
+            return getAbility(moduleUserAbility._id)
               .then((response) => {
                 const data = response.body
                 return Promise.all([
@@ -322,20 +323,20 @@ test.describe('abilities api', function () {
   })
 
   test.describe('delete ability', () => {
-    let serviceUserAbility
+    let moduleUserAbility
     const abilityToRemove = {
       ...fooAbility,
       name: 'foo-ability-to-remove'
     }
 
     test.before(() => {
-      return utils.ensureUserAndDoLogin(authenticator, serviceUser)
+      return utils.ensureUserAndDoLogin(authenticator, moduleUser)
         .then(() => {
           return addAbility(abilityToRemove)
             .then(() => {
               return getAbilities()
                 .then(getResponse => {
-                  serviceUserAbility = getResponse.body.find(ability => ability.name === abilityToRemove.name)
+                  moduleUserAbility = getResponse.body.find(ability => ability.name === abilityToRemove.name)
                   return Promise.resolve()
                 })
             })
@@ -344,11 +345,11 @@ test.describe('abilities api', function () {
 
     test.describe('when ability do not belongs to logged user', () => {
       test.before(() => {
-        return utils.ensureUserAndDoLogin(authenticator, serviceUser2)
+        return utils.ensureUserAndDoLogin(authenticator, moduleUser2)
       })
 
       test.it('should return a forbidden error', () => {
-        return deleteAbility(serviceUserAbility._id)
+        return deleteAbility(moduleUserAbility._id)
           .then((response) => {
             return Promise.all([
               test.expect(response.body.message).to.contain('Not authorized'),
@@ -370,13 +371,13 @@ test.describe('abilities api', function () {
 
     test.describe('when ability belongs to logged user', () => {
       test.before(() => {
-        return utils.ensureUserAndDoLogin(authenticator, serviceUser)
+        return utils.ensureUserAndDoLogin(authenticator, moduleUser)
       })
 
       test.it('should delete provided ability', () => {
-        return deleteAbility(serviceUserAbility._id)
+        return deleteAbility(moduleUserAbility._id)
           .then((response) => {
-            return getAbility(serviceUserAbility._id)
+            return getAbility(moduleUserAbility._id)
               .then((getResponse) => {
                 return Promise.all([
                   test.expect(response.statusCode).to.equal(204),
@@ -390,7 +391,7 @@ test.describe('abilities api', function () {
 
   const testRole = function (user) {
     test.describe(`when user has role "${user.role}"`, () => {
-      let serviceUserAbility
+      let moduleUserAbility
       const fooNewAbility = {
         ...fooAbility,
         action: false
@@ -399,7 +400,7 @@ test.describe('abilities api', function () {
         return utils.ensureUserAndDoLogin(authenticator, user).then(() => {
           return getAbilities()
             .then(getResponse => {
-              serviceUserAbility = getResponse.body.find(ability => ability.name === fooAbility.name)
+              moduleUserAbility = getResponse.body.find(ability => ability.name === fooAbility.name)
               return Promise.resolve()
             })
         })
@@ -430,7 +431,7 @@ test.describe('abilities api', function () {
 
       test.describe('get ability', () => {
         test.it('should return ability data', () => {
-          return getAbility(serviceUserAbility._id)
+          return getAbility(moduleUserAbility._id)
             .then((response) => {
               const ability = response.body
               return Promise.all([
@@ -454,7 +455,7 @@ test.describe('abilities api', function () {
 
       test.describe('update ability', () => {
         test.it('should return a forbidden error', () => {
-          return updateAbility(serviceUserAbility._id, {
+          return updateAbility(moduleUserAbility._id, {
             description: 'foo-new-description'
           }).then(response => {
             return Promise.all([
@@ -467,7 +468,7 @@ test.describe('abilities api', function () {
 
       test.describe('delete ability', () => {
         test.it('should return a forbidden error', () => {
-          return deleteAbility(serviceUserAbility._id)
+          return deleteAbility(moduleUserAbility._id)
             .then(response => {
               return Promise.all([
                 test.expect(response.body.message).to.contain('Not authorized'),

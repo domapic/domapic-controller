@@ -71,9 +71,9 @@ test.describe('abilities api', () => {
     })
 
     test.describe('addAbility auth', () => {
-      test.it('should return true if provided user has "service" role', () => {
+      test.it('should return true if provided user has "module" role', () => {
         test.expect(operations.addAbility.auth({
-          role: 'service'
+          role: 'module'
         }, {}, {})).to.be.true()
       })
 

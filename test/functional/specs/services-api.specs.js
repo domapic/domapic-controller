@@ -51,14 +51,14 @@ test.describe('services api', function () {
     password: 'foo'
   }
 
-  const serviceUser = {
-    name: 'foo-service-user',
-    role: 'service'
+  const moduleUser = {
+    name: 'foo-module-user',
+    role: 'module'
   }
 
-  const serviceUser2 = {
-    name: 'foo-service-user-2',
-    role: 'service'
+  const moduleUser2 = {
+    name: 'foo-module-user-2',
+    role: 'module'
   }
 
   const pluginUser = {
@@ -81,7 +81,8 @@ test.describe('services api', function () {
     package: 'foo-package',
     version: '1.0.0',
     apiKey: 'dasasfdfsdf423efwsfds',
-    url: 'https://192.168.1.1'
+    url: 'https://192.168.1.1',
+    type: 'module'
   }
 
   const fooService2 = {
@@ -90,7 +91,8 @@ test.describe('services api', function () {
     package: 'foo-package',
     version: '1.0.0',
     apiKey: 'dasasfdfsdf423efwsasdfds',
-    url: 'https://192.168.1.42'
+    url: 'https://192.168.1.42',
+    type: 'plugin'
   }
 
   const fooUpdatedService = {
@@ -114,9 +116,9 @@ test.describe('services api', function () {
   })
 
   test.describe('add service', () => {
-    test.describe('when user has service role', () => {
+    test.describe('when user has module role', () => {
       test.before(() => {
-        return utils.ensureUserAndDoLogin(authenticator, serviceUser)
+        return utils.ensureUserAndDoLogin(authenticator, moduleUser)
       })
 
       test.it('should return a bad data error if no processId is provided', () => {
@@ -192,12 +194,13 @@ test.describe('services api', function () {
             .then((getResponse) => {
               const service = getResponse.body
               return Promise.all([
-                test.expect(service.name).to.equal(serviceUser.name),
+                test.expect(service.name).to.equal(moduleUser.name),
                 test.expect(service.package).to.equal(fooService.package),
                 test.expect(service.version).to.equal(fooService.version),
                 test.expect(service.url).to.equal(fooService.url),
                 test.expect(service.apiKey).to.be.undefined(),
                 test.expect(service.processId).to.equal(fooService.processId),
+                test.expect(service.type).to.equal(fooService.type),
                 test.expect(service.createdAt).to.not.be.undefined(),
                 test.expect(service.updatedAt).to.not.be.undefined()
               ])
@@ -215,7 +218,7 @@ test.describe('services api', function () {
       })
 
       test.it('should return a bad data error if repeated url is provided', () => {
-        return utils.ensureUserAndDoLogin(authenticator, serviceUser2)
+        return utils.ensureUserAndDoLogin(authenticator, moduleUser2)
           .then(() => {
             return addService(fooService).then((response) => {
               return Promise.all([
@@ -229,20 +232,20 @@ test.describe('services api', function () {
   })
 
   test.describe('update service', () => {
-    let serviceUserService
+    let moduleUserService
 
     test.before(() => {
-      return utils.ensureUserAndDoLogin(authenticator, serviceUser2)
+      return utils.ensureUserAndDoLogin(authenticator, pluginUser)
         .then(() => {
           return addService(fooService2).then(res => {
             if (res.statusCode !== 201) {
               return Promise.reject(new Error())
             }
-            return utils.ensureUserAndDoLogin(authenticator, serviceUser)
+            return utils.ensureUserAndDoLogin(authenticator, moduleUser)
               .then(() => {
                 return getServices()
                   .then(getResponse => {
-                    serviceUserService = getResponse.body.find(service => service.name === serviceUser.name)
+                    moduleUserService = getResponse.body.find(service => service.name === moduleUser.name)
                     return Promise.resolve()
                   })
               })
@@ -252,11 +255,11 @@ test.describe('services api', function () {
 
     test.describe('when service do not belongs to logged user', () => {
       test.before(() => {
-        return utils.ensureUserAndDoLogin(authenticator, serviceUser2)
+        return utils.ensureUserAndDoLogin(authenticator, pluginUser)
       })
 
       test.it('should return a forbidden error', () => {
-        return updateService(serviceUserService._id, {
+        return updateService(moduleUserService._id, {
           description: 'foo-description'
         }).then((response) => {
           return Promise.all([
@@ -281,11 +284,11 @@ test.describe('services api', function () {
 
     test.describe('when service belongs to logged user', () => {
       test.before(() => {
-        return utils.ensureUserAndDoLogin(authenticator, serviceUser)
+        return utils.ensureUserAndDoLogin(authenticator, moduleUser)
       })
 
       test.it('should return a bad data response if trying to update name', () => {
-        return updateService(serviceUserService._id, {
+        return updateService(moduleUserService._id, {
           name: 'foo-new-name'
         })
           .then((response) => {
@@ -297,7 +300,7 @@ test.describe('services api', function () {
       })
 
       test.it('should return a bad data response if trying to update processId', () => {
-        return updateService(serviceUserService._id, {
+        return updateService(moduleUserService._id, {
           processId: 'foo-new-processId'
         })
           .then((response) => {
@@ -309,7 +312,7 @@ test.describe('services api', function () {
       })
 
       test.it('should return a bad data response if trying to update _user', () => {
-        return updateService(serviceUserService._id, {
+        return updateService(moduleUserService._id, {
           _user: 'foo-new-user-id'
         })
           .then((response) => {
@@ -321,7 +324,7 @@ test.describe('services api', function () {
       })
 
       test.it('should return a bad data response if wrong url is provided', () => {
-        return updateService(serviceUserService._id, {
+        return updateService(moduleUserService._id, {
           url: 'foo'
         })
           .then((response) => {
@@ -333,7 +336,7 @@ test.describe('services api', function () {
       })
 
       test.it('should return a bad data response if repeated url is provided', () => {
-        return updateService(serviceUserService._id, {
+        return updateService(moduleUserService._id, {
           url: fooService2.url
         })
           .then((response) => {
@@ -345,14 +348,15 @@ test.describe('services api', function () {
       })
 
       test.it('should update all provided service data', () => {
-        return updateService(serviceUserService._id, fooUpdatedService)
+        return updateService(moduleUserService._id, fooUpdatedService)
           .then((patchResponse) => {
-            return getService(serviceUserService._id)
+            return getService(moduleUserService._id)
               .then((response) => {
                 const data = response.body
                 return Promise.all([
-                  test.expect(data.name).to.equal(serviceUser.name),
+                  test.expect(data.name).to.equal(moduleUser.name),
                   test.expect(data.processId).to.equal(fooService.processId),
+                  test.expect(data.type).to.equal(fooService.type),
                   test.expect(data.description).to.equal(fooUpdatedService.description),
                   test.expect(data.package).to.equal(fooUpdatedService.package),
                   test.expect(data.version).to.equal(fooUpdatedService.version),
@@ -365,14 +369,15 @@ test.describe('services api', function () {
       })
 
       test.it('should update all provided service data even when url is same than before', () => {
-        return updateService(serviceUserService._id, fooUpdatedServiceRepeatedUrl)
+        return updateService(moduleUserService._id, fooUpdatedServiceRepeatedUrl)
           .then((patchResponse) => {
-            return getService(serviceUserService._id)
+            return getService(moduleUserService._id)
               .then((response) => {
                 const data = response.body
                 return Promise.all([
-                  test.expect(data.name).to.equal(serviceUser.name),
+                  test.expect(data.name).to.equal(moduleUser.name),
                   test.expect(data.processId).to.equal(fooService.processId),
+                  test.expect(data.type).to.equal(fooService.type),
                   test.expect(data.description).to.equal(fooUpdatedServiceRepeatedUrl.description),
                   test.expect(data.package).to.equal(fooUpdatedServiceRepeatedUrl.package),
                   test.expect(data.version).to.equal(fooUpdatedServiceRepeatedUrl.version),
@@ -388,7 +393,7 @@ test.describe('services api', function () {
 
   const testRole = function (user) {
     test.describe(`when user has role "${user.role}"`, () => {
-      let serviceUserService
+      let moduleUserService
       const fooNewService = {
         ...fooService,
         url: `https://${user.role}.com`
@@ -397,7 +402,7 @@ test.describe('services api', function () {
         return utils.ensureUserAndDoLogin(authenticator, user).then(() => {
           return getServices()
             .then(getResponse => {
-              serviceUserService = getResponse.body.find(service => service.name === serviceUser.name)
+              moduleUserService = getResponse.body.find(service => service.name === moduleUser.name)
               return Promise.resolve()
             })
         })
@@ -418,7 +423,7 @@ test.describe('services api', function () {
         test.it('should return all existant services', () => {
           return getServices()
             .then((getResponse) => {
-              const service1 = getResponse.body.find(service => service.name === serviceUser.name)
+              const service1 = getResponse.body.find(service => service.name === moduleUser.name)
               return Promise.all([
                 test.expect(service1.url).to.equal(fooUpdatedService.url)
               ])
@@ -428,12 +433,12 @@ test.describe('services api', function () {
 
       test.describe('get service', () => {
         test.it('should return service data', () => {
-          return getService(serviceUserService._id)
+          return getService(moduleUserService._id)
             .then((response) => {
               const service = response.body
               return Promise.all([
                 test.expect(service._id).to.not.be.undefined(),
-                test.expect(service.name).to.equal(serviceUser.name),
+                test.expect(service.name).to.equal(moduleUser.name),
                 test.expect(service.url).to.equal(fooUpdatedService.url)
               ])
             })
@@ -454,6 +459,5 @@ test.describe('services api', function () {
 
   testRole(adminUser)
   testRole(operatorUser)
-  testRole(pluginUser)
   testRole(serviceRegistererUser)
 })

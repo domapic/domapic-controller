@@ -59,10 +59,36 @@ test.describe('services api', () => {
 
     test.describe('addService auth', () => {
       const fooId = 'foo-id'
-      test.it('should return true if provided user has "service" role', () => {
+      test.it('should return true if provided user has "module" role and wants to create a service with type "module"', () => {
         test.expect(operations.addService.auth({
-          role: 'service'
-        }, {}, {})).to.be.true()
+          role: 'module'
+        }, {}, {
+          type: 'module'
+        })).to.be.true()
+      })
+
+      test.it('should return false if provided user has "module" role and wants to create a service with type "plugin"', () => {
+        test.expect(operations.addService.auth({
+          role: 'module'
+        }, {}, {
+          type: 'plugin'
+        })).to.be.false()
+      })
+
+      test.it('should return true if provided user has "plugin" role and wants to create a service with type "plugin"', () => {
+        test.expect(operations.addService.auth({
+          role: 'plugin'
+        }, {}, {
+          type: 'plugin'
+        })).to.be.true()
+      })
+
+      test.it('should return false if provided user has "plugin" role and wants to create a service with type "module"', () => {
+        test.expect(operations.addService.auth({
+          role: 'plugin'
+        }, {}, {
+          type: 'module'
+        })).to.be.false()
       })
 
       const testRole = function (role) {
@@ -74,7 +100,6 @@ test.describe('services api', () => {
       }
       testRole('admin')
       testRole('operator')
-      testRole('plugin')
       testRole('service-registerer')
     })
 

@@ -16,7 +16,7 @@ test.describe('security tokens api', function () {
 
   const serviceUser = {
     name: 'foo-service-user',
-    role: 'service',
+    role: 'module',
     email: 'service@foo.com',
     password: 'foo'
   }
@@ -189,7 +189,7 @@ test.describe('security tokens api', function () {
           })
       })
 
-      test.it('should return a forbidden error if requested user has not a "service" role', () => {
+      test.it('should return a forbidden error if requested user has not a "module" role', () => {
         return getAuthTokens({
           type: 'apiKey',
           user: operatorUserId
@@ -201,7 +201,7 @@ test.describe('security tokens api', function () {
         })
       })
 
-      test.it('should return tokens data if requested user has "service" role and requested type is "apiKey"', () => {
+      test.it('should return tokens data if requested user has "module" role and requested type is "apiKey"', () => {
         return getAuthTokens({
           type: 'apiKey',
           user: serviceUserId

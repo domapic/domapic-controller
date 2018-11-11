@@ -58,7 +58,7 @@ test.describe('apiKey security', () => {
       test.describe('when user has service-registerer role', () => {
         test.it('should resolve the promise if provided user has service role', () => {
           const fooUserData = {
-            role: 'service'
+            role: 'module'
           }
           commandsMocks.stubs.user.getById.resolves(fooUserData)
           return security.authenticateAuth({

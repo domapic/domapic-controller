@@ -58,7 +58,7 @@ test.describe('users cli', function () {
 
   const serviceUser = {
     name: 'foo-service-user',
-    role: 'service'
+    role: 'module'
   }
 
   test.before(() => {

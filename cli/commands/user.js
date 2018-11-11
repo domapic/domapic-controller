@@ -88,7 +88,7 @@ const Options = (config, cli, commands) => {
       validate: ValidateField(checkName, AvoidDuplicatedUser('name', templates.userNameAlreadyExists()))
     })
     user.role = config.role || await inquire(questions.role)
-    if (![roles.SERVICE, roles.SERVICE_REGISTERER, roles.PLUGIN].includes(user.role)) {
+    if (![roles.MODULE, roles.SERVICE_REGISTERER, roles.PLUGIN].includes(user.role)) {
       user.email = config.email || await inquire(questions.email, {
         validate: ValidateField(checkEmail, AvoidDuplicatedUser('email', templates.emailAlreadyExists()))
       })

@@ -30,17 +30,17 @@ test.describe('users api', () => {
         }, {}, {})).to.be.true()
       })
 
-      test.it('should return true if provided user has "service-registerer" role and received role in query is "service"', () => {
+      test.it('should return true if provided user has "service-registerer" role and received role in query is "module"', () => {
         test.expect(operations.getUsers.auth({
           role: 'service-registerer'
         }, {
           query: {
-            role: 'service'
+            role: 'module'
           }
         }, {})).to.be.true()
       })
 
-      test.it('should return false if provided user has "service-registerer" role and received role in query is different to "service"', () => {
+      test.it('should return false if provided user has "service-registerer" role and received role in query is different to "module"', () => {
         test.expect(operations.getUsers.auth({
           role: 'service-registerer'
         }, {
@@ -68,7 +68,7 @@ test.describe('users api', () => {
         })
       }
 
-      testRole('service')
+      testRole('module')
       testRole('operator')
       testRole('plugin')
     })
@@ -125,7 +125,7 @@ test.describe('users api', () => {
 
       test.it('should return false if provided user id is different than logged user', () => {
         test.expect(operations.getUser.auth({
-          role: 'service',
+          role: 'module',
           _id: 'foo-id'
         }, {
           path: {
@@ -179,11 +179,11 @@ test.describe('users api', () => {
         }, {}, {})).to.be.true()
       })
 
-      test.it('should return true if provided user has "service-registerer" role and body user has "service" role', () => {
+      test.it('should return true if provided user has "service-registerer" role and body user has "module" role', () => {
         test.expect(operations.addUser.auth({
           role: 'service-registerer'
         }, {}, {
-          role: 'service'
+          role: 'module'
         })).to.be.true()
       })
 
@@ -202,7 +202,7 @@ test.describe('users api', () => {
           }, {}, {})).to.be.false()
         })
       }
-      testRole('service')
+      testRole('module')
       testRole('operator')
       testRole('plugin')
     })
