@@ -8,7 +8,7 @@ test.describe('Models', () => {
   let baseMocks
   let userModelMocks
   let securityTokenModelMocks
-  let moduleModelMocks
+  let serviceModelMocks
   let abilityModelMocks
   let logModelMocks
   let models
@@ -17,16 +17,16 @@ test.describe('Models', () => {
     baseMocks = new mocks.Base()
     userModelMocks = new mocks.models.User()
     securityTokenModelMocks = new mocks.models.SecurityToken()
-    moduleModelMocks = new mocks.models.Module()
+    serviceModelMocks = new mocks.models.Service()
     abilityModelMocks = new mocks.models.Ability()
     logModelMocks = new mocks.models.Log()
-    models = Models(baseMocks.stubs.module)
+    models = Models(baseMocks.stubs.service)
   })
 
   test.afterEach(() => {
     baseMocks.restore()
     userModelMocks.restore()
-    moduleModelMocks.restore()
+    serviceModelMocks.restore()
     securityTokenModelMocks.restore()
     abilityModelMocks.restore()
     logModelMocks.restore()
@@ -41,8 +41,8 @@ test.describe('Models', () => {
       return test.expect(typeof models.SecurityToken).to.equal('function')
     })
 
-    test.it('should contain Module model', () => {
-      return test.expect(typeof models.Module).to.equal('function')
+    test.it('should contain Service model', () => {
+      return test.expect(typeof models.Service).to.equal('function')
     })
 
     test.it('should contain Ability model', () => {

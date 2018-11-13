@@ -6,10 +6,10 @@ const utils = require('./utils')
 test.describe('abilities api', function () {
   let authenticator = utils.Authenticator()
 
-  const addModule = function (moduleData) {
-    return utils.request('/modules', {
+  const addService = function (serviceData) {
+    return utils.request('/services', {
       method: 'POST',
-      body: moduleData,
+      body: serviceData,
       ...authenticator.credentials()
     })
   }
@@ -90,13 +90,14 @@ test.describe('abilities api', function () {
     password: 'foo'
   }
 
-  const fooModule = {
-    processId: 'foo-module-id',
+  const fooService = {
+    processId: 'foo-service-id',
     description: 'foo-description',
     package: 'foo-package',
     version: '1.0.0',
     apiKey: 'dasasfdfsdf423efwsfds',
-    url: 'https://192.168.1.1'
+    url: 'https://192.168.1.1',
+    type: 'module'
   }
 
   const fooAbility = {
@@ -179,29 +180,29 @@ test.describe('abilities api', function () {
         })
       })
 
-      test.it('should return a conflict error if no module related to the user is found', () => {
+      test.it('should return a conflict error if no service related to the user is found', () => {
         const ability = {...fooAbility}
         return addAbility(ability).then((response) => {
           return Promise.all([
-            test.expect(response.body.message).to.contain('User has not a related module'),
+            test.expect(response.body.message).to.contain('User has not a related service'),
             test.expect(response.statusCode).to.equal(409)
           ])
         })
       })
 
-      test.it('should return a conflict error if no module related to the user is found', () => {
+      test.it('should return a conflict error if no service related to the user is found', () => {
         const ability = {...fooAbility}
         return addAbility(ability).then((response) => {
           return Promise.all([
-            test.expect(response.body.message).to.contain('User has not a related module'),
+            test.expect(response.body.message).to.contain('User has not a related service'),
             test.expect(response.statusCode).to.equal(409)
           ])
         })
       })
 
-      test.describe('when user has a related module', () => {
+      test.describe('when user has a related service', () => {
         test.before(() => {
-          return addModule(fooModule).then((response) => {
+          return addService(fooService).then((response) => {
             return Promise.resolve()
           })
         })

@@ -15,7 +15,7 @@ test.describe('composed commands', () => {
     let userCommandsMocks
     let securityTokenCommandsMocks
     let abilityCommandsMocks
-    let moduleCommandsMocks
+    let serviceCommandsMocks
     let logCommandsMocks
 
     test.beforeEach(() => {
@@ -26,14 +26,14 @@ test.describe('composed commands', () => {
       userCommandsMocks = new mocks.commands.User()
       securityTokenCommandsMocks = new mocks.commands.SecurityToken()
       abilityCommandsMocks = new mocks.commands.Ability()
-      moduleCommandsMocks = new mocks.commands.Module()
+      serviceCommandsMocks = new mocks.commands.Service()
       logCommandsMocks = new mocks.commands.Log()
 
       commands = composed.Commands(baseMocks.stubs.service, modelsMocks.stubs, clientMocks.stubs, {
         user: userCommandsMocks.stubs.commands,
         securityToken: securityTokenCommandsMocks.stubs.commands,
         ability: abilityCommandsMocks.stubs.commands,
-        module: moduleCommandsMocks.stubs.commands,
+        service: serviceCommandsMocks.stubs.commands,
         log: logCommandsMocks.stubs.commands
       })
     })
@@ -46,7 +46,7 @@ test.describe('composed commands', () => {
       securityTokenCommandsMocks.restore()
       utilMocks.restore()
       abilityCommandsMocks.restore()
-      moduleCommandsMocks.restore()
+      serviceCommandsMocks.restore()
       logCommandsMocks.restore()
     })
 
@@ -65,7 +65,7 @@ test.describe('composed commands', () => {
       })
 
       test.describe('when init users add users because database was empty', () => {
-        test.it('should call to add a new security token for module registerer', () => {
+        test.it('should call to add a new security token for service registerer', () => {
           userCommandsMocks.stubs.commands.init.resolves([{
             _id: 'foo-user-id-1'
           }, fooRegistererUser])
@@ -121,10 +121,10 @@ test.describe('composed commands', () => {
     test.describe('dispatchAbilityAction method', () => {
       const fooAbility = {
         _id: 'foo-id',
-        _module: 'foo-module-id'
+        _service: 'foo-service-id'
       }
-      const fooModule = {
-        _id: 'foo-module-id'
+      const fooService = {
+        _id: 'foo-service-id'
       }
       const fooActionData = {
         data: 'foo-data'
@@ -138,19 +138,19 @@ test.describe('composed commands', () => {
           })
       })
 
-      test.it('should call to send action, passing module data, ability data and action data', () => {
+      test.it('should call to send action, passing service data, ability data and action data', () => {
         abilityCommandsMocks.stubs.commands.validateAction.resolves(fooAbility)
-        moduleCommandsMocks.stubs.commands.getById.resolves(fooModule)
+        serviceCommandsMocks.stubs.commands.getById.resolves(fooService)
 
         return commands.dispatchAbilityAction('foo-id', fooActionData)
           .then(() => {
-            return test.expect(clientMocks.stubs.sendAction).to.have.been.calledWith(fooModule, fooAbility, fooActionData)
+            return test.expect(clientMocks.stubs.sendAction).to.have.been.calledWith(fooService, fooAbility, fooActionData)
           })
       })
 
       test.it('should call to log add command passing ability data and action data', () => {
         abilityCommandsMocks.stubs.commands.validateAction.resolves(fooAbility)
-        moduleCommandsMocks.stubs.commands.getById.resolves(fooModule)
+        serviceCommandsMocks.stubs.commands.getById.resolves(fooService)
 
         return commands.dispatchAbilityAction('foo-id', fooActionData)
           .then(() => {
@@ -166,10 +166,10 @@ test.describe('composed commands', () => {
     test.describe('getAbilityState method', () => {
       const fooAbility = {
         _id: 'foo-id',
-        _module: 'foo-module-id'
+        _service: 'foo-service-id'
       }
-      const fooModule = {
-        _id: 'foo-module-id'
+      const fooService = {
+        _id: 'foo-service-id'
       }
 
       test.it('should call to ability validateState command', () => {
@@ -180,13 +180,13 @@ test.describe('composed commands', () => {
           })
       })
 
-      test.it('should call to get state, passing module data and ability data', () => {
+      test.it('should call to get state, passing service data and ability data', () => {
         abilityCommandsMocks.stubs.commands.validateState.resolves(fooAbility)
-        moduleCommandsMocks.stubs.commands.getById.resolves(fooModule)
+        serviceCommandsMocks.stubs.commands.getById.resolves(fooService)
 
         return commands.getAbilityState('foo-id')
           .then(() => {
-            return test.expect(clientMocks.stubs.getState).to.have.been.calledWith(fooModule, fooAbility)
+            return test.expect(clientMocks.stubs.getState).to.have.been.calledWith(fooService, fooAbility)
           })
       })
     })
@@ -194,10 +194,10 @@ test.describe('composed commands', () => {
     test.describe('triggerAbilityEvent method', () => {
       const fooAbility = {
         _id: 'foo-ability-id',
-        _module: 'foo-module-id'
+        _service: 'foo-service-id'
       }
-      const fooModule = {
-        _id: 'foo-module-id'
+      const fooService = {
+        _id: 'foo-service-id'
       }
       const fooEventData = {
         data: 'foo-data'
@@ -205,7 +205,7 @@ test.describe('composed commands', () => {
 
       test.it('should call to ability validateEvent command', () => {
         abilityCommandsMocks.stubs.commands.validateEvent.resolves(fooAbility)
-        moduleCommandsMocks.stubs.commands.getById.resolves(fooModule)
+        serviceCommandsMocks.stubs.commands.getById.resolves(fooService)
 
         return commands.triggerAbilityEvent('foo-id', fooEventData)
           .then(() => {
@@ -213,19 +213,19 @@ test.describe('composed commands', () => {
           })
       })
 
-      test.it('should call to get related module, passing ability data', () => {
+      test.it('should call to get related service, passing ability data', () => {
         abilityCommandsMocks.stubs.commands.validateEvent.resolves(fooAbility)
-        moduleCommandsMocks.stubs.commands.getById.resolves(fooModule)
+        serviceCommandsMocks.stubs.commands.getById.resolves(fooService)
 
         return commands.triggerAbilityEvent('foo-id', fooEventData)
           .then(() => {
-            return test.expect(moduleCommandsMocks.stubs.commands.getById).to.have.been.calledWith(fooAbility._module)
+            return test.expect(serviceCommandsMocks.stubs.commands.getById).to.have.been.calledWith(fooAbility._service)
           })
       })
 
       test.it('should call to log add command passing ability data and event data', () => {
         abilityCommandsMocks.stubs.commands.validateEvent.resolves(fooAbility)
-        moduleCommandsMocks.stubs.commands.getById.resolves(fooModule)
+        serviceCommandsMocks.stubs.commands.getById.resolves(fooService)
 
         return commands.triggerAbilityEvent('foo-id', fooEventData)
           .then(() => {

@@ -34,6 +34,10 @@ Controller server for Domapic domotic systems.
 Connect all your Domapic Modules and control them with a single application. <!-- and program them to interact automatically using the provided web interface
 Install Domapic plugins to connect Domapic with other domotic systems or online services. -->
 
+![Domapic system example][domapic-example-image]
+
+> Above, an example of two modules in a [Domapic System][website-url]. Now, the relay can be controlled using the web or mobile applications, or interacting with ["Alexa"][alexa-url] or ["HomeKit"][homekit-url]. Automatisms can be configured in the [Domapic Controller Web UI][domapic-controller-url] to make the [_Phillips Hue_][hue-url] bulb be switched off automatically when the relay bulb is switched on, for example.
+
 ## Prerequisites
 
 Domapic controller is built with Node.js, and uses MongoDB as database, so, first of all, you need to have installed them in your system:
@@ -57,6 +61,8 @@ domapic-controller start
 ```
 
 The controller process will be started at background (using [PM2][pm2-url] as manager). Now you can browse to [http://localhost:3000](http://localhost:3000) to check that the server has started successfully. A __Swagger UI__ describing the server api will be available at that url.
+
+![Swagger example][swagger-example-image]
 
 > Note that, with basic options, server will be started over `http` protocol, and security will be disabled for localhost requests. Read about all [options](#options) and [security](#security) to start the controller with stricter security options.
 
@@ -176,6 +182,8 @@ Follow the next steps to securize your Controller before exposing it to the inte
 	If you want to force the authentication requirement even for localhost, use the `--authDisabled` as a flag, without specifying any IP.
 
 [domapic-logo-image]: http://domapic.com/assets/domapic-logo.png
+[domapic-example-image]: http://domapic.com/assets/domapic-schema-example_01.png
+[swagger-example-image]: http://domapic.com/assets/swagger-example.jpg
 
 [coveralls-image]: https://coveralls.io/repos/github/domapic/domapic-controller/badge.svg
 [coveralls-url]: https://coveralls.io/github/domapic/domapic-controller
