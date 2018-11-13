@@ -7,15 +7,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [unreleased]
 ### Added
 ### Changed
+### Fixed
+### Removed
+
+## [1.0.0-alpha.8] - 2018-11-13
+### Changed
 - Revert "services" to "modules" change.
 - Change "service" role into "module"
 - Add type field to services, which can be "module" or  "plugin"
 - Allow plugin users to create services with type "plugin"
 - Allow service-registerer users to create users with role "plugin"
-### Fixed
-### Removed
-
-## [1.0.0-alpha.8] - 2018-11-13
 
 ## [1.0.0-alpha.7] - 2018-11-09
 ### Changed
