@@ -43,28 +43,28 @@ test.describe('ability commands', () => {
       const fooUserData = {
         _id: 'foo-user-id'
       }
-      const fooModuleData = {
-        _id: 'foo-module-id'
+      const fooServiceData = {
+        _id: 'foo-service-id'
       }
       const fooAbilityData = {
         name: 'foo-ability-name'
       }
 
       test.beforeEach(() => {
-        modelsMocks.stubs.Module.findOne.resolves(fooModuleData)
+        modelsMocks.stubs.Service.findOne.resolves(fooServiceData)
       })
 
-      test.it('should call to find module related to logged user', () => {
+      test.it('should call to find service related to logged user', () => {
         return commands.add(fooUserData, fooAbilityData)
           .then(() => {
-            return test.expect(modelsMocks.stubs.Module.findOne).to.have.been.calledWith({
+            return test.expect(modelsMocks.stubs.Service.findOne).to.have.been.calledWith({
               _user: fooUserData._id
             })
           })
       })
 
-      test.it('should reject the promise if no related module is found', () => {
-        modelsMocks.stubs.Module.findOne.resolves(null)
+      test.it('should reject the promise if no related service is found', () => {
+        modelsMocks.stubs.Service.findOne.resolves(null)
         return commands.add(fooUserData, fooAbilityData)
           .then(() => {
             return test.assert.fail()
@@ -76,14 +76,14 @@ test.describe('ability commands', () => {
           })
       })
 
-      test.it('should create and save an Ability model with the received data, adding the module and user data', () => {
+      test.it('should create and save an Ability model with the received data, adding the service and user data', () => {
         return commands.add(fooUserData, fooAbilityData)
           .then(() => {
             return Promise.all([
               test.expect(modelsMocks.stubs.Ability).to.have.been.calledWith({
                 ...fooAbilityData,
                 _user: fooUserData._id,
-                _module: fooModuleData._id
+                _service: fooServiceData._id
               }),
               test.expect(modelsMocks.stubs.ability.save).to.have.been.called()
             ])
@@ -115,7 +115,7 @@ test.describe('ability commands', () => {
 
     test.describe('getFiltered method', () => {
       const fooFilter = {
-        _module: 'foo-id'
+        _service: 'foo-id'
       }
       const fooAbilities = [{
         name: 'foo'

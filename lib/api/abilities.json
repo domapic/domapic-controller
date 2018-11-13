@@ -1,16 +1,16 @@
 {
   "tags": [{
     "name": "ability",
-    "description": "Module ability"
+    "description": "Service ability"
   },{
     "name": "action",
-    "description": "Module ability action"
+    "description": "Service ability action"
   },{
     "name": "state",
-    "description": "Module ability state"
+    "description": "Service ability state"
   },{
     "name": "event",
-    "description": "Module ability event"
+    "description": "Service ability event"
   }],
   "components": {
     "schemas": {
@@ -27,8 +27,8 @@
             "type": "string",
             "pattern": "^[a-zA-Z0-9_-]*$"
           },
-          "_module": {
-            "description": "Unique id of the module owner of the ability",
+          "_service": {
+            "description": "Unique id of the service owner of the ability",
             "type": "string"
           },
           "_user": {
@@ -128,12 +128,12 @@
             "type": "string"
           }
         },
-        "required": ["_id", "name", "_module", "type"],
+        "required": ["_id", "name", "_service", "type"],
         "additionalProperties": false,
         "example": {
           "_id": "1223123",
           "name": "foo-ability-name",
-          "_module": "fdaq3r341212fsf",
+          "_service": "fdaq3r341212fsf",
           "_user": "132defwer4321312",
           "description": "Rele control",
           "event": true,
@@ -367,11 +367,11 @@
         "parameters": [
           {
             "in": "query",
-            "name": "module",
+            "name": "service",
             "schema": {
               "type": "string"
             },
-            "description": "Module id owner of the ability"
+            "description": "Service id owner of the ability"
           }
         ],
         "tags": ["ability"],
@@ -634,7 +634,7 @@
         ],
         "tags": ["ability", "event"],
         "summary": "Triggers an ability event",
-        "description": "Used to inform that an ability event was triggered. Intended to be used only by modules",
+        "description": "Used to inform that an ability event was triggered. Intended to be used only by services",
         "operationId": "abilityEvent",
         "requestBody": {
           "description": "Data of the event",

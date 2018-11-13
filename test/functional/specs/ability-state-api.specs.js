@@ -7,12 +7,12 @@ test.describe('ability state api', function () {
   this.timeout(10000)
   let authenticator = utils.Authenticator()
   let abilityId
-  let moduleId
+  let serviceId
 
-  const addModule = function (moduleData) {
-    return utils.request('/modules', {
+  const addService = function (serviceData) {
+    return utils.request('/services', {
       method: 'POST',
-      body: moduleData,
+      body: serviceData,
       ...authenticator.credentials()
     })
   }
@@ -25,18 +25,19 @@ test.describe('ability state api', function () {
     })
   }
 
-  const moduleUser = {
-    name: 'foo-module-user',
+  const serviceUser = {
+    name: 'foo-service-user',
     role: 'module'
   }
 
-  const fooModule = {
-    processId: 'foo-module-id',
+  const fooService = {
+    processId: 'foo-service-id',
     description: 'foo-description',
     package: 'foo-package',
     version: '1.0.0',
     apiKey: 'dasasfdfsdf423efwsfds',
-    url: 'https://192.168.1.1'
+    url: 'https://192.168.1.1',
+    type: 'module'
   }
 
   const fooAbility = {
@@ -50,10 +51,10 @@ test.describe('ability state api', function () {
   }
 
   test.before(() => {
-    return utils.ensureUserAndDoLogin(authenticator, moduleUser)
-      .then(() => addModule(fooModule)
+    return utils.ensureUserAndDoLogin(authenticator, serviceUser)
+      .then(() => addService(fooService)
         .then((response) => {
-          moduleId = response.headers.location.split('/').pop()
+          serviceId = response.headers.location.split('/').pop()
           return addAbility(fooAbility).then((addResponse) => {
             abilityId = addResponse.headers.location.split('/').pop()
             return Promise.resolve()
@@ -61,49 +62,47 @@ test.describe('ability state api', function () {
         }))
   })
 
-  test.describe('ability state api', () => {
-    test.it('should return a not found error if ability id is unknown', () => {
-      return utils.request(`/abilities/foo-ability-id/state`, {
+  test.it('should return a not found error if ability id is unknown', () => {
+    return utils.request(`/abilities/foo-ability-id/state`, {
+      method: 'GET',
+      ...authenticator.credentials()
+    }).then(response => {
+      return test.expect(response.statusCode).to.equal(404)
+    })
+  })
+
+  test.it('should return a not found error if ability has not a related state', () => {
+    return addAbility({...fooAbility,
+      name: 'foo-ability-no-state-name',
+      state: false
+    }).then(addResponse => {
+      const noActionAbilityId = addResponse.headers.location.split('/').pop()
+      return utils.request(`/abilities/${noActionAbilityId}/state`, {
         method: 'GET',
         ...authenticator.credentials()
       }).then(response => {
-        return test.expect(response.statusCode).to.equal(404)
+        return Promise.all([
+          test.expect(addResponse.statusCode).to.equal(201),
+          test.expect(response.statusCode).to.equal(404)
+        ])
       })
     })
+  })
 
-    test.it('should return a not found error if ability has not a related state', () => {
-      return addAbility({...fooAbility,
-        name: 'foo-ability-no-state-name',
-        state: false
-      }).then(addResponse => {
-        const noActionAbilityId = addResponse.headers.location.split('/').pop()
-        return utils.request(`/abilities/${noActionAbilityId}/state`, {
-          method: 'GET',
-          ...authenticator.credentials()
-        }).then(response => {
+  test.it('should make a request to the service state url', () => {
+    return utils.request(`/abilities/${abilityId}/state`, {
+      method: 'GET',
+      ...authenticator.credentials()
+    }).then(response => {
+      return utils.readLogs()
+        .then(controllerLogs => {
           return Promise.all([
-            test.expect(addResponse.statusCode).to.equal(201),
-            test.expect(response.statusCode).to.equal(404)
+            test.expect(controllerLogs).to.contain(`Sending request to get state from service "${serviceId}", ability "${abilityId}"`),
+            test.expect(controllerLogs).to.contain(`Send Request GET | https://192.168.1.1/api/abilities/foo-ability-name/state`),
+            test.expect(response.statusCode).to.equal(502),
+            test.expect(response.body.message).to.equal('Service not available')
           ])
         })
-      })
-    })
-
-    test.it('should make a request to the module state url', () => {
-      return utils.request(`/abilities/${abilityId}/state`, {
-        method: 'GET',
-        ...authenticator.credentials()
-      }).then(response => {
-        return utils.readLogs()
-          .then(controllerLogs => {
-            return Promise.all([
-              test.expect(controllerLogs).to.contain(`Sending request to get state from module "${moduleId}", ability "${abilityId}"`),
-              test.expect(controllerLogs).to.contain(`Send Request GET | https://192.168.1.1/api/abilities/foo-ability-name/state`),
-              test.expect(response.statusCode).to.equal(502),
-              test.expect(response.body.message).to.equal('Module not available')
-            ])
-          })
-      })
     })
   })
 })

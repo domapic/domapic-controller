@@ -39,14 +39,14 @@ test.describe('abilities api', () => {
           })
       })
 
-      test.it('should pass module query as a filter if it is received', () => {
-        const fooModule = 'foo-module'
+      test.it('should pass service query as a filter if it is received', () => {
+        const fooService = 'foo-service'
         return operations.getAbilities.handler({
           query: {
-            module: fooModule
+            service: fooService
           }
         }).then(() => test.expect(commandsMocks.stubs.ability.getFiltered).to.have.been.calledWith({
-          _module: fooModule
+          _service: fooService
         }))
       })
     })

@@ -3,36 +3,36 @@ const test = require('narval')
 
 const utils = require('./utils')
 
-test.describe('modules api', function () {
+test.describe('services api', function () {
   let authenticator = utils.Authenticator()
 
-  const getModules = function (filters) {
-    return utils.request('/modules', {
+  const getServices = function (filters) {
+    return utils.request('/services', {
       method: 'GET',
       query: filters,
       ...authenticator.credentials()
     })
   }
 
-  const getModule = function (moduleId) {
-    return utils.request(`/modules/${moduleId}`, {
+  const getService = function (serviceId) {
+    return utils.request(`/services/${serviceId}`, {
       method: 'GET',
       ...authenticator.credentials()
     })
   }
 
-  const updateModule = function (moduleId, moduleData) {
-    return utils.request(`/modules/${moduleId}`, {
+  const updateService = function (serviceId, serviceData) {
+    return utils.request(`/services/${serviceId}`, {
       method: 'PATCH',
-      body: moduleData,
+      body: serviceData,
       ...authenticator.credentials()
     })
   }
 
-  const addModule = function (moduleData) {
-    return utils.request('/modules', {
+  const addService = function (serviceData) {
+    return utils.request('/services', {
       method: 'POST',
-      body: moduleData,
+      body: serviceData,
       ...authenticator.credentials()
     })
   }
@@ -75,25 +75,27 @@ test.describe('modules api', function () {
     password: 'foo'
   }
 
-  const fooModule = {
-    processId: 'foo-module-id',
+  const fooService = {
+    processId: 'foo-service-id',
     description: 'foo-description',
     package: 'foo-package',
     version: '1.0.0',
     apiKey: 'dasasfdfsdf423efwsfds',
-    url: 'https://192.168.1.1'
+    url: 'https://192.168.1.1',
+    type: 'module'
   }
 
-  const fooModule2 = {
-    processId: 'foo-module-id',
+  const fooService2 = {
+    processId: 'foo-service-id',
     description: 'foo-description',
     package: 'foo-package',
     version: '1.0.0',
     apiKey: 'dasasfdfsdf423efwsasdfds',
-    url: 'https://192.168.1.42'
+    url: 'https://192.168.1.42',
+    type: 'plugin'
   }
 
-  const fooUpdatedModule = {
+  const fooUpdatedService = {
     description: 'foo updated description',
     package: 'foo updated package',
     version: 'foo updated version',
@@ -101,7 +103,7 @@ test.describe('modules api', function () {
     url: 'https://2.2.2.2'
   }
 
-  const fooUpdatedModuleRepeatedUrl = {
+  const fooUpdatedServiceRepeatedUrl = {
     description: 'foo updated description 2',
     package: 'foo updated package 2',
     version: 'foo updated version 2',
@@ -113,16 +115,16 @@ test.describe('modules api', function () {
     return utils.doLogin(authenticator)
   })
 
-  test.describe('add module', () => {
+  test.describe('add service', () => {
     test.describe('when user has module role', () => {
       test.before(() => {
         return utils.ensureUserAndDoLogin(authenticator, moduleUser)
       })
 
       test.it('should return a bad data error if no processId is provided', () => {
-        const fooCustomModule = {...fooModule}
-        delete fooCustomModule.processId
-        return addModule(fooCustomModule).then((response) => {
+        const service = {...fooService}
+        delete service.processId
+        return addService(service).then((response) => {
           return Promise.all([
             test.expect(response.body.message).to.contain('requires property "processId"'),
             test.expect(response.statusCode).to.equal(422)
@@ -131,9 +133,9 @@ test.describe('modules api', function () {
       })
 
       test.it('should return a bad data error if no package is provided', () => {
-        const fooCustomModule = {...fooModule}
-        delete fooCustomModule.package
-        return addModule(fooCustomModule).then((response) => {
+        const service = {...fooService}
+        delete service.package
+        return addService(service).then((response) => {
           return Promise.all([
             test.expect(response.body.message).to.contain('requires property "package"'),
             test.expect(response.statusCode).to.equal(422)
@@ -142,9 +144,9 @@ test.describe('modules api', function () {
       })
 
       test.it('should return a bad data error if no version is provided', () => {
-        const fooCustomModule = {...fooModule}
-        delete fooCustomModule.version
-        return addModule(fooCustomModule).then((response) => {
+        const service = {...fooService}
+        delete service.version
+        return addService(service).then((response) => {
           return Promise.all([
             test.expect(response.body.message).to.contain('requires property "version"'),
             test.expect(response.statusCode).to.equal(422)
@@ -153,9 +155,9 @@ test.describe('modules api', function () {
       })
 
       test.it('should return a bad data error if no apiKey is provided', () => {
-        const fooCustomModule = {...fooModule}
-        delete fooCustomModule.apiKey
-        return addModule(fooCustomModule).then((response) => {
+        const service = {...fooService}
+        delete service.apiKey
+        return addService(service).then((response) => {
           return Promise.all([
             test.expect(response.body.message).to.contain('requires property "apiKey"'),
             test.expect(response.statusCode).to.equal(422)
@@ -164,9 +166,9 @@ test.describe('modules api', function () {
       })
 
       test.it('should return a bad data error if no url is provided', () => {
-        const fooCustomModule = {...fooModule}
-        delete fooCustomModule.url
-        return addModule(fooCustomModule).then((response) => {
+        const service = {...fooService}
+        delete service.url
+        return addService(service).then((response) => {
           return Promise.all([
             test.expect(response.body.message).to.contain('requires property "url"'),
             test.expect(response.statusCode).to.equal(422)
@@ -175,9 +177,9 @@ test.describe('modules api', function () {
       })
 
       test.it('should return a bad data error if a not valid url is provided', () => {
-        const fooCustomModule = {...fooModule}
-        fooCustomModule.url = 'foo-bad-url'
-        return addModule(fooCustomModule).then((response) => {
+        const service = {...fooService}
+        service.url = 'foo-bad-url'
+        return addService(service).then((response) => {
           return Promise.all([
             test.expect(response.body.message).to.contain('does not conform to the "uri" format'),
             test.expect(response.statusCode).to.equal(422)
@@ -185,30 +187,31 @@ test.describe('modules api', function () {
         })
       })
 
-      test.it('should add module to database if all provided data pass validation', () => {
-        return addModule(fooModule).then((addResponse) => {
-          const moduleId = addResponse.headers.location.split('/').pop()
-          return getModule(moduleId)
+      test.it('should add service to database if all provided data pass validation', () => {
+        return addService(fooService).then((addResponse) => {
+          const serviceId = addResponse.headers.location.split('/').pop()
+          return getService(serviceId)
             .then((getResponse) => {
-              const fooCustomModule = getResponse.body
+              const service = getResponse.body
               return Promise.all([
-                test.expect(fooCustomModule.name).to.equal(moduleUser.name),
-                test.expect(fooCustomModule.package).to.equal(fooModule.package),
-                test.expect(fooCustomModule.version).to.equal(fooModule.version),
-                test.expect(fooCustomModule.url).to.equal(fooModule.url),
-                test.expect(fooCustomModule.apiKey).to.be.undefined(),
-                test.expect(fooCustomModule.processId).to.equal(fooModule.processId),
-                test.expect(fooCustomModule.createdAt).to.not.be.undefined(),
-                test.expect(fooCustomModule.updatedAt).to.not.be.undefined()
+                test.expect(service.name).to.equal(moduleUser.name),
+                test.expect(service.package).to.equal(fooService.package),
+                test.expect(service.version).to.equal(fooService.version),
+                test.expect(service.url).to.equal(fooService.url),
+                test.expect(service.apiKey).to.be.undefined(),
+                test.expect(service.processId).to.equal(fooService.processId),
+                test.expect(service.type).to.equal(fooService.type),
+                test.expect(service.createdAt).to.not.be.undefined(),
+                test.expect(service.updatedAt).to.not.be.undefined()
               ])
             })
         })
       })
 
-      test.it('should return a bad data error if one user tries to add more than one module', () => {
-        return addModule(fooModule).then((response) => {
+      test.it('should return a bad data error if one user tries to add more than one service', () => {
+        return addService(fooService).then((response) => {
           return Promise.all([
-            test.expect(response.body.message).to.contain('name: Module name already exists'),
+            test.expect(response.body.message).to.contain('name: Service name already exists'),
             test.expect(response.statusCode).to.equal(422)
           ])
         })
@@ -217,9 +220,9 @@ test.describe('modules api', function () {
       test.it('should return a bad data error if repeated url is provided', () => {
         return utils.ensureUserAndDoLogin(authenticator, moduleUser2)
           .then(() => {
-            return addModule(fooModule).then((response) => {
+            return addService(fooService).then((response) => {
               return Promise.all([
-                test.expect(response.body.message).to.contain('url: Module url already exists'),
+                test.expect(response.body.message).to.contain('url: Service url already exists'),
                 test.expect(response.statusCode).to.equal(422)
               ])
             })
@@ -228,21 +231,21 @@ test.describe('modules api', function () {
     })
   })
 
-  test.describe('update module', () => {
-    let moduleUserModule
+  test.describe('update service', () => {
+    let moduleUserService
 
     test.before(() => {
-      return utils.ensureUserAndDoLogin(authenticator, moduleUser2)
+      return utils.ensureUserAndDoLogin(authenticator, pluginUser)
         .then(() => {
-          return addModule(fooModule2).then(res => {
+          return addService(fooService2).then(res => {
             if (res.statusCode !== 201) {
               return Promise.reject(new Error())
             }
             return utils.ensureUserAndDoLogin(authenticator, moduleUser)
               .then(() => {
-                return getModules()
+                return getServices()
                   .then(getResponse => {
-                    moduleUserModule = getResponse.body.find(fooCustomModule => fooCustomModule.name === moduleUser.name)
+                    moduleUserService = getResponse.body.find(service => service.name === moduleUser.name)
                     return Promise.resolve()
                   })
               })
@@ -250,13 +253,13 @@ test.describe('modules api', function () {
         })
     })
 
-    test.describe('when module do not belongs to logged user', () => {
+    test.describe('when service do not belongs to logged user', () => {
       test.before(() => {
-        return utils.ensureUserAndDoLogin(authenticator, moduleUser2)
+        return utils.ensureUserAndDoLogin(authenticator, pluginUser)
       })
 
       test.it('should return a forbidden error', () => {
-        return updateModule(moduleUserModule._id, {
+        return updateService(moduleUserService._id, {
           description: 'foo-description'
         }).then((response) => {
           return Promise.all([
@@ -266,8 +269,8 @@ test.describe('modules api', function () {
         })
       })
 
-      test.it('should return a forbidden response when module does not exist', () => {
-        return updateModule('foo-unexistant-module-id', {
+      test.it('should return a forbidden response when service does not exist', () => {
+        return updateService('foo-unexistant-service-id', {
           description: 'foo-description'
         })
           .then((response) => {
@@ -279,13 +282,13 @@ test.describe('modules api', function () {
       })
     })
 
-    test.describe('when module belongs to logged user', () => {
+    test.describe('when service belongs to logged user', () => {
       test.before(() => {
         return utils.ensureUserAndDoLogin(authenticator, moduleUser)
       })
 
       test.it('should return a bad data response if trying to update name', () => {
-        return updateModule(moduleUserModule._id, {
+        return updateService(moduleUserService._id, {
           name: 'foo-new-name'
         })
           .then((response) => {
@@ -297,7 +300,7 @@ test.describe('modules api', function () {
       })
 
       test.it('should return a bad data response if trying to update processId', () => {
-        return updateModule(moduleUserModule._id, {
+        return updateService(moduleUserService._id, {
           processId: 'foo-new-processId'
         })
           .then((response) => {
@@ -309,7 +312,7 @@ test.describe('modules api', function () {
       })
 
       test.it('should return a bad data response if trying to update _user', () => {
-        return updateModule(moduleUserModule._id, {
+        return updateService(moduleUserService._id, {
           _user: 'foo-new-user-id'
         })
           .then((response) => {
@@ -321,7 +324,7 @@ test.describe('modules api', function () {
       })
 
       test.it('should return a bad data response if wrong url is provided', () => {
-        return updateModule(moduleUserModule._id, {
+        return updateService(moduleUserService._id, {
           url: 'foo'
         })
           .then((response) => {
@@ -333,51 +336,53 @@ test.describe('modules api', function () {
       })
 
       test.it('should return a bad data response if repeated url is provided', () => {
-        return updateModule(moduleUserModule._id, {
-          url: fooModule2.url
+        return updateService(moduleUserService._id, {
+          url: fooService2.url
         })
           .then((response) => {
             return Promise.all([
-              test.expect(response.body.message).to.contain('url: Module url already exists'),
+              test.expect(response.body.message).to.contain('url: Service url already exists'),
               test.expect(response.statusCode).to.equal(422)
             ])
           })
       })
 
-      test.it('should update all provided module data', () => {
-        return updateModule(moduleUserModule._id, fooUpdatedModule)
+      test.it('should update all provided service data', () => {
+        return updateService(moduleUserService._id, fooUpdatedService)
           .then((patchResponse) => {
-            return getModule(moduleUserModule._id)
+            return getService(moduleUserService._id)
               .then((response) => {
                 const data = response.body
                 return Promise.all([
                   test.expect(data.name).to.equal(moduleUser.name),
-                  test.expect(data.processId).to.equal(fooModule.processId),
-                  test.expect(data.description).to.equal(fooUpdatedModule.description),
-                  test.expect(data.package).to.equal(fooUpdatedModule.package),
-                  test.expect(data.version).to.equal(fooUpdatedModule.version),
+                  test.expect(data.processId).to.equal(fooService.processId),
+                  test.expect(data.type).to.equal(fooService.type),
+                  test.expect(data.description).to.equal(fooUpdatedService.description),
+                  test.expect(data.package).to.equal(fooUpdatedService.package),
+                  test.expect(data.version).to.equal(fooUpdatedService.version),
                   test.expect(data.apiKey).to.be.undefined(),
-                  test.expect(data.url).to.equal(fooUpdatedModule.url),
+                  test.expect(data.url).to.equal(fooUpdatedService.url),
                   test.expect(patchResponse.statusCode).to.equal(204)
                 ])
               })
           })
       })
 
-      test.it('should update all provided module data even when url is same than before', () => {
-        return updateModule(moduleUserModule._id, fooUpdatedModuleRepeatedUrl)
+      test.it('should update all provided service data even when url is same than before', () => {
+        return updateService(moduleUserService._id, fooUpdatedServiceRepeatedUrl)
           .then((patchResponse) => {
-            return getModule(moduleUserModule._id)
+            return getService(moduleUserService._id)
               .then((response) => {
                 const data = response.body
                 return Promise.all([
                   test.expect(data.name).to.equal(moduleUser.name),
-                  test.expect(data.processId).to.equal(fooModule.processId),
-                  test.expect(data.description).to.equal(fooUpdatedModuleRepeatedUrl.description),
-                  test.expect(data.package).to.equal(fooUpdatedModuleRepeatedUrl.package),
-                  test.expect(data.version).to.equal(fooUpdatedModuleRepeatedUrl.version),
+                  test.expect(data.processId).to.equal(fooService.processId),
+                  test.expect(data.type).to.equal(fooService.type),
+                  test.expect(data.description).to.equal(fooUpdatedServiceRepeatedUrl.description),
+                  test.expect(data.package).to.equal(fooUpdatedServiceRepeatedUrl.package),
+                  test.expect(data.version).to.equal(fooUpdatedServiceRepeatedUrl.version),
                   test.expect(data.apiKey).to.be.undefined(),
-                  test.expect(data.url).to.equal(fooUpdatedModuleRepeatedUrl.url),
+                  test.expect(data.url).to.equal(fooUpdatedServiceRepeatedUrl.url),
                   test.expect(patchResponse.statusCode).to.equal(204)
                 ])
               })
@@ -388,24 +393,24 @@ test.describe('modules api', function () {
 
   const testRole = function (user) {
     test.describe(`when user has role "${user.role}"`, () => {
-      let moduleUserModule
-      const fooNewModule = {
-        ...fooModule,
+      let moduleUserService
+      const fooNewService = {
+        ...fooService,
         url: `https://${user.role}.com`
       }
       test.before(() => {
         return utils.ensureUserAndDoLogin(authenticator, user).then(() => {
-          return getModules()
+          return getServices()
             .then(getResponse => {
-              moduleUserModule = getResponse.body.find(fooCustomModule => fooCustomModule.name === moduleUser.name)
+              moduleUserService = getResponse.body.find(service => service.name === moduleUser.name)
               return Promise.resolve()
             })
         })
       })
 
-      test.describe('add module', () => {
+      test.describe('add service', () => {
         test.it('should return a forbidden error', () => {
-          return addModule(fooNewModule).then(response => {
+          return addService(fooNewService).then(response => {
             return Promise.all([
               test.expect(response.body.message).to.contain('Not authorized'),
               test.expect(response.statusCode).to.equal(403)
@@ -414,36 +419,36 @@ test.describe('modules api', function () {
         })
       })
 
-      test.describe('get modules', () => {
-        test.it('should return all existant modules', () => {
-          return getModules()
+      test.describe('get services', () => {
+        test.it('should return all existant services', () => {
+          return getServices()
             .then((getResponse) => {
-              const module1 = getResponse.body.find(fooCustomModule => fooCustomModule.name === moduleUser.name)
+              const service1 = getResponse.body.find(service => service.name === moduleUser.name)
               return Promise.all([
-                test.expect(module1.url).to.equal(fooUpdatedModule.url)
+                test.expect(service1.url).to.equal(fooUpdatedService.url)
               ])
             })
         })
       })
 
-      test.describe('get module', () => {
-        test.it('should return module data', () => {
-          return getModule(moduleUserModule._id)
+      test.describe('get service', () => {
+        test.it('should return service data', () => {
+          return getService(moduleUserService._id)
             .then((response) => {
-              const fooCustomModule = response.body
+              const service = response.body
               return Promise.all([
-                test.expect(fooCustomModule._id).to.not.be.undefined(),
-                test.expect(fooCustomModule.name).to.equal(moduleUser.name),
-                test.expect(fooCustomModule.url).to.equal(fooUpdatedModule.url)
+                test.expect(service._id).to.not.be.undefined(),
+                test.expect(service.name).to.equal(moduleUser.name),
+                test.expect(service.url).to.equal(fooUpdatedService.url)
               ])
             })
         })
 
-        test.it('should return a not found response when module does not exist', () => {
-          return getModule('foo-unexistant-user-id')
+        test.it('should return a not found response when service does not exist', () => {
+          return getService('foo-unexistant-user-id')
             .then((response) => {
               return Promise.all([
-                test.expect(response.body.message).to.equal('Module not found'),
+                test.expect(response.body.message).to.equal('Service not found'),
                 test.expect(response.statusCode).to.equal(404)
               ])
             })
@@ -454,6 +459,5 @@ test.describe('modules api', function () {
 
   testRole(adminUser)
   testRole(operatorUser)
-  testRole(pluginUser)
   testRole(serviceRegistererUser)
 })
