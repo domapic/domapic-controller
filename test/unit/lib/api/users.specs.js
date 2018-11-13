@@ -40,15 +40,30 @@ test.describe('users api', () => {
         }, {})).to.be.true()
       })
 
-      test.it('should return false if provided user has "service-registerer" role and received role in query is different to "module"', () => {
+      test.it('should return true if provided user has "service-registerer" role and received role in query is "plugin"', () => {
         test.expect(operations.getUsers.auth({
           role: 'service-registerer'
         }, {
           query: {
-            role: 'admin'
+            role: 'plugin'
           }
-        }, {})).to.be.false()
+        }, {})).to.be.true()
       })
+
+      const testServiceRegistererRole = function (role) {
+        test.it(`should return false if provided user has "service-registerer" role and received role in query is "${role}"`, () => {
+          test.expect(operations.getUsers.auth({
+            role: 'service-registerer'
+          }, {
+            query: {
+              role: role
+            }
+          }, {})).to.be.false()
+        })
+      }
+      testServiceRegistererRole('service-registerer')
+      testServiceRegistererRole('admin')
+      testServiceRegistererRole('operator')
 
       test.it('should return false if provided user has "service-registerer" role and no role query is received', () => {
         test.expect(operations.getUsers.auth({
@@ -71,6 +86,7 @@ test.describe('users api', () => {
       testRole('module')
       testRole('operator')
       testRole('plugin')
+      testRole('service-registerer')
     })
 
     test.describe('getUsers handler', () => {
@@ -187,13 +203,27 @@ test.describe('users api', () => {
         })).to.be.true()
       })
 
-      test.it('should return false if provided user has "service-registerer" role and body user has a role different to service', () => {
+      test.it('should return true if provided user has "service-registerer" role and body user has "plugin" role', () => {
         test.expect(operations.addUser.auth({
           role: 'service-registerer'
         }, {}, {
-          role: 'admin'
-        })).to.be.false()
+          role: 'plugin'
+        })).to.be.true()
       })
+
+      const testServiceRegistererRole = function (role) {
+        test.it(`should return false if provided user has "service-registerer" role and body user has "${role}" role`, () => {
+          test.expect(operations.addUser.auth({
+            role: 'service-registerer'
+          }, {}, {
+            role
+          })).to.be.false()
+        })
+      }
+
+      testServiceRegistererRole('operator')
+      testServiceRegistererRole('admin')
+      testServiceRegistererRole('service-registerer')
 
       const testRole = function (role) {
         test.it(`should return false if provided user has "${role}" role`, () => {
@@ -205,6 +235,7 @@ test.describe('users api', () => {
       testRole('module')
       testRole('operator')
       testRole('plugin')
+      testRole('service-registerer')
     })
 
     test.describe('addUser handler', () => {

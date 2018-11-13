@@ -56,35 +56,44 @@ test.describe('apiKey security', () => {
       })
 
       test.describe('when user has service-registerer role', () => {
-        test.it('should resolve the promise if provided user has service role', () => {
-          const fooUserData = {
-            role: 'module'
-          }
-          commandsMocks.stubs.user.getById.resolves(fooUserData)
-          return security.authenticateAuth({
-            role: 'service-registerer',
-            _id: 'foo-user-id'
-          }, {}, {user: 'foo-id'})
-            .then(() => {
-              return test.expect(true).to.be.true()
-            })
-        })
+        const testAllowedRole = function(role) {
+          test.it(`should resolve the promise if provided user has service ${role}`, () => {
+            const fooUserData = {
+              role
+            }
+            commandsMocks.stubs.user.getById.resolves(fooUserData)
+            return security.authenticateAuth({
+              role: 'service-registerer',
+              _id: 'foo-user-id'
+            }, {}, {user: 'foo-id'})
+              .then(() => {
+                return test.expect(true).to.be.true()
+              })
+          })
+        }
+        testAllowedRole('module')
+        testAllowedRole('plugin')
 
-        test.it('should reject the promise if provided has not service role', () => {
-          const fooUserData = {
-            role: 'operator'
-          }
-          commandsMocks.stubs.user.getById.resolves(fooUserData)
-          return security.authenticateAuth({
-            role: 'service-registerer',
-            _id: 'foo-user-id'
-          }, {}, {user: 'foo-id'})
-            .then(() => {
-              return test.assert.fail()
-            }, () => {
-              return test.expect(true).to.be.true()
-            })
-        })
+        const testForbiddenRole = function(role) {
+          test.it(`should reject the promise if provided has ${role} role`, () => {
+            const fooUserData = {
+              role
+            }
+            commandsMocks.stubs.user.getById.resolves(fooUserData)
+            return security.authenticateAuth({
+              role: 'service-registerer',
+              _id: 'foo-user-id'
+            }, {}, {user: 'foo-id'})
+              .then(() => {
+                return test.assert.fail()
+              }, () => {
+                return test.expect(true).to.be.true()
+              })
+          })
+        }
+        testForbiddenRole('operator')
+        testForbiddenRole('service-registerer')
+        testForbiddenRole('admin')
       })
 
       test.describe('when user is not an administrator or service-registerer', () => {
