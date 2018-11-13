@@ -12,7 +12,7 @@ const Index = require('./lib/Index.mocks')
 const Api = require('./lib/Api.mocks')
 const UsersApi = require('./lib/api/Users.mocks')
 const SecurityTokensApi = require('./lib/api/SecurityTokens.mocks')
-const ModulesApi = require('./lib/api/Modules.mocks')
+const ServicesApi = require('./lib/api/Services.mocks')
 const AbilitiesApi = require('./lib/api/Abilities.mocks')
 const LogsApi = require('./lib/api/Logs.mocks')
 
@@ -20,13 +20,13 @@ const Commands = require('./lib/Commands.mocks')
 const UserCommands = require('./lib/commands/User.mocks')
 const SecurityTokenCommands = require('./lib/commands/SecurityToken.mocks')
 const ComposedCommands = require('./lib/commands/Composed.mocks')
-const ModuleCommands = require('./lib/commands/Module.mocks')
+const ServiceCommands = require('./lib/commands/Service.mocks')
 const AbilityCommands = require('./lib/commands/Ability.mocks')
 const LogCommands = require('./lib/commands/Log.mocks')
 
 const Models = require('./lib/Models.mocks')
 const UserModel = require('./lib/models/User.mocks')
-const ModuleModel = require('./lib/models/Module.mocks')
+const ServiceModel = require('./lib/models/Service.mocks')
 const SecurityTokenModel = require('./lib/models/SecurityToken.mocks')
 const AbilityModel = require('./lib/models/Ability.mocks')
 const LogModel = require('./lib/models/Log.mocks')
@@ -36,7 +36,7 @@ module.exports = {
   api: {
     Users: UsersApi,
     SecurityTokens: SecurityTokensApi,
-    Modules: ModulesApi,
+    Services: ServicesApi,
     Abilities: AbilitiesApi,
     Logs: LogsApi
   },
@@ -44,14 +44,14 @@ module.exports = {
     User: UserCommands,
     SecurityToken: SecurityTokenCommands,
     Composed: ComposedCommands,
-    Module: ModuleCommands,
+    Service: ServiceCommands,
     Ability: AbilityCommands,
     Log: LogCommands
   },
   models: {
     User: UserModel,
     SecurityToken: SecurityTokenModel,
-    Module: ModuleModel,
+    Service: ServiceModel,
     Ability: AbilityModel,
     Log: LogModel
   },

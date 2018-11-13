@@ -2,7 +2,7 @@ const test = require('narval')
 
 const UserModel = require('./models/User.mocks')
 const SecurityTokenModel = require('./models/SecurityToken.mocks')
-const ModuleModel = require('./models/Module.mocks')
+const ServiceModel = require('./models/Service.mocks')
 const AbilityModel = require('./models/Ability.mocks')
 const LogModel = require('./models/Log.mocks')
 
@@ -10,7 +10,7 @@ const Mock = function () {
   const sandbox = test.sinon.createSandbox()
   const userModelMocks = new UserModel()
   const securityTokenMocks = new SecurityTokenModel()
-  const moduleModelMocks = new ModuleModel()
+  const serviceModelMocks = new ServiceModel()
   const abilityModelMocks = new AbilityModel()
   const logModelMocks = new LogModel()
 
@@ -19,8 +19,8 @@ const Mock = function () {
     User: userModelMocks.stubs.User,
     securityToken: securityTokenMocks.stubs.securityToken,
     SecurityToken: securityTokenMocks.stubs.SecurityToken,
-    module: moduleModelMocks.stubs.module,
-    Module: moduleModelMocks.stubs.Module,
+    service: serviceModelMocks.stubs.service,
+    Service: serviceModelMocks.stubs.Service,
     ability: abilityModelMocks.stubs.ability,
     Ability: abilityModelMocks.stubs.Ability,
     log: logModelMocks.stubs.log,
@@ -28,7 +28,7 @@ const Mock = function () {
   }
 
   const restore = function () {
-    moduleModelMocks.restore()
+    serviceModelMocks.restore()
     userModelMocks.restore()
     securityTokenMocks.restore()
     abilityModelMocks.restore()

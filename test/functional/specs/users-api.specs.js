@@ -30,7 +30,7 @@ test.describe('users api', function () {
   }
 
   const newUser = {
-    name: 'foo-module',
+    name: 'foo-service',
     role: 'operator',
     email: 'foo2@foo.com',
     password: 'foo'
@@ -43,10 +43,10 @@ test.describe('users api', function () {
     password: 'foo'
   }
 
-  const moduleUser = {
-    name: 'foo-module-user',
+  const serviceUser = {
+    name: 'foo-service-user',
     role: 'module',
-    email: 'module@foo.com',
+    email: 'service@foo.com',
     password: 'foo'
   }
 
@@ -135,7 +135,7 @@ test.describe('users api', function () {
 
       test.it('should allow to create users with role "module" without password and email', () => {
         return utils.createUser(authenticator, {
-          name: 'foo-module-name',
+          name: 'foo-service-name',
           role: 'module'
         }).then((response) => {
           return test.expect(response.statusCode).to.equal(201)
@@ -347,7 +347,7 @@ test.describe('users api', function () {
   }
 
   testRole(operatorUser)
-  testRole(moduleUser)
+  testRole(serviceUser)
   testRole(pluginUser)
   testRole(serviceRegistererUser)
 
@@ -359,9 +359,9 @@ test.describe('users api', function () {
     test.describe('add user', () => {
       test.it('should return 201 when adding a new user with role "module"', () => {
         return utils.createUser(authenticator, {
-          name: 'foo-new-module',
+          name: 'foo-new-service',
           role: 'module',
-          email: 'fooNewModule@foo.com',
+          email: 'fooNewService@foo.com',
           password: 'foo'
         }).then(response => {
           return test.expect(response.statusCode).to.equal(201)
@@ -411,7 +411,7 @@ test.describe('users api', function () {
 
     testUser(newUser)
     testUser(operatorUser)
-    testUser(moduleUser)
+    testUser(serviceUser)
     testUser(pluginUser)
     testUser(serviceRegistererUser)
   })

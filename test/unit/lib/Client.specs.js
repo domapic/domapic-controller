@@ -20,9 +20,9 @@ test.describe('Client', () => {
 
   test.describe('instance', () => {
     test.describe('sendAction method', () => {
-      const fooModuleData = {
-        url: 'foo-module-url',
-        apiKey: 'foo-module-apiKey'
+      const fooServiceData = {
+        url: 'foo-service-url',
+        apiKey: 'foo-service-apiKey'
       }
       const fooAbility = {
         name: 'foo-ability-name'
@@ -31,17 +31,17 @@ test.describe('Client', () => {
         data: 'foo-data'
       }
 
-      test.it('should call to create a new Connection, passing the module url and apiKey', () => {
-        return client.sendAction(fooModuleData, fooAbility, fooData)
+      test.it('should call to create a new Connection, passing the service url and apiKey', () => {
+        return client.sendAction(fooServiceData, fooAbility, fooData)
           .then(() => {
-            return test.expect(baseMocks.stubs.service.client.Connection).to.have.been.calledWith(fooModuleData.url, {
-              apiKey: fooModuleData.apiKey
+            return test.expect(baseMocks.stubs.service.client.Connection).to.have.been.calledWith(fooServiceData.url, {
+              apiKey: fooServiceData.apiKey
             })
           })
       })
 
       test.it('should call to post to ability action handler, passing the data', () => {
-        return client.sendAction(fooModuleData, fooAbility, fooData)
+        return client.sendAction(fooServiceData, fooAbility, fooData)
           .then(() => {
             return test.expect(baseMocks.stubs.service.client.connection.post).to.have.been.calledWith('abilities/foo-ability-name/action', fooData)
           })
@@ -55,7 +55,7 @@ test.describe('Client', () => {
         baseMocks.stubs.service.errors.BadGateway.returns(fooBadGatewayError)
         baseMocks.stubs.service.client.connection.post.rejects(fooServerUnavailableError)
 
-        return client.sendAction(fooModuleData, fooAbility, fooData)
+        return client.sendAction(fooServiceData, fooAbility, fooData)
           .then(response => {
             return test.assert.fail()
           }, (err) => {
@@ -67,7 +67,7 @@ test.describe('Client', () => {
         const fooError = new Error()
         baseMocks.stubs.service.client.connection.post.rejects(fooError)
 
-        return client.sendAction(fooModuleData, fooAbility, fooData)
+        return client.sendAction(fooServiceData, fooAbility, fooData)
           .then(response => {
             return test.assert.fail()
           }, (err) => {
@@ -77,9 +77,9 @@ test.describe('Client', () => {
     })
 
     test.describe('getState method', () => {
-      const fooModuleData = {
-        url: 'foo-module-url',
-        apiKey: 'foo-module-apiKey'
+      const fooServiceData = {
+        url: 'foo-service-url',
+        apiKey: 'foo-service-apiKey'
       }
       const fooAbility = {
         name: 'foo-ability-name'
@@ -89,17 +89,17 @@ test.describe('Client', () => {
         baseMocks.stubs.service.client.connection.get.resolves({})
       })
 
-      test.it('should call to create a new Connection, passing the module url and apiKey', () => {
-        return client.getState(fooModuleData, fooAbility)
+      test.it('should call to create a new Connection, passing the service url and apiKey', () => {
+        return client.getState(fooServiceData, fooAbility)
           .then(() => {
-            return test.expect(baseMocks.stubs.service.client.Connection).to.have.been.calledWith(fooModuleData.url, {
-              apiKey: fooModuleData.apiKey
+            return test.expect(baseMocks.stubs.service.client.Connection).to.have.been.calledWith(fooServiceData.url, {
+              apiKey: fooServiceData.apiKey
             })
           })
       })
 
       test.it('should call to get ability action handler, passing the data', () => {
-        return client.getState(fooModuleData, fooAbility)
+        return client.getState(fooServiceData, fooAbility)
           .then(() => {
             return test.expect(baseMocks.stubs.service.client.connection.get).to.have.been.calledWith('abilities/foo-ability-name/state')
           })
@@ -113,7 +113,7 @@ test.describe('Client', () => {
         baseMocks.stubs.service.errors.BadGateway.returns(fooBadGatewayError)
         baseMocks.stubs.service.client.connection.get.rejects(fooServerUnavailableError)
 
-        return client.getState(fooModuleData, fooAbility)
+        return client.getState(fooServiceData, fooAbility)
           .then(response => {
             return test.assert.fail()
           }, (err) => {
@@ -125,7 +125,7 @@ test.describe('Client', () => {
         const fooError = new Error()
         baseMocks.stubs.service.client.connection.get.rejects(fooError)
 
-        return client.getState(fooModuleData, fooAbility)
+        return client.getState(fooServiceData, fooAbility)
           .then(response => {
             return test.assert.fail()
           }, (err) => {

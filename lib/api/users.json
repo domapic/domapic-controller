@@ -108,7 +108,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "User name"
+            "description": "Service name"
           },
           {
             "in": "query",
@@ -117,7 +117,7 @@
               "type": "string",
               "enum": ["admin", "operator", "module", "plugin", "service-registerer"]
             },
-            "description": "User role"
+            "description": "Service name"
           }
         ],
         "tags": ["user"],
