@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 ### Removed
 
+## [1.0.0-alpha.8] - 2018-11-13
+
 ## [1.0.0-alpha.7] - 2018-11-09
 ### Changed
 - Upgrade domapic-base
