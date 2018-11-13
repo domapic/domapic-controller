@@ -86,7 +86,7 @@ test.describe('securityTokens api', () => {
           })
         })
 
-        const testRole = function(role) {
+        const testRole = function (role) {
           test.it(`should reject the promise if received user in query has "${role}" role`, () => {
             const forbiddenError = new Error('forbidden')
             commandsMocks.stubs.user.get.resolves({

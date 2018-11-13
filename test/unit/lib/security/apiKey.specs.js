@@ -56,7 +56,7 @@ test.describe('apiKey security', () => {
       })
 
       test.describe('when user has service-registerer role', () => {
-        const testAllowedRole = function(role) {
+        const testAllowedRole = function (role) {
           test.it(`should resolve the promise if provided user has service ${role}`, () => {
             const fooUserData = {
               role
@@ -74,7 +74,7 @@ test.describe('apiKey security', () => {
         testAllowedRole('module')
         testAllowedRole('plugin')
 
-        const testForbiddenRole = function(role) {
+        const testForbiddenRole = function (role) {
           test.it(`should reject the promise if provided has ${role} role`, () => {
             const fooUserData = {
               role
