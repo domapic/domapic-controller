@@ -6,6 +6,8 @@ const utils = require('./utils')
 test.describe('users api', function () {
   let authenticator = utils.Authenticator()
   let adminUserId
+  let pluginId
+  let entityId
 
   const getUsers = function (query) {
     return utils.request('/users', {
@@ -65,11 +67,16 @@ test.describe('users api', function () {
   }
 
   test.before(() => {
-    return utils.doLogin(authenticator)
-      .then(() => {
-        return getUsers().then(usersResponse => {
-          adminUserId = usersResponse.body.find(userData => userData.name === 'admin')._id
-        })
+    return utils.addPlugin()
+      .then(id => {
+        pluginId = id
+      }).then(() => {
+        return utils.doLogin(authenticator)
+          .then(() => {
+            return getUsers().then(usersResponse => {
+              adminUserId = usersResponse.body.find(userData => userData.name === 'admin')._id
+            })
+          })
       })
   })
 
@@ -187,6 +194,7 @@ test.describe('users api', function () {
           return getUsers()
             .then((getResponse) => {
               const userId = addResponse.headers.location.split('/').pop()
+              entityId = userId
               const user = getResponse.body.find(user => user._id === userId)
               return Promise.all([
                 test.expect(user.name).to.equal(operatorUser.name),
@@ -197,6 +205,10 @@ test.describe('users api', function () {
               ])
             })
         })
+      })
+
+      test.it('should have sent user creation event to registered plugins', () => {
+        return utils.expectEvent('user:create', entityId, pluginId)
       })
 
       test.it('should return a bad data error if an already existant email is provided', () => {
