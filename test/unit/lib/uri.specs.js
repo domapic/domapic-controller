@@ -15,4 +15,10 @@ test.describe('uri utils', () => {
       test.expect(uris.abilityStateHandler('foo_name')).to.equal('abilities/foo-name/state')
     })
   })
+
+  test.describe('serviceEventHandler method', () => {
+    test.it('should return the event uri', () => {
+      test.expect(uris.serviceEventHandler()).to.equal('events')
+    })
+  })
 })

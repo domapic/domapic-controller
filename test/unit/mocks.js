@@ -2,8 +2,10 @@
 const Mongoose = require('./Mongoose.mocks')
 const Base = require('./Base.mocks')
 const Client = require('./lib/Client.mocks')
+const Events = require('./lib/Events.mocks')
 const Security = require('./lib/Security.mocks')
 const Utils = require('./lib/Utils.mocks')
+const PluginsHandler = require('./lib/PluginsHandler.mocks')
 
 const Controller = require('./lib/Controller.mocks')
 const Database = require('./lib/Database.mocks')
@@ -57,6 +59,8 @@ module.exports = {
   },
   Base,
   Client,
+  Events,
+  PluginsHandler,
   Commands,
   Controller,
   Database,

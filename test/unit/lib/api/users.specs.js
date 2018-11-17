@@ -11,16 +11,19 @@ test.describe('users api', () => {
     let operations
     let commandsMocks
     let baseMocks
+    let eventsMocks
 
     test.beforeEach(() => {
       baseMocks = new mocks.Base()
       commandsMocks = new mocks.Commands()
       operations = users.Operations(baseMocks.stubs.service, commandsMocks.stubs)
+      eventsMocks = new mocks.Events()
     })
 
     test.afterEach(() => {
       baseMocks.restore()
       commandsMocks.restore()
+      eventsMocks.restore()
     })
 
     test.describe('getUsers auth', () => {
@@ -280,6 +283,13 @@ test.describe('users api', () => {
         return operations.addUser.handler({}, fooBody, response)
           .then(() => {
             return test.expect(response.header).to.have.been.calledWith('location', '/api/users/foo-id')
+          })
+      })
+
+      test.it('should emit a plugin event', () => {
+        return operations.addUser.handler({}, fooBody, response)
+          .then(() => {
+            return test.expect(eventsMocks.stubs.plugin).to.have.been.calledWith('user', 'create', fooUser)
           })
       })
 

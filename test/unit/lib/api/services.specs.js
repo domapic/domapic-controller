@@ -11,16 +11,19 @@ test.describe('services api', () => {
     let operations
     let commandsMocks
     let baseMocks
+    let eventsMocks
 
     test.beforeEach(() => {
       baseMocks = new mocks.Base()
       commandsMocks = new mocks.Commands()
       operations = services.Operations(baseMocks.stubs.service, commandsMocks.stubs)
+      eventsMocks = new mocks.Events()
     })
 
     test.afterEach(() => {
       baseMocks.restore()
       commandsMocks.restore()
+      eventsMocks.restore()
     })
 
     test.describe('getServices handler', () => {
@@ -151,6 +154,13 @@ test.describe('services api', () => {
           })
       })
 
+      test.it('should emit a plugin event', () => {
+        return operations.addService.handler({}, fooBody, response, fooUserData)
+          .then(() => {
+            return test.expect(eventsMocks.stubs.plugin).to.have.been.calledWith('service', 'create', fooService)
+          })
+      })
+
       test.it('should resolve the promise with no value', () => {
         return operations.addService.handler({}, fooBody, response)
           .then((result) => {
@@ -249,6 +259,17 @@ test.describe('services api', () => {
         }, fooBody, response)
           .then(() => {
             return test.expect(response.header).to.have.been.calledWith('location', '/api/services/foo-service-id')
+          })
+      })
+
+      test.it('should emit a plugin event', () => {
+        return operations.updateService.handler({
+          path: {
+            id: fooId
+          }
+        }, fooBody, response)
+          .then(() => {
+            return test.expect(eventsMocks.stubs.plugin).to.have.been.calledWith('service', 'update', fooService)
           })
       })
 
