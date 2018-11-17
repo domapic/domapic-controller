@@ -196,9 +196,12 @@ const addPlugin = () => {
 }
 
 const expectEvent = (event, entityId, pluginId) => {
-  return readLogs()
-    .then(logs => {
-      return test.expect(logs).to.contain(`Sending "${event}" event of entity "${entityId}" to plugin "${pluginId}"`)
+  return waitOnestimatedStartTime(200)
+    .then(() => {
+      return readLogs()
+        .then(logs => {
+          return test.expect(logs).to.contain(`Sending "${event}" event of entity "${entityId}" to plugin "${pluginId}"`)
+        })
     })
 }
 
