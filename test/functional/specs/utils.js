@@ -3,6 +3,7 @@
 const path = require('path')
 const fs = require('fs')
 const querystring = require('querystring')
+const test = require('narval')
 const testUtils = require('narval/utils')
 
 const { omitBy, isUndefined } = require('lodash')
@@ -168,6 +169,39 @@ const ensureUserAndDoLogin = (authenticator, userData) => {
 
 const readLogs = () => testUtils.logs.combined('controller')
 
+const addPlugin = () => {
+  const authenticator = Authenticator()
+  return ensureUserAndDoLogin(authenticator, {
+    name: 'foo-events-plugin',
+    role: 'plugin',
+    email: 'events-plugin@foo.com',
+    password: 'foo'
+  }).then(() => {
+    return request('/services', {
+      method: 'POST',
+      body: {
+        processId: 'foo-plugin-service-id',
+        description: 'foo-plugin-description',
+        package: 'foo-plugin-package',
+        version: '1.0.0',
+        apiKey: 'dasdasdqe342312reww4r4234wgsdfsf',
+        url: 'https://192.132.112.1:3500',
+        type: 'plugin'
+      },
+      ...authenticator.credentials()
+    }).then(response => {
+      return Promise.resolve(response.headers.location.split('/').pop())
+    })
+  })
+}
+
+const expectEvent = (event, entityId, pluginId) => {
+  return readLogs()
+    .then(logs => {
+      return test.expect(logs).to.contain(`Sending "${event}" event of entity "${entityId}" to plugin "${pluginId}"`)
+    })
+}
+
 module.exports = {
   superAdmin,
   waitOnestimatedStartTime,
@@ -179,5 +213,7 @@ module.exports = {
   createUser,
   ensureUser,
   ensureUserAndDoLogin,
-  readLogs
+  readLogs,
+  addPlugin,
+  expectEvent
 }

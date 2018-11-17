@@ -5,6 +5,8 @@ const utils = require('./utils')
 
 test.describe('services api', function () {
   let authenticator = utils.Authenticator()
+  let pluginId
+  let entityId
 
   const getServices = function (filters) {
     return utils.request('/services', {
@@ -112,7 +114,11 @@ test.describe('services api', function () {
   }
 
   test.before(() => {
-    return utils.doLogin(authenticator)
+    return utils.addPlugin()
+      .then(id => {
+        pluginId = id
+      })
+      .then(() => utils.doLogin(authenticator))
   })
 
   test.describe('add service', () => {
@@ -190,6 +196,7 @@ test.describe('services api', function () {
       test.it('should add service to database if all provided data pass validation', () => {
         return addService(fooService).then((addResponse) => {
           const serviceId = addResponse.headers.location.split('/').pop()
+          entityId = serviceId
           return getService(serviceId)
             .then((getResponse) => {
               const service = getResponse.body
@@ -206,6 +213,10 @@ test.describe('services api', function () {
               ])
             })
         })
+      })
+
+      test.it('should have sent service creation event to registered plugins', () => {
+        return utils.expectEvent('service:create', entityId, pluginId)
       })
 
       test.it('should return a bad data error if one user tries to add more than one service', () => {
@@ -366,6 +377,10 @@ test.describe('services api', function () {
                 ])
               })
           })
+      })
+
+      test.it('should have sent service update event to registered plugins', () => {
+        return utils.expectEvent('service:update', moduleUserService._id, pluginId)
       })
 
       test.it('should update all provided service data even when url is same than before', () => {
