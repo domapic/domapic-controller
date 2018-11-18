@@ -53,6 +53,16 @@ test.describe('users api', () => {
         }, {})).to.be.true()
       })
 
+      test.it('should return true if provided user has "plugin" role and received role in query is "operator"', () => {
+        test.expect(operations.getUsers.auth({
+          role: 'plugin'
+        }, {
+          query: {
+            role: 'operator'
+          }
+        }, {})).to.be.true()
+      })
+
       const testServiceRegistererRole = function (role) {
         test.it(`should return false if provided user has "service-registerer" role and received role in query is "${role}"`, () => {
           test.expect(operations.getUsers.auth({
@@ -125,33 +135,129 @@ test.describe('users api', () => {
     })
 
     test.describe('getUser auth', () => {
-      test.it('should return true if provided user has "admin" role', () => {
-        test.expect(operations.getUser.auth({
-          role: 'admin'
-        }, {}, {})).to.be.true()
+      test.beforeEach(() => {
+        commandsMocks.stubs.user.getById.resolves({
+          role: 'operator'
+        })
       })
 
-      test.it('should return true if provided user id is same than logged user', () => {
-        test.expect(operations.getUser.auth({
+      test.it('should resolve if provided user has "admin" role', () => {
+        return operations.getUser.auth({
+          role: 'admin'
+        }, {
+          path: {
+            id: 'foo-id'
+          }
+        }, {}).then(() => {
+          return test.expect(true).to.be.true()
+        })
+      })
+
+      test.it('should resolve if provided user has "service-registerer" role and requested user has "module" role', () => {
+        commandsMocks.stubs.user.getById.resolves({
+          role: 'module'
+        })
+        return operations.getUser.auth({
+          role: 'service-registerer'
+        }, {
+          path: {
+            id: 'foo-id'
+          }
+        }, {}).then(() => {
+          return test.expect(true).to.be.true()
+        })
+      })
+
+      test.it('should return true if provided user has "service-registerer" role and requested user has "plugin" role', () => {
+        commandsMocks.stubs.user.getById.resolves({
+          role: 'plugin'
+        })
+        return operations.getUser.auth({
+          role: 'service-registerer'
+        }, {
+          path: {
+            id: 'foo-id'
+          }
+        }, {}).then(() => {
+          return test.expect(true).to.be.true()
+        })
+      })
+
+      test.it('should return true if provided user has "plugin" role and requested user is "operator"', () => {
+        commandsMocks.stubs.user.getById.resolves({
+          role: 'operator'
+        })
+        return operations.getUser.auth({
+          role: 'plugin'
+        }, {
+          path: {
+            id: 'foo-id'
+          }
+        }, {}).then(() => {
+          return test.expect(true).to.be.true()
+        })
+      })
+
+      test.it('should resolve if provided user id is same than logged user', () => {
+        return operations.getUser.auth({
           role: 'plugin',
           _id: 'foo-id'
         }, {
           path: {
             id: 'foo-id'
           }
-        }, {})).to.be.true()
+        }, {}).then(() => {
+          return test.expect(true).to.be.true()
+        })
       })
 
-      test.it('should return false if provided user id is different than logged user', () => {
-        test.expect(operations.getUser.auth({
+      test.it('should reject the promise if provided user id is different than logged user', () => {
+        return operations.getUser.auth({
           role: 'module',
           _id: 'foo-id'
         }, {
           path: {
             id: 'foo-different-id'
           }
-        }, {})).to.be.false()
+        }, {}).then(() => {
+          return test.assert.fail()
+        }, error => {
+          return test.expect(error).to.be.an.instanceOf(Error)
+        })
       })
+
+      const testRole = function (userRole, requestedRole) {
+        test.it(`should reject if user has "${userRole}" role and requested user has "${requestedRole}" role`, () => {
+          commandsMocks.stubs.user.getById.resolves({
+            role: requestedRole
+          })
+          return operations.getUser.auth({
+            role: userRole
+          }, {
+            path: {
+              id: 'foo-id'
+            }
+          }, {}).then(() => {
+            return test.assert.fail()
+          }, error => {
+            return test.expect(error).to.be.an.instanceOf(Error)
+          })
+        })
+      }
+      testRole('plugin', 'admin')
+      testRole('plugin', 'module')
+      testRole('plugin', 'plugin')
+      testRole('plugin', 'service-registerer')
+      testRole('operator', 'admin')
+      testRole('operator', 'module')
+      testRole('operator', 'plugin')
+      testRole('operator', 'service-registerer')
+      testRole('service-registerer', 'admin')
+      testRole('service-registerer', 'operator')
+      testRole('module', 'admin')
+      testRole('module', 'operator')
+      testRole('module', 'module')
+      testRole('module', 'plugin')
     })
 
     test.describe('getUser handler', () => {
@@ -214,31 +320,51 @@ test.describe('users api', () => {
         })).to.be.true()
       })
 
-      const testServiceRegistererRole = function (role) {
-        test.it(`should return false if provided user has "service-registerer" role and body user has "${role}" role`, () => {
+      test.it('should return true if provided user has "plugin" role and received role in query is "operator"', () => {
+        test.expect(operations.addUser.auth({
+          role: 'plugin'
+        }, {}, {
+          role: 'operator'
+        })).to.be.true()
+      })
+
+      const testRole = function (userRole, role) {
+        test.it(`should reject if user has "${userRole}" role and body user has "${role}" role`, () => {
           test.expect(operations.addUser.auth({
-            role: 'service-registerer'
+            role: userRole
           }, {}, {
             role
           })).to.be.false()
         })
       }
 
-      testServiceRegistererRole('operator')
-      testServiceRegistererRole('admin')
-      testServiceRegistererRole('service-registerer')
+      testRole('plugin', 'admin')
+      testRole('plugin', 'module')
+      testRole('plugin', 'plugin')
+      testRole('plugin', 'service-registerer')
+      testRole('operator', 'admin')
+      testRole('operator', 'module')
+      testRole('operator', 'plugin')
+      testRole('operator', 'service-registerer')
+      testRole('service-registerer', 'admin')
+      testRole('service-registerer', 'operator')
+      testRole('module', 'admin')
+      testRole('module', 'operator')
+      testRole('module', 'module')
+      testRole('module', 'plugin')
 
-      const testRole = function (role) {
+      const testEmptyRole = function (role) {
         test.it(`should return false if provided user has "${role}" role`, () => {
           test.expect(operations.addUser.auth({
             role
           }, {}, {})).to.be.false()
         })
       }
-      testRole('module')
-      testRole('operator')
-      testRole('plugin')
-      testRole('service-registerer')
+
+      testEmptyRole('module')
+      testEmptyRole('operator')
+      testEmptyRole('plugin')
+      testEmptyRole('service-registerer')
     })
 
     test.describe('addUser handler', () => {
