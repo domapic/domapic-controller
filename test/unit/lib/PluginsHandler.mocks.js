@@ -1,12 +1,12 @@
 const test = require('narval')
 
+const pluginsHandler = require('../../../lib/pluginsHandler')
+
 const Mock = function () {
   const sandbox = test.sinon.createSandbox()
 
   const stubs = {
-    sendAction: sandbox.stub().usingPromise().resolves(),
-    getState: sandbox.stub().usingPromise().resolves(),
-    sendEvent: sandbox.stub().usingPromise().resolves()
+    init: sandbox.stub(pluginsHandler, 'init').resolves()
   }
 
   const restore = function () {

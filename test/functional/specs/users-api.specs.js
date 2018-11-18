@@ -6,6 +6,8 @@ const utils = require('./utils')
 test.describe('users api', function () {
   let authenticator = utils.Authenticator()
   let adminUserId
+  let pluginId
+  let entityId
 
   const getUsers = function (query) {
     return utils.request('/users', {
@@ -65,11 +67,16 @@ test.describe('users api', function () {
   }
 
   test.before(() => {
-    return utils.doLogin(authenticator)
-      .then(() => {
-        return getUsers().then(usersResponse => {
-          adminUserId = usersResponse.body.find(userData => userData.name === 'admin')._id
-        })
+    return utils.addPlugin()
+      .then(id => {
+        pluginId = id
+      }).then(() => {
+        return utils.doLogin(authenticator)
+          .then(() => {
+            return getUsers().then(usersResponse => {
+              adminUserId = usersResponse.body.find(userData => userData.name === 'admin')._id
+            })
+          })
       })
   })
 
@@ -187,6 +194,7 @@ test.describe('users api', function () {
           return getUsers()
             .then((getResponse) => {
               const userId = addResponse.headers.location.split('/').pop()
+              entityId = userId
               const user = getResponse.body.find(user => user._id === userId)
               return Promise.all([
                 test.expect(user.name).to.equal(operatorUser.name),
@@ -197,6 +205,10 @@ test.describe('users api', function () {
               ])
             })
         })
+      })
+
+      test.it('should have sent user creation event to registered plugins', () => {
+        return utils.expectEvent('user:create', entityId, pluginId)
       })
 
       test.it('should return a bad data error if an already existant email is provided', () => {
@@ -246,6 +258,35 @@ test.describe('users api', function () {
             })
         })
       })
+
+      test.it('should return users filtering by name', () => {
+        return getUsers({
+          name: newUser.name
+        })
+          .then(getResponse => {
+            const user1 = getResponse.body.find(user => user.name === operatorUser.name)
+            const user2 = getResponse.body.find(user => user.name === newUser.name)
+            return Promise.all([
+              test.expect(user1).to.be.undefined(),
+              test.expect(user2.role).to.equal(newUser.role),
+              test.expect(user2.email).to.equal(newUser.email),
+              test.expect(user2.name).to.equal(newUser.name)
+            ])
+          })
+      })
+
+      test.it('should return users filtering by role', () => {
+        return getUsers({
+          role: 'admin'
+        })
+          .then(getResponse => {
+            const noAdminUser = getResponse.body.find(user => user.role !== 'admin')
+            return Promise.all([
+              test.expect(getResponse.statusCode).to.equal(200),
+              test.expect(noAdminUser).to.be.undefined()
+            ])
+          })
+      })
     })
 
     test.describe('get user', () => {
@@ -268,19 +309,19 @@ test.describe('users api', function () {
           })
       })
 
-      test.it('should return a not found response when user does not exist', () => {
+      test.it('should return a Not authorized response when user does not exist', () => {
         return getUser('foo-unexistant-user')
           .then((response) => {
             return Promise.all([
-              test.expect(response.body.message).to.equal('User not found'),
-              test.expect(response.statusCode).to.equal(404)
+              test.expect(response.body.message).to.equal('Not authorized'),
+              test.expect(response.statusCode).to.equal(403)
             ])
           })
       })
     })
   })
 
-  const testRole = function (user) {
+  const testRole = function (user, userToAdd) {
     test.describe(`when user has role "${user.role}"`, () => {
       let userId
 
@@ -301,8 +342,8 @@ test.describe('users api', function () {
       })
 
       test.describe('add user', () => {
-        test.it('should return a forbidden error', () => {
-          return utils.createUser(authenticator, newUser).then(response => {
+        test.it(`should return a forbidden error when adding user with role ${userToAdd.role}`, () => {
+          return utils.createUser(authenticator, userToAdd).then(response => {
             return Promise.all([
               test.expect(response.body.message).to.contain('Not authorized'),
               test.expect(response.statusCode).to.equal(403)
@@ -323,7 +364,7 @@ test.describe('users api', function () {
       })
 
       test.describe('get user', () => {
-        test.it('should return a forbidden error if user is different to himself', () => {
+        test.it('should return a forbidden error when request user is admin', () => {
           return getUser(adminUserId).then(response => {
             return Promise.all([
               test.expect(response.body.message).to.contain('Not authorized'),
@@ -346,12 +387,58 @@ test.describe('users api', function () {
     })
   }
 
-  testRole(operatorUser)
-  testRole(serviceUser)
-  testRole(pluginUser)
-  testRole(serviceRegistererUser)
+  testRole(operatorUser, newUser)
+  testRole(serviceUser, newUser)
+  testRole(pluginUser, serviceUser)
+  testRole(serviceRegistererUser, newUser)
+
+  test.describe('when user has role "plugin"', () => {
+    let operatorUserId
+    const newOperatorUser = {
+      name: 'foo-operator-2',
+      role: 'operator',
+      email: 'operator-2@foo.com',
+      password: 'foo'
+    }
+
+    test.before(() => {
+      return utils.ensureUserAndDoLogin(authenticator, pluginUser)
+    })
+
+    test.describe('add user', () => {
+      test.it('should return 201 when adding a new user with role "operator"', () => {
+        return utils.createUser(authenticator, newOperatorUser).then(response => {
+          operatorUserId = response.headers.location.split('/').pop()
+          return test.expect(response.statusCode).to.equal(201)
+        })
+      })
+    })
+
+    test.describe('get users', () => {
+      test.it('should return users if query role has "operator" value', () => {
+        return getUsers({
+          role: 'operator'
+        }).then(response => {
+          return test.expect(response.statusCode).to.equal(200)
+        })
+      })
+    })
+
+    test.describe('get user', () => {
+      test.it('should return user if it is an operator', () => {
+        return getUser(operatorUserId).then(response => {
+          return Promise.all([
+            test.expect(response.statusCode).to.equal(200),
+            test.expect(response.body.name).to.equal(newOperatorUser.name),
+            test.expect(response.body.email).to.equal(newOperatorUser.email)
+          ])
+        })
+      })
+    })
+  })
 
   test.describe(`when user has role "service-registerer"`, () => {
+    let newUserId
     test.before(() => {
       return utils.ensureUserAndDoLogin(authenticator, serviceRegistererUser)
     })
@@ -364,6 +451,7 @@ test.describe('users api', function () {
           email: 'fooNewService@foo.com',
           password: 'foo'
         }).then(response => {
+          newUserId = response.headers.location.split('/').pop()
           return test.expect(response.statusCode).to.equal(201)
         })
       })
@@ -385,6 +473,14 @@ test.describe('users api', function () {
         return getUsers({
           role: 'module'
         }).then(response => {
+          return test.expect(response.statusCode).to.equal(200)
+        })
+      })
+    })
+
+    test.describe('get user', () => {
+      test.it('should return user if it has "module" role', () => {
+        return getUser(newUserId).then(response => {
           return test.expect(response.statusCode).to.equal(200)
         })
       })

@@ -12,17 +12,20 @@ test.describe('controller', () => {
     }
     let baseMocks
     let indexMocks
+    let pluginHandlerMocks
 
     test.beforeEach(() => {
       indexMocks = new mocks.Index()
       indexMocks.stubs.security.methods.resolves(fooSecurityMethods)
       baseMocks = new mocks.Base()
+      pluginHandlerMocks = new mocks.PluginsHandler()
       return controller.start()
     })
 
     test.afterEach(() => {
       indexMocks.restore()
       baseMocks.restore()
+      pluginHandlerMocks.restore()
     })
 
     test.it('should have created a new Service instance', () => {
@@ -51,6 +54,10 @@ test.describe('controller', () => {
 
     test.it('should have created a new Api instance', () => {
       test.expect(indexMocks.stubs.Api).to.have.been.calledWith(baseMocks.stubs.service, indexMocks.stubs.commands)
+    })
+
+    test.it('should have inited plugins handler', () => {
+      test.expect(pluginHandlerMocks.stubs.init).to.have.been.called()
     })
 
     test.it('should have called to connect to database', () => {
