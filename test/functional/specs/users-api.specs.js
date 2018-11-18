@@ -208,7 +208,7 @@ test.describe('users api', function () {
       })
 
       test.it('should have sent user creation event to registered plugins', () => {
-        return utils.expectEvent('user:create', entityId, pluginId)
+        return utils.expectEvent('user:created', entityId, pluginId)
       })
 
       test.it('should return a bad data error if an already existant email is provided', () => {

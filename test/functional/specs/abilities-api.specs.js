@@ -239,7 +239,7 @@ test.describe('abilities api', function () {
         })
 
         test.it('should have sent ability creation event to registered plugins', () => {
-          return utils.expectEvent('ability:create', entityId, pluginId)
+          return utils.expectEvent('ability:created', entityId, pluginId)
         })
       })
     })
@@ -333,7 +333,7 @@ test.describe('abilities api', function () {
       })
 
       test.it('should have sent ability update event to registered plugins', () => {
-        return utils.expectEvent('ability:update', moduleUserAbility._id, pluginId)
+        return utils.expectEvent('ability:updated', moduleUserAbility._id, pluginId)
       })
     })
   })
@@ -404,7 +404,7 @@ test.describe('abilities api', function () {
       })
 
       test.it('should have sent ability delete event to registered plugins', () => {
-        return utils.expectEvent('ability:delete', moduleUserAbility._id, pluginId)
+        return utils.expectEvent('ability:deleted', moduleUserAbility._id, pluginId)
       })
     })
   })

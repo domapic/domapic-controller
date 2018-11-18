@@ -216,7 +216,7 @@ test.describe('services api', function () {
       })
 
       test.it('should have sent service creation event to registered plugins', () => {
-        return utils.expectEvent('service:create', entityId, pluginId)
+        return utils.expectEvent('service:created', entityId, pluginId)
       })
 
       test.it('should return a bad data error if one user tries to add more than one service', () => {
@@ -420,7 +420,7 @@ test.describe('services api', function () {
       })
 
       test.it('should have sent service update event to registered plugins', () => {
-        return utils.expectEvent('service:update', moduleUserService._id, pluginId)
+        return utils.expectEvent('service:updated', moduleUserService._id, pluginId)
       })
 
       test.it('should update all provided service data even when url is same than before', () => {

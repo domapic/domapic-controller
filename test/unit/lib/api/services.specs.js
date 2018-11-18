@@ -173,7 +173,7 @@ test.describe('services api', () => {
       test.it('should emit a plugin event', () => {
         return operations.addService.handler({}, fooBody, response, fooUserData)
           .then(() => {
-            return test.expect(eventsMocks.stubs.plugin).to.have.been.calledWith('service', 'create', fooService)
+            return test.expect(eventsMocks.stubs.plugin).to.have.been.calledWith('service', 'created', fooService)
           })
       })
 
@@ -285,7 +285,7 @@ test.describe('services api', () => {
           }
         }, fooBody, response)
           .then(() => {
-            return test.expect(eventsMocks.stubs.plugin).to.have.been.calledWith('service', 'update', fooService)
+            return test.expect(eventsMocks.stubs.plugin).to.have.been.calledWith('service', 'updated', fooService)
           })
       })
 

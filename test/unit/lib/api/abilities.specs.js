@@ -144,7 +144,7 @@ test.describe('abilities api', () => {
       test.it('should emit a plugin event', () => {
         return operations.addAbility.handler({}, fooBody, response, fooUserData)
           .then(() => {
-            return test.expect(eventsMocks.stubs.plugin).to.have.been.calledWith('ability', 'create', fooAbility)
+            return test.expect(eventsMocks.stubs.plugin).to.have.been.calledWith('ability', 'created', fooAbility)
           })
       })
 
@@ -257,7 +257,7 @@ test.describe('abilities api', () => {
           }
         }, fooBody, response)
           .then(() => {
-            return test.expect(eventsMocks.stubs.plugin).to.have.been.calledWith('ability', 'update', fooAbility)
+            return test.expect(eventsMocks.stubs.plugin).to.have.been.calledWith('ability', 'updated', fooAbility)
           })
       })
 
@@ -358,7 +358,7 @@ test.describe('abilities api', () => {
           }
         }, {}, response)
           .then(() => {
-            return test.expect(eventsMocks.stubs.plugin).to.have.been.calledWith('ability', 'delete', {
+            return test.expect(eventsMocks.stubs.plugin).to.have.been.calledWith('ability', 'deleted', {
               _id: fooId
             })
           })
