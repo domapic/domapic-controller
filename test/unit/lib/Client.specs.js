@@ -133,5 +133,52 @@ test.describe('Client', () => {
           })
       })
     })
+
+    test.describe('sendEvent method', () => {
+      const fooServiceData = {
+        url: 'foo-service-url',
+        apiKey: 'foo-service-apiKey'
+      }
+      const fooEventData = {
+        entity: 'foo-entity',
+        operation: 'foo-operation',
+        data: {
+          _id: 'foo-event-data-id',
+          foo: 'foo'
+        }
+      }
+
+      test.beforeEach(() => {
+        baseMocks.stubs.service.client.connection.get.resolves({})
+      })
+
+      test.it('should call to create a new Connection, passing the service url and apiKey', () => {
+        return client.sendEvent(fooServiceData, fooEventData)
+          .then(() => {
+            return test.expect(baseMocks.stubs.service.client.Connection).to.have.been.calledWith(fooServiceData.url, {
+              apiKey: fooServiceData.apiKey
+            })
+          })
+      })
+
+      test.it('should call to post event, passing the data', () => {
+        return client.sendEvent(fooServiceData, fooEventData)
+          .then(() => {
+            return test.expect(baseMocks.stubs.service.client.connection.post).to.have.been.calledWith('events', fooEventData)
+          })
+      })
+
+      test.it('should catch client error and trace it', () => {
+        const fooServerUnavailableError = new Error('server unavailable')
+        fooServerUnavailableError.typeof = 'ServerUnavailable'
+
+        baseMocks.stubs.service.client.connection.post.rejects(fooServerUnavailableError)
+
+        return client.sendEvent(fooServiceData, fooEventData)
+          .then(response => {
+            return test.expect(baseMocks.stubs.service.tracer.warn).to.have.been.called()
+          })
+      })
+    })
   })
 })

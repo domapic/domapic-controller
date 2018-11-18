@@ -5,6 +5,8 @@ const utils = require('./utils')
 
 test.describe('abilities api', function () {
   let authenticator = utils.Authenticator()
+  let pluginId
+  let entityId
 
   const addService = function (serviceData) {
     return utils.request('/services', {
@@ -114,7 +116,12 @@ test.describe('abilities api', function () {
   }
 
   test.before(() => {
-    return utils.doLogin(authenticator)
+    return utils.addPlugin()
+      .then(id => {
+        pluginId = id
+      }).then(() => {
+        return utils.doLogin(authenticator)
+      })
   })
 
   test.describe('add ability', () => {
@@ -213,6 +220,7 @@ test.describe('abilities api', function () {
             return getAbility(abilityId)
               .then((getResponse) => {
                 const ability = getResponse.body
+                entityId = ability._id
                 return Promise.all([
                   test.expect(ability._id).to.equal(abilityId),
                   test.expect(ability.description).to.equal(fooAbility.description),
@@ -228,6 +236,10 @@ test.describe('abilities api', function () {
                 ])
               })
           })
+        })
+
+        test.it('should have sent ability creation event to registered plugins', () => {
+          return utils.expectEvent('ability:created', entityId, pluginId)
         })
       })
     })
@@ -319,6 +331,10 @@ test.describe('abilities api', function () {
               })
           })
       })
+
+      test.it('should have sent ability update event to registered plugins', () => {
+        return utils.expectEvent('ability:updated', moduleUserAbility._id, pluginId)
+      })
     })
   })
 
@@ -385,6 +401,10 @@ test.describe('abilities api', function () {
                 ])
               })
           })
+      })
+
+      test.it('should have sent ability delete event to registered plugins', () => {
+        return utils.expectEvent('ability:deleted', moduleUserAbility._id, pluginId)
       })
     })
   })

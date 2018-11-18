@@ -103,6 +103,19 @@ test.describe('service commands', () => {
             ])
           })
       })
+
+      test.it('should not filter fields if allFields option is received', () => {
+        modelsMocks.stubs.Service.find.resolves(fooServices)
+        return commands.getFiltered({}, {
+          allFields: true
+        })
+          .then((result) => {
+            return Promise.all([
+              test.expect(result).to.equal(fooServices),
+              test.expect(modelsMocks.stubs.Service.find).to.have.been.calledWith({}, undefined)
+            ])
+          })
+      })
     })
 
     test.describe('get method', () => {

@@ -10,6 +10,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 ### Removed
 
+## [1.0.0-alpha.9] - 2018-11-18
+### Added
+- Send entity operations events to all registered plugins
+- Add type filter to get services api
+### Changed
+- Allow plugin users to create and get operator users
+### Fixed
+- Fix role-based permissions in get user api
+
 ## [1.0.0-alpha.8] - 2018-11-13
 ### Changed
 - Revert "services" to "modules" change.

@@ -11,16 +11,19 @@ test.describe('abilities api', () => {
     let operations
     let commandsMocks
     let baseMocks
+    let eventsMocks
 
     test.beforeEach(() => {
       baseMocks = new mocks.Base()
       commandsMocks = new mocks.Commands()
+      eventsMocks = new mocks.Events()
       operations = abilities.Operations(baseMocks.stubs.service, commandsMocks.stubs)
     })
 
     test.afterEach(() => {
       baseMocks.restore()
       commandsMocks.restore()
+      eventsMocks.restore()
     })
 
     test.describe('getAbilities handler', () => {
@@ -138,6 +141,13 @@ test.describe('abilities api', () => {
           })
       })
 
+      test.it('should emit a plugin event', () => {
+        return operations.addAbility.handler({}, fooBody, response, fooUserData)
+          .then(() => {
+            return test.expect(eventsMocks.stubs.plugin).to.have.been.calledWith('ability', 'created', fooAbility)
+          })
+      })
+
       test.it('should resolve the promise with no value', () => {
         return operations.addAbility.handler({}, fooBody, response, fooUserData)
           .then((result) => {
@@ -240,6 +250,17 @@ test.describe('abilities api', () => {
           })
       })
 
+      test.it('should emit a plugin event', () => {
+        return operations.updateAbility.handler({
+          path: {
+            id: fooId
+          }
+        }, fooBody, response)
+          .then(() => {
+            return test.expect(eventsMocks.stubs.plugin).to.have.been.calledWith('ability', 'updated', fooAbility)
+          })
+      })
+
       test.it('should resolve the promise with no value', () => {
         return operations.updateAbility.handler({
           path: {
@@ -330,6 +351,19 @@ test.describe('abilities api', () => {
           })
       })
 
+      test.it('should emit a plugin event', () => {
+        return operations.deleteAbility.handler({
+          path: {
+            id: fooId
+          }
+        }, {}, response)
+          .then(() => {
+            return test.expect(eventsMocks.stubs.plugin).to.have.been.calledWith('ability', 'deleted', {
+              _id: fooId
+            })
+          })
+      })
+
       test.it('should resolve the promise with no value', () => {
         return operations.deleteAbility.handler({
           path: {
@@ -393,6 +427,20 @@ test.describe('abilities api', () => {
         }, fooActionData, response)
           .then(() => {
             return test.expect(response.header).to.have.been.calledWith('location', '/api/abilities/foo-ability-id/state')
+          })
+      })
+
+      test.it('should emit a plugin event', () => {
+        return operations.abilityAction.handler({
+          path: {
+            id: fooId
+          }
+        }, fooActionData, response)
+          .then(() => {
+            return test.expect(eventsMocks.stubs.plugin).to.have.been.calledWith('ability', 'action', {
+              _id: fooId,
+              ...fooActionData
+            })
           })
       })
 
@@ -508,6 +556,20 @@ test.describe('abilities api', () => {
         }, fooActionData, response)
           .then(() => {
             return test.expect(response.header).to.have.been.calledWith('location', '/api/abilities/foo-ability-id/state')
+          })
+      })
+
+      test.it('should emit a plugin event', () => {
+        return operations.abilityEvent.handler({
+          path: {
+            id: fooId
+          }
+        }, fooActionData, response)
+          .then(() => {
+            return test.expect(eventsMocks.stubs.plugin).to.have.been.calledWith('ability', 'event', {
+              _id: fooId,
+              ...fooActionData
+            })
           })
       })
 

@@ -176,6 +176,17 @@
   "paths": {
     "/services": {
       "get": {
+        "parameters": [
+          {
+            "in": "query",
+            "name": "type",
+            "schema": {
+              "type": "string",
+              "enum": ["module", "plugin"]
+            },
+            "description": "Service type"
+          }
+        ],
         "tags": ["service"],
         "summary": "Get services",
         "description": "List services",
