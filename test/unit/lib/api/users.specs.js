@@ -415,7 +415,7 @@ test.describe('users api', () => {
       test.it('should emit a plugin event', () => {
         return operations.addUser.handler({}, fooBody, response)
           .then(() => {
-            return test.expect(eventsMocks.stubs.plugin).to.have.been.calledWith('user', 'create', fooUser)
+            return test.expect(eventsMocks.stubs.plugin).to.have.been.calledWith('user', 'created', fooUser)
           })
       })
 
