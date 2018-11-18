@@ -258,6 +258,35 @@ test.describe('users api', function () {
             })
         })
       })
+
+      test.it('should return users filtering by name', () => {
+        return getUsers({
+          name: newUser.name
+        })
+          .then(getResponse => {
+            const user1 = getResponse.body.find(user => user.name === operatorUser.name)
+            const user2 = getResponse.body.find(user => user.name === newUser.name)
+            return Promise.all([
+              test.expect(user1).to.be.undefined(),
+              test.expect(user2.role).to.equal(newUser.role),
+              test.expect(user2.email).to.equal(newUser.email),
+              test.expect(user2.name).to.equal(newUser.name)
+            ])
+          })
+      })
+
+      test.it('should return users filtering by role', () => {
+        return getUsers({
+          role: 'admin'
+        })
+          .then(getResponse => {
+            const noAdminUser = getResponse.body.find(user => user.role !== 'admin')
+            return Promise.all([
+              test.expect(getResponse.statusCode).to.equal(200),
+              test.expect(noAdminUser).to.be.undefined()
+            ])
+          })
+      })
     })
 
     test.describe('get user', () => {

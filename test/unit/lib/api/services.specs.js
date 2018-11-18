@@ -31,11 +31,27 @@ test.describe('services api', () => {
         const fooResult = 'foo result'
         commandsMocks.stubs.service.getFiltered.resolves(fooResult)
 
-        return operations.getServices.handler()
+        return operations.getServices.handler({query: {}})
           .then((result) => {
             return Promise.all([
               test.expect(result).to.equal(fooResult),
               test.expect(commandsMocks.stubs.service.getFiltered).to.have.been.calledWith()
+            ])
+          })
+      })
+
+      test.it('should pass received query data to get services command', () => {
+        const fooResult = 'foo result'
+        const fooQuery = {
+          type: 'foo-type'
+        }
+        commandsMocks.stubs.service.getFiltered.resolves(fooResult)
+
+        return operations.getServices.handler({query: fooQuery})
+          .then((result) => {
+            return Promise.all([
+              test.expect(result).to.equal(fooResult),
+              test.expect(commandsMocks.stubs.service.getFiltered).to.have.been.calledWith(fooQuery)
             ])
           })
       })

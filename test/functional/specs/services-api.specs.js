@@ -242,6 +242,46 @@ test.describe('services api', function () {
     })
   })
 
+  test.describe('get services', () => {
+    test.it('should return all services', () => {
+      return getServices()
+        .then(getResponse => {
+          return Promise.all([
+            test.expect(getResponse.statusCode).to.equal(200),
+            test.expect(getResponse.body.length).to.equal(2)
+          ])
+        })
+    })
+
+    test.it('should return plugin services when filtering by plugin type', () => {
+      return getServices({
+        type: 'plugin'
+      })
+        .then(getResponse => {
+          const service = getResponse.body.find(service => service.type !== 'plugin')
+          return Promise.all([
+            test.expect(getResponse.statusCode).to.equal(200),
+            test.expect(service).to.be.undefined(),
+            test.expect(getResponse.body.length).to.equal(1)
+          ])
+        })
+    })
+
+    test.it('should return module services when filtering by module type', () => {
+      return getServices({
+        type: 'module'
+      })
+        .then(getResponse => {
+          const service = getResponse.body.find(service => service.type !== 'module')
+          return Promise.all([
+            test.expect(getResponse.statusCode).to.equal(200),
+            test.expect(service).to.be.undefined(),
+            test.expect(getResponse.body.length).to.equal(1)
+          ])
+        })
+    })
+  })
+
   test.describe('update service', () => {
     let moduleUserService
 
