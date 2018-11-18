@@ -34,6 +34,7 @@ const CallBackRunnerFake = function (options = {}) {
 
 const Mock = function () {
   const sandbox = test.sinon.createSandbox()
+  const originalEmitter = events.emitter
 
   const emmiterOnFake = new CallBackRunnerFake({
     runOnRegister: true
@@ -45,13 +46,16 @@ const Mock = function () {
 
   emitterStubs.on.returns = emmiterOnFake.returns
 
+  events.emitter = emitterStubs
+
   const stubs = {
-    emitter: sandbox.stub(events, 'emitter').returns(emitterStubs),
+    emitter: emitterStubs,
     plugin: sandbox.stub(events, 'plugin')
   }
 
   const restore = function () {
     sandbox.restore()
+    events.emitter = originalEmitter
   }
 
   return {

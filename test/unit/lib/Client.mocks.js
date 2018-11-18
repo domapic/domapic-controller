@@ -5,7 +5,8 @@ const Mock = function () {
 
   const stubs = {
     sendAction: sandbox.stub().usingPromise().resolves(),
-    getState: sandbox.stub().usingPromise().resolves()
+    getState: sandbox.stub().usingPromise().resolves(),
+    sendEvent: sandbox.stub().usingPromise().resolves()
   }
 
   const restore = function () {
