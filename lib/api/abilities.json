@@ -128,7 +128,7 @@
             "type": "string"
           }
         },
-        "required": ["_id", "name", "_service", "type"],
+        "required": ["_id", "name", "_service"],
         "additionalProperties": false,
         "example": {
           "_id": "1223123",
@@ -241,7 +241,7 @@
             "type": "boolean"
           }
         },
-        "required": ["name", "type"],
+        "required": ["name"],
         "additionalProperties": false,
         "example": {
           "name": "foo-ability-name",
@@ -556,7 +556,6 @@
         "operationId": "abilityAction",
         "requestBody": {
           "description": "Data of the action",
-          "required": true,
           "content": {
             "application/json": {
               "schema": {
@@ -638,7 +637,6 @@
         "operationId": "abilityEvent",
         "requestBody": {
           "description": "Data of the event",
-          "required": true,
           "content": {
             "application/json": {
               "schema": {

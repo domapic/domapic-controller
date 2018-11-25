@@ -7,6 +7,7 @@ test.describe('ability action api', function () {
   this.timeout(10000)
   let authenticator = utils.Authenticator()
   let abilityId
+  let abilityNoDataId
   let serviceId
 
   const addService = function (serviceData) {
@@ -51,15 +52,29 @@ test.describe('ability action api', function () {
     actionDescription: 'foo action description'
   }
 
+  const fooAbilityNoData = {
+    name: 'foo-ability-no-data',
+    description: 'foo-description',
+    action: true,
+    event: true,
+    actionDescription: 'foo action description'
+  }
+
   test.before(() => {
     return utils.ensureUserAndDoLogin(authenticator, serviceUser)
       .then(() => addService(fooService)
         .then((response) => {
           serviceId = response.headers.location.split('/').pop()
-          return addAbility(fooAbility).then((addResponse) => {
-            abilityId = addResponse.headers.location.split('/').pop()
-            return Promise.resolve()
-          })
+          return Promise.all([
+            addAbility(fooAbility).then((addResponse) => {
+              abilityId = addResponse.headers.location.split('/').pop()
+              return Promise.resolve()
+            }),
+            addAbility(fooAbilityNoData).then((addResponse) => {
+              abilityNoDataId = addResponse.headers.location.split('/').pop()
+              return Promise.resolve()
+            })
+          ])
         }))
   })
 
@@ -128,6 +143,40 @@ test.describe('ability action api', function () {
             test.expect(response.body.message).to.equal('Service not available')
           ])
         })
+    })
+  })
+
+  test.describe('when ability has not data "type" defined', () => {
+    test.it('should return a bad data error if action provides a data property', () => {
+      return utils.request(`/abilities/${abilityNoDataId}/action`, {
+        method: 'POST',
+        body: {
+          data: 'foo'
+        },
+        ...authenticator.credentials()
+      }).then(response => {
+        return Promise.all([
+          test.expect(response.statusCode).to.equal(422),
+          test.expect(response.body.message).to.contain('Ability has not defined type. Data property is not allowed')
+        ])
+      })
+    })
+
+    test.it('should make a request to the service action url', () => {
+      return utils.request(`/abilities/${abilityNoDataId}/action`, {
+        method: 'POST',
+        ...authenticator.credentials()
+      }).then(response => {
+        return utils.readLogs()
+          .then(controllerLogs => {
+            return Promise.all([
+              test.expect(controllerLogs).to.contain(`Sending action to service "${serviceId}", ability "${abilityNoDataId}". Data: `),
+              test.expect(controllerLogs).to.contain(`Send Request POST | https://192.168.1.1/api/abilities/foo-ability-no-data/action`),
+              test.expect(response.statusCode).to.equal(502),
+              test.expect(response.body.message).to.equal('Service not available')
+            ])
+          })
+      })
     })
   })
 })
