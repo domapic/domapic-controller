@@ -1,6 +1,6 @@
 {
   "name": "domapic-controller",
-  "version": "1.0.0-alpha.9",
+  "version": "1.0.0-alpha.10",
   "description": "Controller for Domapic systems",
   "main": "server.js",
   "keywords": [
@@ -23,7 +23,7 @@
     "coveralls": "cat ./.coverage/unit/lcov.info | coveralls"
   },
   "dependencies": {
-    "domapic-base": "1.0.0-beta.14",
+    "domapic-base": "1.0.0-beta.15",
     "inquirer": "6.2.0",
     "inquirer-autocomplete-prompt": "1.0.1",
     "isuri": "2.0.3",
