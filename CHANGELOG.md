@@ -11,6 +11,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 
 ## [1.0.0-alpha.10] - 2018-11-25
+### Added
+- Add express-mongo-sanitize middleware
+
+### Changed
+- Type property in abilities becomes not mandatory when ability has not state
 
 ## [1.0.0-alpha.9] - 2018-11-18
 ### Added
