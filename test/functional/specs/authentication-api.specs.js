@@ -222,7 +222,8 @@ test.describe('authentication api', function () {
                 'authDisabled',
                 'hostName',
                 'db',
-                'path'
+                'path',
+                'rejectUntrusted'
               ),
               test.expect(response.body.authDisabled).to.deep.equal([]),
               test.expect(response.body.port).to.equal(3000),
@@ -416,7 +417,8 @@ test.describe('authentication api', function () {
                 'authDisabled',
                 'hostName',
                 'db',
-                'path'
+                'path',
+                'rejectUntrusted'
               ),
               test.expect(response.body.authDisabled).to.deep.equal([]),
               test.expect(response.body.port).to.equal(3000),
