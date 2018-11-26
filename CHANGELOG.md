@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 - Type property in abilities becomes not mandatory when ability has not state
+- Data property is not allowed in ability handlers when ability type is not defined
 
 ## [1.0.0-alpha.9] - 2018-11-18
 ### Added

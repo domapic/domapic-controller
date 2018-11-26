@@ -6,7 +6,7 @@
 
 [![Build status][travisci-image]][travisci-url] [![Coverage Status][coveralls-image]][coveralls-url] [![Quality Gate][quality-gate-image]][quality-gate-url] [![js-standard-style][standard-image]][standard-url]
 
-[![NPM dependencies][npm-dependencies-image]][npm-dependencies-url] [![Last commit][last-commit-image]][last-commit-url] [![Last release][release-image]][release-url] 
+[![NPM dependencies][npm-dependencies-image]][npm-dependencies-url] [![Last commit][last-commit-image]][last-commit-url] <!-- [![Last release][release-image]][release-url] -->
 
 [![NPM downloads][npm-downloads-image]][npm-downloads-url] [![Website][website-image]][website-url] [![License][license-image]][license-url]
 
@@ -105,9 +105,10 @@ This command will stop the server, and, if you used the `--save` option when you
 domapic-controller start
 ```
 
-If you want your server to be started automatically on system reload, use the pm2 save command:
+If you want your server to be started automatically on system reload, use the `pm2 startup` and `pm2 save` commands:
 
 ```bash
+pm2 startup
 pm2 save
 ```
 
@@ -142,6 +143,7 @@ option | description | default
 `--logLevel` | Tracing level. Choices are 'log', 'trace', 'debug', 'info', 'warn' and 'error' | info
 `--path` | Path to be used as home path, instead of user´s default (.domapic folder will be created inside) | ~
 `--saveConfig` | Save current options for next execution (except `name` and `path`) | false
+`--rejectUntrusted` | Reject untrusted ssl certificates when making requests to modules or plugins | false
 
 Example of setting options from command line:
 ```shell
