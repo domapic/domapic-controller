@@ -1,3 +1,4 @@
+const _ = require('lodash')
 const test = require('narval')
 
 const mocks = require('../../mocks')
@@ -67,7 +68,7 @@ test.describe('ability model', () => {
         'exclusiveMaximum',
         'exclusiveMinimum'
       ]
-      required.map(testValidation)
+      _.each(required, testValidation)
 
       test.it(`should not be required if ability has not any of that properties`, () => {
         model = ability.Model(baseMocks.stubs.service)
