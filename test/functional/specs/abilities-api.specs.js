@@ -115,6 +115,15 @@ test.describe('abilities api', function () {
     stateDescription: 'foo state description'
   }
 
+  const fooAbilityNoData = {
+    name: 'foo-ability-no-data',
+    description: 'foo-description',
+    action: true,
+    event: true,
+    actionDescription: 'foo action description',
+    eventDescription: 'foo event description'
+  }
+
   test.before(() => {
     return utils.addPlugin()
       .then(id => {
@@ -149,17 +158,6 @@ test.describe('abilities api', function () {
         return addAbility(ability).then((response) => {
           return Promise.all([
             test.expect(response.body.message).to.contain('does not match pattern'),
-            test.expect(response.statusCode).to.equal(422)
-          ])
-        })
-      })
-
-      test.it('should return a bad data error if no type is provided', () => {
-        const ability = {...fooAbility}
-        delete ability.type
-        return addAbility(ability).then((response) => {
-          return Promise.all([
-            test.expect(response.body.message).to.contain('requires property "type"'),
             test.expect(response.statusCode).to.equal(422)
           ])
         })
@@ -214,6 +212,38 @@ test.describe('abilities api', function () {
           })
         })
 
+        test.it('should return a bad data error if no type is provided, but has state or another properties related to ability data', () => {
+          const ability = {...fooAbility}
+          delete ability.type
+          return addAbility(ability).then((response) => {
+            return Promise.all([
+              test.expect(response.body.message).to.contain('Ability data type is required'),
+              test.expect(response.statusCode).to.equal(422)
+            ])
+          })
+        })
+
+        test.it('should add ability to database if all provided data pass validation for an ability without data', () => {
+          return addAbility(fooAbilityNoData).then((addResponse) => {
+            const abilityId = addResponse.headers.location.split('/').pop()
+            return getAbility(abilityId)
+              .then((getResponse) => {
+                const ability = getResponse.body
+                entityId = ability._id
+                return Promise.all([
+                  test.expect(ability._id).to.equal(abilityId),
+                  test.expect(ability.description).to.equal(fooAbilityNoData.description),
+                  test.expect(ability.action).to.equal(fooAbilityNoData.action),
+                  test.expect(ability.event).to.equal(fooAbilityNoData.event),
+                  test.expect(ability.eventDescription).to.equal(fooAbilityNoData.eventDescription),
+                  test.expect(ability.actionDescription).to.equal(fooAbilityNoData.actionDescription),
+                  test.expect(ability.createdAt).to.not.be.undefined(),
+                  test.expect(ability.updatedAt).to.not.be.undefined()
+                ])
+              })
+          })
+        })
+
         test.it('should add ability to database if all provided data pass validation', () => {
           return addAbility(fooAbility).then((addResponse) => {
             const abilityId = addResponse.headers.location.split('/').pop()
@@ -224,6 +254,7 @@ test.describe('abilities api', function () {
                 return Promise.all([
                   test.expect(ability._id).to.equal(abilityId),
                   test.expect(ability.description).to.equal(fooAbility.description),
+                  test.expect(ability.action).to.equal(fooAbility.action),
                   test.expect(ability.event).to.equal(fooAbility.event),
                   test.expect(ability.state).to.equal(fooAbility.state),
                   test.expect(ability.format).to.equal(fooAbility.format),

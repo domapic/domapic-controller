@@ -236,6 +236,15 @@ test.describe('composed commands', () => {
             })
           })
       })
+
+      test.it('should trace data as an empty string if not received', () => {
+        abilityCommandsMocks.stubs.commands.validateEvent.resolves(fooAbility)
+        serviceCommandsMocks.stubs.commands.getById.resolves(fooService)
+        return commands.triggerAbilityEvent('foo-id', {})
+          .then(() => {
+            return test.expect(baseMocks.stubs.service.tracer.debug.getCall(0).args[0]).to.include('Data: ""')
+          })
+      })
     })
   })
 })

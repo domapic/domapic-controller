@@ -287,7 +287,8 @@ test.describe('ability commands', () => {
     test.describe('validateAction method', () => {
       const fooId = 'foo-id'
       const fooAbility = {
-        action: true
+        action: true,
+        type: 'foo-type'
       }
       const fooActionData = {
         data: 'foo-data'
@@ -325,6 +326,40 @@ test.describe('ability commands', () => {
             return test.assert.fail()
           }, err => {
             return test.expect(err).to.equal(fooError)
+          })
+      })
+
+      test.it('should reject with a BadData Error if ability has no type and data is provided', () => {
+        const fooError = new Error('foo error')
+        const fooAbilityNoType = {
+          action: true
+        }
+        baseMocks.stubs.service.errors.BadData.returns(fooError)
+        modelsMocks.stubs.Ability.findById.resolves(fooAbilityNoType)
+        return commands.validateAction('foo-id', {
+          data: 'foo'
+        })
+          .then(() => {
+            return test.assert.fail()
+          }, err => {
+            return Promise.all([
+              test.expect(err).to.equal(fooError)
+            ])
+          })
+      })
+
+      test.it('should reject with a BadData Error if ability has type and not data is provided', () => {
+        const fooError = new Error('foo error')
+        baseMocks.stubs.service.errors.BadData.returns(fooError)
+        modelsMocks.stubs.Ability.findById.resolves(fooAbility)
+        return commands.validateAction('foo-id', {
+        })
+          .then(() => {
+            return test.assert.fail()
+          }, err => {
+            return Promise.all([
+              test.expect(err).to.equal(fooError)
+            ])
           })
       })
 
@@ -384,7 +419,8 @@ test.describe('ability commands', () => {
     test.describe('validateEvent method', () => {
       const fooId = 'foo-id'
       const fooAbility = {
-        event: true
+        event: true,
+        type: 'foo-type'
       }
       const fooEventData = {
         data: 'foo-data'
@@ -422,6 +458,40 @@ test.describe('ability commands', () => {
             return test.assert.fail()
           }, err => {
             return test.expect(err).to.equal(fooError)
+          })
+      })
+
+      test.it('should reject with a BadData Error if ability has no type and data is provided', () => {
+        const fooError = new Error('foo error')
+        const fooAbilityNoType = {
+          event: true
+        }
+        baseMocks.stubs.service.errors.BadData.returns(fooError)
+        modelsMocks.stubs.Ability.findById.resolves(fooAbilityNoType)
+        return commands.validateEvent('foo-id', {
+          data: 'foo'
+        })
+          .then(() => {
+            return test.assert.fail()
+          }, err => {
+            return Promise.all([
+              test.expect(err).to.equal(fooError)
+            ])
+          })
+      })
+
+      test.it('should reject with a BadData Error if ability has type and not data is provided', () => {
+        const fooError = new Error('foo error')
+        baseMocks.stubs.service.errors.BadData.returns(fooError)
+        modelsMocks.stubs.Ability.findById.resolves(fooAbility)
+        return commands.validateEvent('foo-id', {
+        })
+          .then(() => {
+            return test.assert.fail()
+          }, err => {
+            return Promise.all([
+              test.expect(err).to.equal(fooError)
+            ])
           })
       })
 

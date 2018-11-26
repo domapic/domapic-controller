@@ -15,6 +15,7 @@ const Mock = function () {
     server: {
       addAuthentication: sandbox.stub().usingPromise().resolves(),
       addOperations: sandbox.stub().usingPromise().resolves(),
+      addMiddleware: sandbox.stub().usingPromise().resolves(),
       extendOpenApi: sandbox.stub().usingPromise().resolves(),
       start: sandbox.stub().usingPromise().resolves()
     },

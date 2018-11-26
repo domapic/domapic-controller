@@ -1,3 +1,4 @@
+const _ = require('lodash')
 const test = require('narval')
 
 const mocks = require('../../mocks')
@@ -42,6 +43,38 @@ test.describe('ability model', () => {
           model.name.validate('foo-name_123-foo2'),
           model.name.validate('javier.brea')
         ])
+      })
+    })
+
+    test.describe('type', () => {
+      const testValidation = function (key) {
+        test.it(`should be required if ability has ${key}`, () => {
+          model = ability.Model(baseMocks.stubs.service)
+          test.expect(model.type.required[0].bind({
+            [key]: true
+          })()).to.equal(true)
+        })
+      }
+      const required = [
+        'state',
+        'format',
+        'enum',
+        'maxLength',
+        'minLength',
+        'pattern',
+        'multipleOf',
+        'minimum',
+        'maximum',
+        'exclusiveMaximum',
+        'exclusiveMinimum'
+      ]
+      _.each(required, testValidation)
+
+      test.it(`should not be required if ability has not any of that properties`, () => {
+        model = ability.Model(baseMocks.stubs.service)
+        test.expect(model.type.required[0].bind({
+          event: true
+        })()).to.equal(false)
       })
     })
   })
