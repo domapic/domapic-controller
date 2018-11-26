@@ -40,6 +40,13 @@ test.describe('Client', () => {
           })
       })
 
+      test.it('should trace data as an empty string if not received', () => {
+        return client.sendAction(fooServiceData, fooAbility, {})
+          .then(() => {
+            return test.expect(baseMocks.stubs.service.tracer.debug.getCall(0).args[0]).to.include('Data: ""')
+          })
+      })
+
       test.it('should call to post to ability action handler, passing the data', () => {
         return client.sendAction(fooServiceData, fooAbility, fooData)
           .then(() => {

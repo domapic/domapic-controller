@@ -7,6 +7,7 @@ test.describe('ability event api', function () {
   this.timeout(10000)
   let authenticator = utils.Authenticator()
   let abilityId
+  let abilityNoDataId
   let serviceId
 
   const addService = function (serviceData) {
@@ -52,15 +53,29 @@ test.describe('ability event api', function () {
     eventDescription: 'foo event description'
   }
 
+  const fooAbilityNoData = {
+    name: 'foo-ability-no-data',
+    description: 'foo-description',
+    action: true,
+    event: true,
+    actionDescription: 'foo action description'
+  }
+
   test.before(() => {
     return utils.ensureUserAndDoLogin(authenticator, serviceUser)
       .then(() => addService(fooService)
         .then((response) => {
           serviceId = response.headers.location.split('/').pop()
-          return addAbility(fooAbility).then((addResponse) => {
-            abilityId = addResponse.headers.location.split('/').pop()
-            return Promise.resolve()
-          })
+          return Promise.all([
+            addAbility(fooAbility).then((addResponse) => {
+              abilityId = addResponse.headers.location.split('/').pop()
+              return Promise.resolve()
+            }),
+            addAbility(fooAbilityNoData).then((addResponse) => {
+              abilityNoDataId = addResponse.headers.location.split('/').pop()
+              return Promise.resolve()
+            })
+          ])
         }))
   })
 
@@ -112,6 +127,18 @@ test.describe('ability event api', function () {
     })
   })
 
+  test.it('should return a bad data error if no data property is provided', () => {
+    return utils.request(`/abilities/${abilityId}/event`, {
+      method: 'POST',
+      ...authenticator.credentials()
+    }).then(response => {
+      return Promise.all([
+        test.expect(response.statusCode).to.equal(422),
+        test.expect(response.body.message).to.contain('Data is required')
+      ])
+    })
+  })
+
   test.it('should save the received event into logs', () => {
     const fooData = 'foo1@foo1.com'
     return utils.request(`/abilities/${abilityId}/event`, {
@@ -155,6 +182,45 @@ test.describe('ability event api', function () {
               ])
             })
         })
+    })
+  })
+
+  test.describe('when ability has not data "type" defined', () => {
+    test.it('should return a bad data error if action provides a data property', () => {
+      return utils.request(`/abilities/${abilityNoDataId}/event`, {
+        method: 'POST',
+        body: {
+          data: 'foo'
+        },
+        ...authenticator.credentials()
+      }).then(response => {
+        return Promise.all([
+          test.expect(response.statusCode).to.equal(422),
+          test.expect(response.body.message).to.contain('Ability has not defined type. Data property is not allowed')
+        ])
+      })
+    })
+
+    test.it('should save the received event into logs', () => {
+      return utils.request(`/abilities/${abilityNoDataId}/event`, {
+        method: 'POST',
+        ...authenticator.credentials()
+      }).then(response => {
+        return utils.waitOnestimatedStartTime(500)
+          .then(() => {
+            return utils.request(`/logs`, {
+              method: 'GET',
+              ...authenticator.credentials()
+            })
+              .then(logsResponse => {
+                const log = logsResponse.body.find(savedLog => savedLog._ability === abilityNoDataId)
+                return Promise.all([
+                  test.expect(log.type).to.equal('event'),
+                  test.expect(log.data).to.be.undefined()
+                ])
+              })
+          })
+      })
     })
   })
 })

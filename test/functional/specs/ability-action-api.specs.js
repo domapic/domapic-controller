@@ -126,6 +126,18 @@ test.describe('ability action api', function () {
     })
   })
 
+  test.it('should return a bad data error if no data property is provided', () => {
+    return utils.request(`/abilities/${abilityId}/action`, {
+      method: 'POST',
+      ...authenticator.credentials()
+    }).then(response => {
+      return Promise.all([
+        test.expect(response.statusCode).to.equal(422),
+        test.expect(response.body.message).to.contain('Data is required')
+      ])
+    })
+  })
+
   test.it('should make a request to the service action url', () => {
     return utils.request(`/abilities/${abilityId}/action`, {
       method: 'POST',
