@@ -34,6 +34,8 @@ Controller server for Domapic domotic systems.
 Connect all your Domapic Modules and control them with a single application. <!-- and program them to interact automatically using the provided web interface
 Install Domapic plugins to connect Domapic with other domotic systems or online services. -->
 
+__NOTE: The next schema includes some Domapic pieces that are still not released. The web ui for the Controller, Domapic Cloud, mobile apps, as well as Homekit and Alexa plugins will be available soon.__
+
 ![Domapic system example][domapic-example-image]
 
 > Above, an example of two modules in a [Domapic System][website-url]. Now, the relay can be controlled using the web or mobile applications, or interacting with ["Alexa"][alexa-url] or ["HomeKit"][homekit-url]. Automatisms can be configured in the [Domapic Controller Web UI][domapic-controller-url] to make the [_Phillips Hue_][hue-url] bulb be switched off automatically when the relay bulb is switched on, for example.
