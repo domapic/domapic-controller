@@ -149,7 +149,7 @@
           },
           {
             "in": "query",
-            "name": "plugin",
+            "name": "plugin-package-name",
             "schema": {
               "type": "string"
             },
