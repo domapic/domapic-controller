@@ -23,14 +23,14 @@
     "coveralls": "cat ./.coverage/unit/lcov.info | coveralls"
   },
   "dependencies": {
-    "domapic-base": "1.0.0-beta.17",
+    "domapic-base": "1.0.0-beta.18",
     "express-mongo-sanitize": "1.3.2",
-    "inquirer": "6.2.0",
+    "inquirer": "6.2.1",
     "inquirer-autocomplete-prompt": "1.0.1",
     "isuri": "2.0.3",
     "jsonschema": "1.2.4",
     "md5": "2.2.1",
-    "mongoose": "5.3.3",
+    "mongoose": "5.4.0",
     "rand-token": "0.4.0"
   },
   "devDependencies": {
