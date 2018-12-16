@@ -43,14 +43,14 @@ test.describe('service commands', () => {
       })
 
       test.it('should reject if provided _service does not exist', () => {
-        modelsMocks.stubs.Service.findById.resolves(null)
+        modelsMocks.stubs.Service.findById.rejects(new Error())
         return commands.add(fooServicePluginConfigData)
           .then(() => {
             return test.assert.fail()
           }, err => {
             return Promise.all([
               test.expect(err).to.be.an.instanceOf(Error),
-              test.expect(baseMocks.stubs.service.errors.Conflict).to.have.been.called()
+              test.expect(baseMocks.stubs.service.errors.BadData).to.have.been.called()
             ])
           })
       })

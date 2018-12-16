@@ -53,7 +53,7 @@ test.describe('servicePluginConfigs api', () => {
             return Promise.all([
               test.expect(result).to.equal(fooResult),
               test.expect(commandsMocks.stubs.servicePluginConfig.getFiltered).to.have.been.calledWith({
-                service: 'foo-service',
+                _service: 'foo-service',
                 pluginPackageName: 'foo-package-name'
               })
             ])
@@ -142,7 +142,7 @@ test.describe('servicePluginConfigs api', () => {
     testWriteAuth('updateServicePluginConfig')
 
     test.describe('addServicePluginConfig auth', () => {
-      test.it('should call check the service owner with the provided service in body', () => {
+      test.it('should call to check the service owner with the provided service in body', () => {
         const fooUserId = 'foo-id'
         commandsMocks.stubs.service.getById.resolves({
           _user: fooUserId
