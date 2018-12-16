@@ -7,9 +7,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [unreleased]
 ### Added
 ### Changed
-- Upgrade dependencies
 ### Fixed
 ### Removed
+
+## [1.0.0-alpha.12] - 2018-12-16
+### Added
+- Add api resources for managing service custom configurations for specific plugin packages.
+
+### Changed
+- Upgrade dependencies
 
 ## [1.0.0-alpha.11] - 2018-12-01
 ### Changed
