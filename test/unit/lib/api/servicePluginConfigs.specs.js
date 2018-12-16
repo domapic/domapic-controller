@@ -86,9 +86,6 @@ test.describe('servicePluginConfigs api', () => {
         const fooParams = {
           path: {
             id: 'foo-service-plugin-config-id'
-          },
-          body: {
-            _service: 'foo-service-id'
           }
         }
 
@@ -143,6 +140,48 @@ test.describe('servicePluginConfigs api', () => {
 
     testWriteAuth('addServicePluginConfig')
     testWriteAuth('updateServicePluginConfig')
+
+    test.describe('addServicePluginConfig auth', () => {
+      test.it('should call check the service owner with the provided service in body', () => {
+        const fooUserId = 'foo-id'
+        commandsMocks.stubs.service.getById.resolves({
+          _user: fooUserId
+        })
+        return operations.addServicePluginConfig.auth({
+          _id: fooUserId
+        }, {}, {
+          _service: 'foo'
+        }).then(() => {
+          return test.expect(commandsMocks.stubs.service.getById).to.have.been.calledWith('foo')
+        })
+      })
+    })
+
+    test.describe('updateServicePluginConfig auth', () => {
+      test.it('should call check the service owner with existant service in plugin config', () => {
+        const fooUserId = 'foo-id'
+        const fooServiceId = 'foo-service-id'
+        commandsMocks.stubs.servicePluginConfig.getById.resolves({
+          _service: fooServiceId
+        })
+        commandsMocks.stubs.service.getById.resolves({
+          _user: fooUserId
+        })
+        return operations.updateServicePluginConfig.auth({
+          _id: fooUserId
+        }, {
+          path: {
+            id: 'foo-id'
+          }
+        }, {
+        }).then(() => {
+          return Promise.all([
+            test.expect(commandsMocks.stubs.servicePluginConfig.getById).to.have.been.calledWith('foo-id'),
+            test.expect(commandsMocks.stubs.service.getById).to.have.been.calledWith(fooServiceId)
+          ])
+        })
+      })
+    })
 
     test.describe('addServicePluginConfig handler', () => {
       const fooServicePluginConfig = {

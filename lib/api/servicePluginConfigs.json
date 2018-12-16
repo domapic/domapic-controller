@@ -181,22 +181,22 @@
       "post": {
         "tags": ["service"],
         "summary": "Add a new service",
-        "description": "Register a new service",
-        "operationId": "addService",
+        "description": "Register a new service plugin configuration",
+        "operationId": "addServicePluginConfig",
         "requestBody": {
-          "description": "Data of the service to be added",
+          "description": "Data of the service plugin configuration to be added",
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/NewService"
+                "$ref": "#/components/schemas/NewServicePluginConfig"
               }
             }
           }
         },
         "responses": {
           "201": {
-            "$ref": "#/components/responses/Service"
+            "$ref": "#/components/responses/ServicePluginConfig"
           }
         },
         "security": [{
