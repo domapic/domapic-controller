@@ -9,6 +9,7 @@ test.describe('Models', () => {
   let userModelMocks
   let securityTokenModelMocks
   let serviceModelMocks
+  let servicePluginConfigModelMocks
   let abilityModelMocks
   let logModelMocks
   let models
@@ -18,6 +19,7 @@ test.describe('Models', () => {
     userModelMocks = new mocks.models.User()
     securityTokenModelMocks = new mocks.models.SecurityToken()
     serviceModelMocks = new mocks.models.Service()
+    servicePluginConfigModelMocks = new mocks.models.ServicePluginConfig()
     abilityModelMocks = new mocks.models.Ability()
     logModelMocks = new mocks.models.Log()
     models = Models(baseMocks.stubs.service)
@@ -27,6 +29,7 @@ test.describe('Models', () => {
     baseMocks.restore()
     userModelMocks.restore()
     serviceModelMocks.restore()
+    servicePluginConfigModelMocks.restore()
     securityTokenModelMocks.restore()
     abilityModelMocks.restore()
     logModelMocks.restore()
@@ -43,6 +46,10 @@ test.describe('Models', () => {
 
     test.it('should contain Service model', () => {
       return test.expect(typeof models.Service).to.equal('function')
+    })
+
+    test.it('should contain ServicePluginConfig model', () => {
+      return test.expect(typeof models.ServicePluginConfig).to.equal('function')
     })
 
     test.it('should contain Ability model', () => {

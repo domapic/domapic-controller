@@ -29,6 +29,7 @@ const LogCommands = require('./lib/commands/Log.mocks')
 const Models = require('./lib/Models.mocks')
 const UserModel = require('./lib/models/User.mocks')
 const ServiceModel = require('./lib/models/Service.mocks')
+const ServicePluginConfigModel = require('./lib/models/ServicePluginConfig.mocks')
 const SecurityTokenModel = require('./lib/models/SecurityToken.mocks')
 const AbilityModel = require('./lib/models/Ability.mocks')
 const LogModel = require('./lib/models/Log.mocks')
@@ -54,6 +55,7 @@ module.exports = {
     User: UserModel,
     SecurityToken: SecurityTokenModel,
     Service: ServiceModel,
+    ServicePluginConfig: ServicePluginConfigModel,
     Ability: AbilityModel,
     Log: LogModel
   },
