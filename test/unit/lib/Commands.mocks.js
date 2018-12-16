@@ -4,6 +4,7 @@ const UserCommands = require('./commands/User.mocks')
 const SecurityTokenCommands = require('./commands/SecurityToken.mocks')
 const ComposedCommands = require('./commands/Composed.mocks')
 const ServiceCommands = require('./commands/Service.mocks')
+const ServicePluginConfigCommands = require('./commands/ServicePluginConfig.mocks')
 const AbilityCommands = require('./commands/Ability.mocks')
 const LogCommands = require('./commands/Log.mocks')
 
@@ -13,6 +14,7 @@ const Mock = function () {
   const securityTokenMocks = new SecurityTokenCommands()
   const composedMocks = new ComposedCommands()
   const serviceMocks = new ServiceCommands()
+  const servicePluginConfigMocks = new ServicePluginConfigCommands()
   const abilityMocks = new AbilityCommands()
   const logMocks = new LogCommands()
 
@@ -21,6 +23,7 @@ const Mock = function () {
     securityToken: securityTokenMocks.stubs.commands,
     composed: composedMocks.stubs.commands,
     service: serviceMocks.stubs.commands,
+    servicePluginConfig: servicePluginConfigMocks.stubs.commands,
     ability: abilityMocks.stubs.commands,
     log: logMocks.stubs.commands
   }
@@ -30,6 +33,7 @@ const Mock = function () {
     userCommandsMocks.restore()
     securityTokenMocks.restore()
     serviceMocks.restore()
+    servicePluginConfigMocks.restore()
     abilityMocks.restore()
     logMocks.restore()
     sandbox.restore()

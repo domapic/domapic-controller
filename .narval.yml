@@ -126,6 +126,7 @@ suites:
         <<: *base-test
         specs:
           - test/functional/specs/services-api.specs.js
+          - test/functional/specs/service-plugin-configs-api.specs.js
       coverage: *base-coverage
     - name: abilities
       describe: Abilities api should work as expected

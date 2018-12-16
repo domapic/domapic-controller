@@ -66,6 +66,16 @@ test.describe('Commands', () => {
       )
     })
 
+    test.it('should contain all servicePluginConfig commands', () => {
+      return test.expect(commands.servicePluginConfig).to.have.all.keys(
+        'add',
+        'getFiltered',
+        'get',
+        'getById',
+        'update'
+      )
+    })
+
     test.it('should contain all ability commands', () => {
       return test.expect(commands.ability).to.have.all.keys(
         'add',

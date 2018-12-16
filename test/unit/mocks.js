@@ -14,6 +14,7 @@ const Index = require('./lib/Index.mocks')
 const Api = require('./lib/Api.mocks')
 const UsersApi = require('./lib/api/Users.mocks')
 const SecurityTokensApi = require('./lib/api/SecurityTokens.mocks')
+const ServicePluginConfigsApi = require('./lib/api/ServicePluginConfigs.mocks')
 const ServicesApi = require('./lib/api/Services.mocks')
 const AbilitiesApi = require('./lib/api/Abilities.mocks')
 const LogsApi = require('./lib/api/Logs.mocks')
@@ -23,12 +24,14 @@ const UserCommands = require('./lib/commands/User.mocks')
 const SecurityTokenCommands = require('./lib/commands/SecurityToken.mocks')
 const ComposedCommands = require('./lib/commands/Composed.mocks')
 const ServiceCommands = require('./lib/commands/Service.mocks')
+const ServicePluginConfigCommands = require('./lib/commands/ServicePluginConfig.mocks')
 const AbilityCommands = require('./lib/commands/Ability.mocks')
 const LogCommands = require('./lib/commands/Log.mocks')
 
 const Models = require('./lib/Models.mocks')
 const UserModel = require('./lib/models/User.mocks')
 const ServiceModel = require('./lib/models/Service.mocks')
+const ServicePluginConfigModel = require('./lib/models/ServicePluginConfig.mocks')
 const SecurityTokenModel = require('./lib/models/SecurityToken.mocks')
 const AbilityModel = require('./lib/models/Ability.mocks')
 const LogModel = require('./lib/models/Log.mocks')
@@ -39,6 +42,7 @@ module.exports = {
     Users: UsersApi,
     SecurityTokens: SecurityTokensApi,
     Services: ServicesApi,
+    ServicePluginConfigs: ServicePluginConfigsApi,
     Abilities: AbilitiesApi,
     Logs: LogsApi
   },
@@ -47,6 +51,7 @@ module.exports = {
     SecurityToken: SecurityTokenCommands,
     Composed: ComposedCommands,
     Service: ServiceCommands,
+    ServicePluginConfig: ServicePluginConfigCommands,
     Ability: AbilityCommands,
     Log: LogCommands
   },
@@ -54,6 +59,7 @@ module.exports = {
     User: UserModel,
     SecurityToken: SecurityTokenModel,
     Service: ServiceModel,
+    ServicePluginConfig: ServicePluginConfigModel,
     Ability: AbilityModel,
     Log: LogModel
   },
