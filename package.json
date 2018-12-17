@@ -1,6 +1,6 @@
 {
   "name": "domapic-controller",
-  "version": "1.0.0-alpha.12",
+  "version": "1.0.0-alpha.13",
   "description": "Controller for Domapic systems",
   "main": "server.js",
   "keywords": [
