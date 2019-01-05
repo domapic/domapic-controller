@@ -7,6 +7,7 @@ test.describe('ability action api', function () {
   this.timeout(10000)
   let authenticator = utils.Authenticator()
   let abilityId
+  let abilityNumericId
   let abilityNoDataId
   let serviceId
 
@@ -52,6 +53,17 @@ test.describe('ability action api', function () {
     actionDescription: 'foo action description'
   }
 
+  const fooAbilityNumeric = {
+    name: 'foo-numeric-ability-name',
+    description: 'foo-description',
+    action: true,
+    event: false,
+    state: false,
+    enum: [1, 2.5, 3, 4.5],
+    type: 'number',
+    actionDescription: 'foo action description'
+  }
+
   const fooAbilityNoData = {
     name: 'foo-ability-no-data',
     description: 'foo-description',
@@ -68,6 +80,10 @@ test.describe('ability action api', function () {
           return Promise.all([
             addAbility(fooAbility).then((addResponse) => {
               abilityId = addResponse.headers.location.split('/').pop()
+              return Promise.resolve()
+            }),
+            addAbility(fooAbilityNumeric).then((addResponse) => {
+              abilityNumericId = addResponse.headers.location.split('/').pop()
               return Promise.resolve()
             }),
             addAbility(fooAbilityNoData).then((addResponse) => {
@@ -123,6 +139,41 @@ test.describe('ability action api', function () {
         test.expect(response.statusCode).to.equal(422),
         test.expect(response.body.message).to.contain('instance does not conform to the "email" format')
       ])
+    })
+  })
+
+  test.it('should return a bad data error if numeric action data is not valid', () => {
+    return utils.request(`/abilities/${abilityNumericId}/action`, {
+      method: 'POST',
+      body: {
+        data: 2
+      },
+      ...authenticator.credentials()
+    }).then(response => {
+      return Promise.all([
+        test.expect(response.statusCode).to.equal(422),
+        test.expect(response.body.message).to.contain('instance is not one of enum values: 1,2.5,3,4.5')
+      ])
+    })
+  })
+
+  test.it('should allow to use numeric ability data types with enums', () => {
+    return utils.request(`/abilities/${abilityNumericId}/action`, {
+      method: 'POST',
+      body: {
+        data: 2.5
+      },
+      ...authenticator.credentials()
+    }).then(response => {
+      return utils.readLogs()
+        .then(controllerLogs => {
+          return Promise.all([
+            test.expect(controllerLogs).to.contain(`Sending action to service "${serviceId}", ability "${abilityNumericId}". Data: 2.5`),
+            test.expect(controllerLogs).to.contain(`Send Request POST | https://192.168.1.1/api/abilities/foo-numeric-ability-name/action`),
+            test.expect(response.statusCode).to.equal(502),
+            test.expect(response.body.message).to.equal('Service not available')
+          ])
+        })
     })
   })
 
