@@ -10,6 +10,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 ### Removed
 
+## [1.0.0-alpha.14] - 2019-01-05
+### Fixed
+- Fix enum for abilities with numeric data type.
+
 ## [1.0.0-alpha.13] - 2018-12-17
 ### Fixed
 - Return new documents in update commands.
