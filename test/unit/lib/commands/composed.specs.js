@@ -246,5 +246,101 @@ test.describe('composed commands', () => {
           })
       })
     })
+
+    test.describe('getServiceOwner method', () => {
+      const fooService = {
+        name: 'foo-service-name',
+        _id: 'foo-id'
+      }
+      test.describe('when received user is anonymous', () => {
+        const fooUser = {
+          name: 'foo-user-name',
+          _id: 'foo-id'
+        }
+
+        test.beforeEach(() => {
+          userCommandsMocks.stubs.commands.get.resolves(fooUser)
+        })
+
+        test.it('should call to get user with same name than service', () => {
+          return commands.getServiceOwner({
+            name: 'anonymous'
+          }, fooService).then(() => {
+            return test.expect(userCommandsMocks.stubs.commands.get).to.have.been.calledWith({
+              name: fooService.name
+            })
+          })
+        })
+
+        test.it('should return user with same name than service', () => {
+          return commands.getServiceOwner({
+            name: 'anonymous'
+          }, fooService).then(result => {
+            return test.expect(result).to.equal(fooUser)
+          })
+        })
+      })
+
+      test.describe('when received user is not anonymous', () => {
+        test.it('should return received user data', () => {
+          const fooUser = {
+            name: 'foo-user-name',
+            _id: 'foo-id'
+          }
+          return commands.getServiceOwner(fooUser, fooService).then(result => {
+            return test.expect(result).to.equal(fooUser)
+          })
+        })
+      })
+    })
+
+    test.describe('getAbilityOwner method', () => {
+      const fooAbility = {
+        name: 'foo-ability-name',
+        _id: 'foo-ability-id',
+        _service: 'foo-service-id'
+      }
+
+      test.describe('when received user is anonymous', () => {
+        const fooService = {
+          name: 'foo-service-name',
+          _id: 'foo-service-id',
+          _user: 'foo-user-id'
+        }
+        test.beforeEach(() => {
+          serviceCommandsMocks.stubs.commands.getById.resolves(fooService)
+        })
+
+        test.it('should call to get service with same id than received _service', () => {
+          return commands.getAbilityOwner({
+            name: 'anonymous'
+          }, fooAbility).then(() => {
+            return test.expect(serviceCommandsMocks.stubs.commands.getById).to.have.been.calledWith(fooAbility._service)
+          })
+        })
+
+        test.it('should return the id of the user owner of the received _service', () => {
+          return commands.getAbilityOwner({
+            name: 'anonymous'
+          }, fooAbility).then(result => {
+            return test.expect(result).to.deep.equal({
+              _id: fooService._user
+            })
+          })
+        })
+      })
+
+      test.describe('when received user is not anonymous', () => {
+        test.it('should return received user data', () => {
+          const fooUser = {
+            name: 'foo-user-name',
+            _id: 'foo-id'
+          }
+          return commands.getAbilityOwner(fooUser, fooAbility).then(result => {
+            return test.expect(result).to.equal(fooUser)
+          })
+        })
+      })
+    })
   })
 })

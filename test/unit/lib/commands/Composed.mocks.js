@@ -10,7 +10,9 @@ const Mock = function () {
     initUsers: sandbox.stub().usingPromise().resolves(),
     dispatchAbilityAction: sandbox.stub().usingPromise().resolves(),
     getAbilityState: sandbox.stub().usingPromise().resolves(),
-    triggerAbilityEvent: sandbox.stub().usingPromise().resolves()
+    triggerAbilityEvent: sandbox.stub().usingPromise().resolves(),
+    getServiceOwner: sandbox.stub().usingPromise().resolves(),
+    getAbilityOwner: sandbox.stub().usingPromise().resolves()
   }
 
   const stubs = {

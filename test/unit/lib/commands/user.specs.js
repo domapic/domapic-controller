@@ -213,7 +213,7 @@ test.describe('user commands', () => {
         modelsMocks.stubs.User.find.resolves([])
         return commands.init()
           .then(() => {
-            return test.expect(modelsMocks.stubs.user.save).to.have.been.calledTwice()
+            return test.expect(modelsMocks.stubs.user.save).to.have.been.calledThrice()
           })
       })
 

@@ -120,7 +120,8 @@ test.describe('abilities api', () => {
         sandbox.restore()
       })
 
-      test.it('should call to add ability, passing the received user data and body', () => {
+      test.it('should call to add ability, passing the received body and ability owner user data', () => {
+        commandsMocks.stubs.composed.getAbilityOwner.resolves(fooUserData)
         return operations.addAbility.handler({}, fooBody, response, fooUserData)
           .then((result) => {
             return test.expect(commandsMocks.stubs.ability.add).to.have.been.calledWith(fooUserData, fooBody)

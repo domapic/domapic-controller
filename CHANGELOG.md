@@ -10,6 +10,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 ### Removed
 
+## [1.0.0-alpha.14] - 2019-01-06
+### Added
+- Add anonymous default user, which will be used as logged user for requests with authentication disabled. When this user is logged in, services and abilities will be added to user with same name as service, not to logged user. In this way, the services connection process will work when authentication is disabled, and services registered will still be connected if authentication is enabled again.
+
+### Fixed
+- Fix enum for abilities with numeric data type.
+
 ## [1.0.0-alpha.13] - 2018-12-17
 ### Fixed
 - Return new documents in update commands.

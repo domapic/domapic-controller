@@ -52,7 +52,9 @@ test.describe('Commands', () => {
         'initUsers',
         'dispatchAbilityAction',
         'getAbilityState',
-        'triggerAbilityEvent'
+        'triggerAbilityEvent',
+        'getServiceOwner',
+        'getAbilityOwner'
       )
     })
 
