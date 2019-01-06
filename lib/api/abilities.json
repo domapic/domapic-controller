@@ -156,6 +156,10 @@
             "type": "string",
             "pattern": "^[a-zA-Z0-9_-]*$"
           },
+          "_service": {
+            "description": "Unique id of the service owner of the ability",
+            "type": "string"
+          },
           "description": {
             "description": "Description of the ability",
             "type": "string"
@@ -245,6 +249,7 @@
         "additionalProperties": false,
         "example": {
           "name": "foo-ability-name",
+          "_service": "foo-service-id",
           "description": "Rele control",
           "event": true,
           "eventDescription": "Rele has changed state",
