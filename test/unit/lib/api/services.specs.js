@@ -149,7 +149,7 @@ test.describe('services api', () => {
         sandbox.restore()
       })
 
-      test.it('should call to add service, passing the received body and user data', () => {
+      test.it('should call to add service, passing the received body and service owner user data', () => {
         commandsMocks.stubs.composed.getServiceOwner.resolves(fooUserData)
         return operations.addService.handler({}, fooBody, response, fooUserData)
           .then((result) => {

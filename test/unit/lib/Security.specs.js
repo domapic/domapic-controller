@@ -6,6 +6,7 @@ const mocks = require('../mocks')
 const Security = require('../../../lib/Security')
 const jwt = require('../../../lib/security/jwt')
 const apiKey = require('../../../lib/security/apiKey')
+const disabled = require('../../../lib/security/disabled')
 
 test.describe('Security', () => {
   const jwtMock = {
@@ -20,9 +21,14 @@ test.describe('Security', () => {
     revokeAuth: 'foo apikey revokeAuth handler',
     revokeHandler: 'foo apikey revoke handler'
   }
+  const disabledMock = {
+    verify: 'foo disabled verify handler'
+  }
+
   let sandbox
   let jwtStub
   let apiKeyStub
+  let disabledStub
   let baseMocks
   let commandsMocks
   let security
@@ -31,6 +37,7 @@ test.describe('Security', () => {
     sandbox = test.sinon.createSandbox()
     jwtStub = sandbox.stub(jwt, 'Methods').returns(jwtMock)
     apiKeyStub = sandbox.stub(apiKey, 'Methods').returns(apiKeyMock)
+    disabledStub = sandbox.stub(disabled, 'Methods').returns(disabledMock)
     baseMocks = new mocks.Base()
     commandsMocks = new mocks.Commands()
     security = Security(baseMocks.stubs.service, commandsMocks.stubs)
@@ -49,6 +56,14 @@ test.describe('Security', () => {
 
     test.it('should have created an apiKey methods instance', () => {
       test.expect(apiKeyStub).to.have.been.calledWith(baseMocks.stubs.service, commandsMocks.stubs)
+    })
+
+    test.it('should have created an apiKey methods instance', () => {
+      test.expect(apiKeyStub).to.have.been.calledWith(baseMocks.stubs.service, commandsMocks.stubs)
+    })
+
+    test.it('should have created a disabled methods instance', () => {
+      test.expect(disabledStub).to.have.been.calledWith(baseMocks.stubs.service, commandsMocks.stubs)
     })
 
     test.describe('methods', () => {
@@ -100,6 +115,10 @@ test.describe('Security', () => {
 
       test.it('should expose apiKey revoke handler method', () => {
         test.expect(methods.apiKey.revoke.handler).to.equal(apiKeyMock.revokeHandler)
+      })
+
+      test.it('should expose disabled verify handler method', () => {
+        test.expect(methods.disabled.verify).to.equal(disabledMock.verify)
       })
     })
   })
