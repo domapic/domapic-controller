@@ -183,7 +183,7 @@ Follow the next steps to securize your Controller before exposing it to the inte
 
 * __Disable the authentication whitelist:__
 	
-	Authentication can be disabled for desired IPs or IP ranges using the `--authDisabled` option, or for all origins using the `--auth=false` option. By default, authentication is disabled only for the 172.0.0.1 IP, in order to make easier the first configuration, but you can disable it for all your local network, etc. Because of security reasons, this is not recommended, take into account that users accessing to the controller with authentication disabled will have equivalent permissions to and "admin" role. Use always the built-in api keys method to identify your Domapic Services.
+	Authentication can be disabled for desired IPs or IP ranges using the `--authDisabled` option, or for all origins using the `--auth=false` option. By default, authentication is disabled only for the 172.0.0.1 IP in order to make easier the first configuration, but you can disable it for your whole your local network, etc. *Because of security reasons, this is not recommended*, take into account that users accessing to the controller with authentication disabled will have equivalent permissions to an user with "admin" role. Use always the built-in api keys method to identify your Domapic Services.
 	If you want to force the authentication requirement even for localhost, use the `--authDisabled` as a flag, without specifying any IP.
 
 [domapic-logo-image]: http://domapic.com/assets/domapic-logo.png
