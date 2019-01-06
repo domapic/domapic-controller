@@ -121,6 +121,7 @@ test.describe('abilities api', () => {
       })
 
       test.it('should call to add ability, passing the received user data and body', () => {
+        commandsMocks.stubs.composed.getAbilityOwner.resolves(fooUserData)
         return operations.addAbility.handler({}, fooBody, response, fooUserData)
           .then((result) => {
             return test.expect(commandsMocks.stubs.ability.add).to.have.been.calledWith(fooUserData, fooBody)

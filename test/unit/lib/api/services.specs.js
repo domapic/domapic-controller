@@ -150,6 +150,7 @@ test.describe('services api', () => {
       })
 
       test.it('should call to add service, passing the received body and user data', () => {
+        commandsMocks.stubs.composed.getServiceOwner.resolves(fooUserData)
         return operations.addService.handler({}, fooBody, response, fooUserData)
           .then((result) => {
             return test.expect(commandsMocks.stubs.service.add).to.have.been.calledWith(fooUserData, fooBody)
