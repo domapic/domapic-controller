@@ -34,7 +34,7 @@ Controller server for Domapic domotic systems.
 Connect all your Domapic Modules and control them with a single application. <!-- and program them to interact automatically using the provided web interface
 Install Domapic plugins to connect Domapic with other domotic systems or online services. -->
 
-__NOTE: The next schema includes some Domapic pieces that are still not released. The web ui for the Controller, Domapic Cloud, mobile apps, as well as Homekit and Alexa plugins will be available soon.__
+__NOTE: The next schema includes some Domapic pieces that are still not released. The web ui for the Controller, Domapic Cloud, mobile apps and Alexa plugins will be available soon.__
 
 ![Domapic system example][domapic-example-image]
 
@@ -140,6 +140,7 @@ option | description | default
 `--sslCert` | Path to an ssl certificate | -
 `--sslKey` | Path to an ssl key | - 
 `--authDisabled` | Array of IPs or CIDR IP ranges with authentication disabled | ['127.0.0.1', '::1/128']
+`--auth` | If false, authentication will be disabled for all origins | true
 `--secret` | Secret to be used in authentication encoding | -
 `--color` | Use ANSI colors in traces | true
 `--logLevel` | Tracing level. Choices are 'log', 'trace', 'debug', 'info', 'warn' and 'error' | info
@@ -182,7 +183,7 @@ Follow the next steps to securize your Controller before exposing it to the inte
 
 * __Disable the authentication whitelist:__
 	
-	Authentication can be disabled for desired IPs or IP ranges using the `--authDisabled` option. By default, authentication is disabled only for the 172.0.0.1 IP, in order to make easier the first configuration, but you can disable it for all your local network, etc. Because of security reasons, this is not recommended. Use always the built-in api keys method to identify your Domapic Services.
+	Authentication can be disabled for desired IPs or IP ranges using the `--authDisabled` option, or for all origins using the `--auth=false` option. By default, authentication is disabled only for the 172.0.0.1 IP, in order to make easier the first configuration, but you can disable it for all your local network, etc. Because of security reasons, this is not recommended, take into account that users accessing to the controller with authentication disabled will have equivalent permissions to and "admin" role. Use always the built-in api keys method to identify your Domapic Services.
 	If you want to force the authentication requirement even for localhost, use the `--authDisabled` as a flag, without specifying any IP.
 
 [domapic-logo-image]: http://domapic.com/assets/domapic-logo.png
