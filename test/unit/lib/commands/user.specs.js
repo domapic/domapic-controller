@@ -176,6 +176,52 @@ test.describe('user commands', () => {
       })
     })
 
+    test.describe('update method', () => {
+      const fooId = 'foo-id'
+      const fooData = {role: 'foo-role'}
+
+      test.it('should call to user model findOneAndUpdate method, and return the result', () => {
+        const fooResult = 'foo'
+        modelsMocks.stubs.User.findOneAndUpdate.resolves(fooResult)
+        return commands.update(fooId, fooData)
+          .then((result) => {
+            return Promise.all([
+              test.expect(result).to.equal(fooResult),
+              test.expect(modelsMocks.stubs.User.findOneAndUpdate).to.have.been.calledWith({
+                _id: fooId
+              }, fooData)
+            ])
+          })
+      })
+
+      test.it('should call to transform the received error if updating user fails', () => {
+        let updateError = new Error('update error')
+        modelsMocks.stubs.User.findOneAndUpdate.rejects(updateError)
+        utilMocks.stubs.transformValidationErrors.rejects(updateError)
+        return commands.update(fooId, fooData)
+          .then(() => {
+            return test.assert.fail()
+          }, (err) => {
+            return Promise.all([
+              test.expect(err).to.equal(updateError),
+              test.expect(utilMocks.stubs.transformValidationErrors).to.have.been.calledWith(updateError)
+            ])
+          })
+      })
+
+      test.it('should return a not found error if no user is found', () => {
+        const fooError = new Error('foo error')
+        modelsMocks.stubs.User.findOneAndUpdate.resolves(null)
+        baseMocks.stubs.service.errors.NotFound.returns(fooError)
+        return commands.update(fooId, fooData)
+          .then(() => {
+            return test.assert.fail()
+          }, err => {
+            return test.expect(err).to.equal(fooError)
+          })
+      })
+    })
+
     test.describe('remove method', () => {
       const fooFilter = {name: 'foo-name'}
 
