@@ -140,6 +140,7 @@ test.describe('servicePluginConfigs api', () => {
 
     testWriteAuth('addServicePluginConfig')
     testWriteAuth('updateServicePluginConfig')
+    testWriteAuth('deleteServicePluginConfig')
 
     test.describe('addServicePluginConfig auth', () => {
       test.it('should call to check the service owner with the provided service in body', () => {
@@ -326,6 +327,60 @@ test.describe('servicePluginConfigs api', () => {
             id: fooId
           }
         }, fooBody, response)
+          .then((result) => {
+            return test.expect(result).to.be.undefined()
+          })
+      })
+    })
+
+    test.describe('deleteServicePluginConfig handler', () => {
+      const fooId = 'foo-service-plugin-config-id'
+      const fooParams = {
+        path: {
+          id: fooId
+        }
+      }
+      let sandbox
+      let response
+
+      test.beforeEach(() => {
+        sandbox = test.sinon.createSandbox()
+        response = {
+          status: sandbox.stub(),
+          header: sandbox.stub()
+        }
+        commandsMocks.stubs.servicePluginConfig.remove.resolves()
+      })
+
+      test.afterEach(() => {
+        sandbox.restore()
+      })
+
+      test.it('should call to update servicePluginConfig, passing the received name and body', () => {
+        return operations.deleteServicePluginConfig.handler(fooParams, null, response)
+          .then((result) => {
+            return test.expect(commandsMocks.stubs.servicePluginConfig.remove).to.have.been.calledWith(fooId)
+          })
+      })
+
+      test.it('should add a 204 header to response', () => {
+        return operations.deleteServicePluginConfig.handler(fooParams, null, response)
+          .then(() => {
+            return test.expect(response.status).to.have.been.calledWith(204)
+          })
+      })
+
+      test.it('should emit a plugin event', () => {
+        return operations.deleteServicePluginConfig.handler(fooParams, null, response)
+          .then(() => {
+            return test.expect(eventsMocks.stubs.plugin).to.have.been.calledWith('servicePluginConfig', 'deleted', {
+              _id: fooId
+            })
+          })
+      })
+
+      test.it('should resolve the promise with no value', () => {
+        return operations.deleteServicePluginConfig.handler(fooParams, null, response)
           .then((result) => {
             return test.expect(result).to.be.undefined()
           })
