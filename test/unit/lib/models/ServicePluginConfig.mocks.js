@@ -15,6 +15,7 @@ const Mock = function () {
   ModelStub.findOne = sandbox.stub().usingPromise().resolves()
   ModelStub.findById = sandbox.stub().usingPromise().resolves()
   ModelStub.findOneAndUpdate = sandbox.stub().usingPromise().resolves()
+  ModelStub.deleteMany = sandbox.stub().usingPromise().resolves()
 
   const stubs = {
     servicePluginConfig: modelStub,

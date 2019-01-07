@@ -245,5 +245,32 @@ test.describe('service commands', () => {
           })
       })
     })
+
+    test.describe('remove method', () => {
+      const fooId = 'foo-id'
+
+      test.it('should call to service model findOneAndRemove method', () => {
+        const fooResult = 'foo'
+        modelsMocks.stubs.Service.findOneAndRemove.resolves(fooResult)
+        return commands.remove(fooId)
+          .then((result) => {
+            return test.expect(modelsMocks.stubs.Service.findOneAndRemove).to.have.been.calledWith({
+              _id: fooId
+            })
+          })
+      })
+
+      test.it('should return a not found error if no service is found', () => {
+        const fooError = new Error('foo error')
+        modelsMocks.stubs.Service.findOneAndRemove.resolves(null)
+        baseMocks.stubs.service.errors.NotFound.returns(fooError)
+        return commands.remove(fooId)
+          .then(() => {
+            return test.assert.fail()
+          }, err => {
+            return test.expect(err).to.equal(fooError)
+          })
+      })
+    })
   })
 })

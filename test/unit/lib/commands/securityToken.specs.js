@@ -213,5 +213,19 @@ test.describe('securityToken commands', () => {
           })
       })
     })
+
+    test.describe('findAndRemove method', () => {
+      const fooFilter = {
+        _id: 'foo-id'
+      }
+
+      test.it('should call to securityToken model deleteMany method', () => {
+        modelsMocks.stubs.SecurityToken.deleteMany.resolves({})
+        return commands.findAndRemove(fooFilter)
+          .then((result) => {
+            return test.expect(modelsMocks.stubs.SecurityToken.deleteMany).to.have.been.calledWith(fooFilter)
+          })
+      })
+    })
   })
 })

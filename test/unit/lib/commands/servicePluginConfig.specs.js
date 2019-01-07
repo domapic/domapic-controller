@@ -264,5 +264,20 @@ test.describe('service commands', () => {
           })
       })
     })
+
+    test.describe('findAndRemove method', () => {
+      const fooFilter = {
+        _id: 'foo-id'
+      }
+
+      test.it('should call to servicePluginConfig model deleteMany method', () => {
+        const fooResult = 'foo'
+        modelsMocks.stubs.ServicePluginConfig.deleteMany.resolves(fooResult)
+        return commands.findAndRemove(fooFilter)
+          .then((result) => {
+            return test.expect(modelsMocks.stubs.ServicePluginConfig.deleteMany).to.have.been.calledWith(fooFilter)
+          })
+      })
+    })
   })
 })

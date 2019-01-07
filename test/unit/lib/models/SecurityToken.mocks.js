@@ -14,6 +14,7 @@ const Mock = function () {
   SecurityTokenStub.findOne = sandbox.stub().usingPromise().resolves()
   SecurityTokenStub.find = sandbox.stub().usingPromise().resolves()
   SecurityTokenStub.deleteOne = sandbox.stub().usingPromise().resolves()
+  SecurityTokenStub.deleteMany = sandbox.stub().usingPromise().resolves()
 
   const stubs = {
     securityToken: securityTokenStub,

@@ -598,5 +598,20 @@ test.describe('ability commands', () => {
           })
       })
     })
+
+    test.describe('findAndRemove method', () => {
+      const fooFilter = {
+        _id: 'foo-id'
+      }
+
+      test.it('should call to ability model deleteMany method', () => {
+        const fooResult = 'foo'
+        modelsMocks.stubs.Ability.deleteMany.resolves(fooResult)
+        return commands.findAndRemove(fooFilter)
+          .then((result) => {
+            return test.expect(modelsMocks.stubs.Ability.deleteMany).to.have.been.calledWith(fooFilter)
+          })
+      })
+    })
   })
 })

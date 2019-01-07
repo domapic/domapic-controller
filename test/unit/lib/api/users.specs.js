@@ -575,6 +575,59 @@ test.describe('users api', () => {
           })
       })
     })
+
+    test.describe('deleteUser handler', () => {
+      const fooId = 'foo-id'
+      const fooParams = {
+        path: {
+          id: fooId
+        }
+      }
+      let sandbox
+      let response
+
+      test.beforeEach(() => {
+        sandbox = test.sinon.createSandbox()
+        response = {
+          status: sandbox.stub(),
+          header: sandbox.stub()
+        }
+      })
+
+      test.afterEach(() => {
+        sandbox.restore()
+      })
+
+      test.it('should call to delete user, passing the received  id', () => {
+        return operations.deleteUser.handler(fooParams, null, response)
+          .then((result) => {
+            return test.expect(commandsMocks.stubs.composed.removeUser).to.have.been.calledWith(fooId)
+          })
+      })
+
+      test.it('should add a 204 header to response', () => {
+        return operations.deleteUser.handler(fooParams, null, response)
+          .then(() => {
+            return test.expect(response.status).to.have.been.calledWith(204)
+          })
+      })
+
+      test.it('should emit a plugin event', () => {
+        return operations.deleteUser.handler(fooParams, null, response)
+          .then(() => {
+            return test.expect(eventsMocks.stubs.plugin).to.have.been.calledWith('user', 'deleted', {
+              _id: fooId
+            })
+          })
+      })
+
+      test.it('should resolve the promise with no value', () => {
+        return operations.deleteUser.handler(fooParams, null, response)
+          .then((result) => {
+            return test.expect(result).to.be.undefined()
+          })
+      })
+    })
   })
 
   test.describe('openapi', () => {
