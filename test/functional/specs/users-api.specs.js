@@ -9,6 +9,7 @@ test.describe('users api', function () {
   let adminUserId
   let pluginId
   let entityId
+  let operatorUserId
 
   const getUsers = function (query) {
     return utils.request('/users', {
@@ -469,7 +470,6 @@ test.describe('users api', function () {
   testRole(serviceRegistererUser, newUser)
 
   test.describe('update user', () => {
-    let operatorUserId
     let moduleUserId
     let pluginUserId
 
@@ -799,45 +799,55 @@ test.describe('users api', function () {
         return utils.doLogin(authenticator)
       })
 
-      test.it('should delete user and all related services, abilities, securityTokens and servicePluginConfigs', () => {
-        return Promise.all([
-          getServices(),
-          getAbilities(),
-          getAuthTokens(),
-          getServicePluginConfigs()
-        ]).then(previousResults => {
-          return deleteUser(userId).then(response => {
-            return Promise.all([
-              getServices(),
-              getAbilities(),
-              getAuthTokens(),
-              getServicePluginConfigs(),
-              getUsers()
-            ]).then(afterResults => {
-              const previousServices = previousResults[0].body.filter(service => service._user === userId)
-              const previousAbilities = previousResults[1].body.filter(ability => ability._service === serviceId)
-              const previousTokens = previousResults[2].body.filter(token => token._user === userId)
-              const previousServicesConfigs = previousResults[3].body.filter(serviceConfig => serviceConfig._service === serviceId)
+      test.describe('when deleting an operator', () => {
+        test.it('should delete user', () => {
+          return deleteUser(operatorUserId).then(response => {
+            return test.expect(response.statusCode).to.equal(204)
+          })
+        })
+      })
 
-              const afterServices = afterResults[0].body.filter(service => service._user === userId)
-              const afterAbilities = afterResults[1].body.filter(ability => ability._service === serviceId)
-              const afterTokens = afterResults[2].body.filter(token => token._user === userId)
-              const afterServicesConfigs = afterResults[3].body.filter(serviceConfig => serviceConfig._service === serviceId)
-
-              const afterUser = afterResults[4].body.find(user => user.name === serviceUser.name)
-
+      test.describe('when is deleting a service', () => {
+        test.it('should delete user and all related services, abilities, securityTokens and servicePluginConfigs', () => {
+          return Promise.all([
+            getServices(),
+            getAbilities(),
+            getAuthTokens(),
+            getServicePluginConfigs()
+          ]).then(previousResults => {
+            return deleteUser(userId).then(response => {
               return Promise.all([
-                test.expect(response.statusCode).to.equal(204),
-                test.expect(previousServices.length).to.be.above(0),
-                test.expect(previousAbilities.length).to.be.above(0),
-                test.expect(previousTokens.length).to.be.above(0),
-                test.expect(previousServicesConfigs.length).to.be.above(0),
-                test.expect(afterServices.length).to.equal(0),
-                test.expect(afterAbilities.length).to.equal(0),
-                test.expect(afterTokens.length).to.equal(0),
-                test.expect(afterServicesConfigs.length).to.equal(0),
-                test.expect(afterUser).to.be.undefined()
-              ])
+                getServices(),
+                getAbilities(),
+                getAuthTokens(),
+                getServicePluginConfigs(),
+                getUsers()
+              ]).then(afterResults => {
+                const previousServices = previousResults[0].body.filter(service => service._user === userId)
+                const previousAbilities = previousResults[1].body.filter(ability => ability._service === serviceId)
+                const previousTokens = previousResults[2].body.filter(token => token._user === userId)
+                const previousServicesConfigs = previousResults[3].body.filter(serviceConfig => serviceConfig._service === serviceId)
+
+                const afterServices = afterResults[0].body.filter(service => service._user === userId)
+                const afterAbilities = afterResults[1].body.filter(ability => ability._service === serviceId)
+                const afterTokens = afterResults[2].body.filter(token => token._user === userId)
+                const afterServicesConfigs = afterResults[3].body.filter(serviceConfig => serviceConfig._service === serviceId)
+
+                const afterUser = afterResults[4].body.find(user => user.name === serviceUser.name)
+
+                return Promise.all([
+                  test.expect(response.statusCode).to.equal(204),
+                  test.expect(previousServices.length).to.be.above(0),
+                  test.expect(previousAbilities.length).to.be.above(0),
+                  test.expect(previousTokens.length).to.be.above(0),
+                  test.expect(previousServicesConfigs.length).to.be.above(0),
+                  test.expect(afterServices.length).to.equal(0),
+                  test.expect(afterAbilities.length).to.equal(0),
+                  test.expect(afterTokens.length).to.equal(0),
+                  test.expect(afterServicesConfigs.length).to.equal(0),
+                  test.expect(afterUser).to.be.undefined()
+                ])
+              })
             })
           })
         })
