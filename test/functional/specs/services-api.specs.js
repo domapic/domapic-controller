@@ -56,18 +56,6 @@ test.describe('services api', function () {
     })
   }
 
-  const getAccessToken = userData => {
-    return utils.getAccessToken(authenticator, userData)
-  }
-
-  const getAuthTokens = filters => {
-    return utils.request('/auth/tokens', {
-      method: 'GET',
-      query: filters,
-      ...authenticator.credentials()
-    })
-  }
-
   const addServicePluginConfig = servicePluginConfigData => {
     return utils.request('/service-plugin-configs', {
       method: 'POST',
