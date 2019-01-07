@@ -12,7 +12,9 @@ const Mock = function () {
     getAbilityState: sandbox.stub().usingPromise().resolves(),
     triggerAbilityEvent: sandbox.stub().usingPromise().resolves(),
     getServiceOwner: sandbox.stub().usingPromise().resolves(),
-    getAbilityOwner: sandbox.stub().usingPromise().resolves()
+    getAbilityOwner: sandbox.stub().usingPromise().resolves(),
+    removeService: sandbox.stub().usingPromise().resolves(),
+    removeUser: sandbox.stub().usingPromise().resolves()
   }
 
   const stubs = {
