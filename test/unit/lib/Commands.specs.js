@@ -80,6 +80,7 @@ test.describe('Commands', () => {
         'get',
         'getById',
         'update',
+        'remove',
         'findAndRemove'
       )
     })
