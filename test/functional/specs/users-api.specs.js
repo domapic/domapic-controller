@@ -24,6 +24,14 @@ test.describe('users api', function () {
     })
   }
 
+  const updateUser = function (userId, body) {
+    return utils.request(`/users/${userId}`, {
+      method: 'PATCH',
+      body,
+      ...authenticator.credentials()
+    })
+  }
+
   const getUserMe = function () {
     return utils.request(`/users/me`, {
       method: 'GET',
@@ -391,6 +399,155 @@ test.describe('users api', function () {
   testRole(serviceUser, newUser)
   testRole(pluginUser, serviceUser)
   testRole(serviceRegistererUser, newUser)
+
+  test.describe('update user', () => {
+    let operatorUserId
+    let moduleUserId
+    let pluginUserId
+
+    test.before(() => {
+      return utils.doLogin(authenticator)
+        .then(() => {
+          return getUsers().then(usersResponse => {
+            operatorUserId = usersResponse.body.find(userData => userData.role === 'operator')._id
+            moduleUserId = usersResponse.body.find(userData => userData.role === 'module')._id
+            pluginUserId = usersResponse.body.find(userData => userData.role === 'plugin')._id
+            return Promise.resolve()
+          })
+        })
+    })
+
+    test.describe('when user is admin', () => {
+      test.it('should return a bad data error when trying to update email', () => {
+        return updateUser(adminUserId, {
+          role: 'admin',
+          email: 'foo-other-email@foo.com'
+        }).then(response => {
+          return Promise.all([
+            test.expect(response.body.message).to.contain('"email" exists in instance when not allowed'),
+            test.expect(response.statusCode).to.equal(422)
+          ])
+        })
+      })
+
+      test.it('should be able to update self data, including role', () => {
+        return updateUser(adminUserId, {
+          role: 'admin'
+        }).then(response => {
+          return test.expect(response.statusCode).to.equal(204)
+        })
+      })
+
+      test.it('should be able to update data of operator users, including role', () => {
+        return updateUser(operatorUserId, {
+          password: 'foo',
+          role: 'operator'
+        }).then(response => {
+          return test.expect(response.statusCode).to.equal(204)
+        })
+      })
+
+      test.it('should not be able to update data of module users', () => {
+        return updateUser(moduleUserId, {
+          password: 'foo'
+        }).then(response => {
+          return Promise.all([
+            test.expect(response.body.message).to.contain('Not authorized'),
+            test.expect(response.statusCode).to.equal(403)
+          ])
+        })
+      })
+
+      test.it('should not be able to update data of plugin users', () => {
+        return updateUser(pluginUserId, {
+          password: 'foo'
+        }).then(response => {
+          return Promise.all([
+            test.expect(response.body.message).to.contain('Not authorized'),
+            test.expect(response.statusCode).to.equal(403)
+          ])
+        })
+      })
+    })
+
+    test.describe('when user is operator', () => {
+      test.before(() => {
+        return utils.ensureUserAndDoLogin(authenticator, operatorUser)
+      })
+
+      test.it('should be able to update self data', () => {
+        return updateUser(operatorUserId, {
+          password: 'foo'
+        }).then(response => {
+          return test.expect(response.statusCode).to.equal(204)
+        })
+      })
+
+      test.it('should not be able to update self role', () => {
+        return updateUser(operatorUserId, {
+          password: 'foo',
+          role: 'admin'
+        }).then(response => {
+          return Promise.all([
+            test.expect(response.body.message).to.contain('Not authorized'),
+            test.expect(response.statusCode).to.equal(403)
+          ])
+        })
+      })
+
+      test.it('should not be able to update data of module users', () => {
+        return updateUser(moduleUserId, {
+          password: 'foo',
+          role: 'admin'
+        }).then(response => {
+          return Promise.all([
+            test.expect(response.body.message).to.contain('Not authorized'),
+            test.expect(response.statusCode).to.equal(403)
+          ])
+        })
+      })
+
+      test.it('should not be able to update data of plugin users', () => {
+        return updateUser(pluginUserId, {
+          password: 'foo',
+          role: 'admin'
+        }).then(response => {
+          return Promise.all([
+            test.expect(response.body.message).to.contain('Not authorized'),
+            test.expect(response.statusCode).to.equal(403)
+          ])
+        })
+      })
+    })
+
+    test.describe('when user is module', () => {
+      test.before(() => {
+        return utils.ensureUserAndDoLogin(authenticator, operatorUser)
+      })
+
+      test.it('should not be able to update self data', () => {
+        return updateUser(moduleUserId, {
+          password: 'foo'
+        }).then(response => {
+          return Promise.all([
+            test.expect(response.body.message).to.contain('Not authorized'),
+            test.expect(response.statusCode).to.equal(403)
+          ])
+        })
+      })
+
+      test.it('should not be able to update other users data', () => {
+        return updateUser(pluginUserId, {
+          password: 'foo'
+        }).then(response => {
+          return Promise.all([
+            test.expect(response.body.message).to.contain('Not authorized'),
+            test.expect(response.statusCode).to.equal(403)
+          ])
+        })
+      })
+    })
+  })
 
   test.describe('when user has role "plugin"', () => {
     let operatorUserId
