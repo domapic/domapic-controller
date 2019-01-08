@@ -18,6 +18,9 @@ const Mock = function () {
     },
     updateServicePluginConfig: {
       handler: sandbox.stub().usingPromise().resolves()
+    },
+    deleteServicePluginConfig: {
+      handler: sandbox.stub().usingPromise().resolves()
     }
   }
 

@@ -4,6 +4,7 @@ const test = require('narval')
 const utils = require('./utils')
 
 test.describe('services api', function () {
+  this.timeout(10000)
   let authenticator = utils.Authenticator()
   let pluginId
   let entityId
@@ -35,6 +36,45 @@ test.describe('services api', function () {
     return utils.request('/services', {
       method: 'POST',
       body: serviceData,
+      ...authenticator.credentials()
+    })
+  }
+
+  const addAbility = function (abilityData) {
+    return utils.request('/abilities', {
+      method: 'POST',
+      body: abilityData,
+      ...authenticator.credentials()
+    })
+  }
+
+  const getAbilities = function (filters) {
+    return utils.request('/abilities', {
+      method: 'GET',
+      query: filters,
+      ...authenticator.credentials()
+    })
+  }
+
+  const addServicePluginConfig = servicePluginConfigData => {
+    return utils.request('/service-plugin-configs', {
+      method: 'POST',
+      body: servicePluginConfigData,
+      ...authenticator.credentials()
+    })
+  }
+
+  const getServicePluginConfigs = query => {
+    return utils.request(`/service-plugin-configs`, {
+      method: 'GET',
+      query,
+      ...authenticator.credentials()
+    })
+  }
+
+  const deleteService = function (serviceId, body) {
+    return utils.request(`/services/${serviceId}`, {
+      method: 'DELETE',
       ...authenticator.credentials()
     })
   }
@@ -515,4 +555,72 @@ test.describe('services api', function () {
   testRole(adminUser)
   testRole(operatorUser)
   testRole(serviceRegistererUser)
+
+  test.describe('delete service', () => {
+    test.before(() => {
+      return utils.ensureUserAndDoLogin(authenticator, moduleUser)
+        .then(() => {
+          return addAbility({
+            name: 'foo-ability-name'
+          })
+        })
+        .then(() => {
+          return addServicePluginConfig({
+            _service: entityId,
+            pluginPackageName: 'foo-plugin',
+            config: {
+              foo: 'foo-data'
+            }
+          })
+        })
+    })
+
+    test.describe('when user is not admin', () => {
+      test.it('should return a forbidden error', () => {
+        return deleteService(entityId).then(response => {
+          return test.expect(response.statusCode).to.equal(403)
+        })
+      })
+    })
+
+    test.describe('when user is admin', () => {
+      test.before(() => {
+        return utils.doLogin(authenticator)
+      })
+
+      test.it('should delete service and all related abilities and servicePluginConfigs', () => {
+        return Promise.all([
+          getServices(),
+          getAbilities(),
+          getServicePluginConfigs()
+        ]).then(previousResults => {
+          return deleteService(entityId).then(response => {
+            return Promise.all([
+              getServices(),
+              getAbilities(),
+              getServicePluginConfigs()
+            ]).then(afterResults => {
+              const previousServices = previousResults[0].body.filter(service => service._id === entityId)
+              const previousAbilities = previousResults[1].body.filter(ability => ability._service === entityId)
+              const previousServicesConfigs = previousResults[2].body.filter(serviceConfig => serviceConfig._service === entityId)
+
+              const afterServices = afterResults[0].body.filter(service => service._id === entityId)
+              const afterAbilities = afterResults[1].body.filter(ability => ability._service === entityId)
+              const afterServicesConfigs = afterResults[2].body.filter(serviceConfig => serviceConfig._service === entityId)
+
+              return Promise.all([
+                test.expect(response.statusCode).to.equal(204),
+                test.expect(previousServices.length).to.be.above(0),
+                test.expect(previousAbilities.length).to.be.above(0),
+                test.expect(previousServicesConfigs.length).to.be.above(0),
+                test.expect(afterServices.length).to.equal(0),
+                test.expect(afterAbilities.length).to.equal(0),
+                test.expect(afterServicesConfigs.length).to.equal(0)
+              ])
+            })
+          })
+        })
+      })
+    })
+  })
 })

@@ -47,8 +47,14 @@
           "updatedAt": "2018-07-28T17:13:09.730Z"
         }
       },
+      "Users": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/User"
+        }
+      },
       "NewUser": {
-        "description": "User data",
+        "description": "New user data",
         "type": "object",
         "properties": {
           "name": {
@@ -80,16 +86,30 @@
           "password": "foopass"
         }
       },
-      "Users": {
-        "type": "array",
-        "items": {
-          "$ref": "#/components/schemas/User"
+      "UpdateUser": {
+        "description": "Update user data",
+        "type": "object",
+        "properties": {
+          "password": {
+            "description": "User password",
+            "type": "string"
+          },
+          "role": {
+            "description": "Role assigned to the user",
+            "type": "string",
+            "enum": ["admin", "operator", "module", "plugin", "service-registerer"]
+          }
+        },
+        "additionalProperties": false,
+        "example": {
+          "role": "operator",
+          "password": "foopass"
         }
       }
     },
     "responses": {
-      "NewUser": {
-        "description": "New user added",
+      "User": {
+        "description": "User added or modified",
         "headers": {
           "location": {
             "$ref": "#/components/headers/ContentLocation"
@@ -160,7 +180,7 @@
         },
         "responses": {
           "201": {
-            "$ref": "#/components/responses/NewUser"
+            "$ref": "#/components/responses/User"
           }
         },
         "security": [{
@@ -222,6 +242,77 @@
                 }
               }
             }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          }
+        },
+        "security": [{
+          "jwt": []
+        }, {
+          "apiKey": []
+        }]
+      },
+      "patch": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "User id"
+          }
+        ],
+        "tags": ["user"],
+        "summary": "Update user",
+        "description": "Update user",
+        "operationId": "updateUser",
+        "requestBody": {
+          "description": "Data of the user to be modified",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateUser"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "$ref": "#/components/responses/User"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          }
+        },
+        "security": [{
+          "jwt": []
+        }, {
+          "apiKey": []
+        }]
+      },
+      "delete": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "User id"
+          }
+        ],
+        "tags": ["user"],
+        "summary": "Delete user",
+        "description": "Delete user",
+        "operationId": "deleteUser",
+        "responses": {
+          "204": {
+            "$ref": "#/components/responses/Deleted"
           },
           "404": {
             "$ref": "#/components/responses/NotFoundError"

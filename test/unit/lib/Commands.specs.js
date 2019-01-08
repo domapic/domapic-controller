@@ -32,6 +32,7 @@ test.describe('Commands', () => {
         'getFiltered',
         'get',
         'getById',
+        'update',
         'init',
         'remove'
       )
@@ -43,7 +44,8 @@ test.describe('Commands', () => {
         'getUser',
         'getFiltered',
         'remove',
-        'get'
+        'get',
+        'findAndRemove'
       )
     })
 
@@ -54,7 +56,9 @@ test.describe('Commands', () => {
         'getAbilityState',
         'triggerAbilityEvent',
         'getServiceOwner',
-        'getAbilityOwner'
+        'getAbilityOwner',
+        'removeService',
+        'removeUser'
       )
     })
 
@@ -64,7 +68,8 @@ test.describe('Commands', () => {
         'getFiltered',
         'get',
         'getById',
-        'update'
+        'update',
+        'remove'
       )
     })
 
@@ -74,7 +79,9 @@ test.describe('Commands', () => {
         'getFiltered',
         'get',
         'getById',
-        'update'
+        'update',
+        'remove',
+        'findAndRemove'
       )
     })
 
@@ -88,7 +95,8 @@ test.describe('Commands', () => {
         'remove',
         'validateAction',
         'validateState',
-        'validateEvent'
+        'validateEvent',
+        'findAndRemove'
       )
     })
 

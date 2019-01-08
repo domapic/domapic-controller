@@ -15,7 +15,8 @@ const Mock = function () {
     remove: sandbox.stub().usingPromise().resolves(),
     validateAction: sandbox.stub().usingPromise().resolves(),
     validateState: sandbox.stub().usingPromise().resolves(),
-    validateEvent: sandbox.stub().usingPromise().resolves()
+    validateEvent: sandbox.stub().usingPromise().resolves(),
+    findAndRemove: sandbox.stub().usingPromise().resolves()
   }
 
   const stubs = {

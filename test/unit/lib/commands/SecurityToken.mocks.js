@@ -11,7 +11,8 @@ const Mock = function () {
     getUser: sandbox.stub().usingPromise().resolves(),
     getFiltered: sandbox.stub().usingPromise().resolves(),
     remove: sandbox.stub().usingPromise().resolves(),
-    get: sandbox.stub().usingPromise().resolves()
+    get: sandbox.stub().usingPromise().resolves(),
+    findAndRemove: sandbox.stub().usingPromise().resolves()
   }
 
   const stubs = {

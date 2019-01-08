@@ -264,5 +264,47 @@ test.describe('service commands', () => {
           })
       })
     })
+
+    test.describe('remove method', () => {
+      const fooId = 'foo-id'
+
+      test.it('should call to servicePluginConfig model findOneAndRemove method', () => {
+        const fooResult = 'foo'
+        modelsMocks.stubs.ServicePluginConfig.findOneAndRemove.resolves(fooResult)
+        return commands.remove(fooId)
+          .then((result) => {
+            return test.expect(modelsMocks.stubs.ServicePluginConfig.findOneAndRemove).to.have.been.calledWith({
+              _id: fooId
+            })
+          })
+      })
+
+      test.it('should return a not found error if no servicePluginConfig is found', () => {
+        const fooError = new Error('foo error')
+        modelsMocks.stubs.ServicePluginConfig.findOneAndRemove.resolves(null)
+        baseMocks.stubs.service.errors.NotFound.returns(fooError)
+        return commands.remove(fooId)
+          .then(() => {
+            return test.assert.fail()
+          }, err => {
+            return test.expect(err).to.equal(fooError)
+          })
+      })
+    })
+
+    test.describe('findAndRemove method', () => {
+      const fooFilter = {
+        _id: 'foo-id'
+      }
+
+      test.it('should call to servicePluginConfig model deleteMany method', () => {
+        const fooResult = 'foo'
+        modelsMocks.stubs.ServicePluginConfig.deleteMany.resolves(fooResult)
+        return commands.findAndRemove(fooFilter)
+          .then((result) => {
+            return test.expect(modelsMocks.stubs.ServicePluginConfig.deleteMany).to.have.been.calledWith(fooFilter)
+          })
+      })
+    })
   })
 })

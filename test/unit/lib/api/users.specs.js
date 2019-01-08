@@ -426,6 +426,208 @@ test.describe('users api', () => {
           })
       })
     })
+
+    test.describe('updateUser auth', () => {
+      const fooUser = {
+        _id: 'foo-user-id',
+        role: 'admin'
+      }
+      const fooParams = {
+        path: {
+          id: 'foo-user-id'
+        }
+      }
+
+      test.it('should reject if target user has not operator or admin role', () => {
+        commandsMocks.stubs.user.getById.resolves({
+          role: 'module'
+        })
+
+        return operations.updateUser.auth(fooUser, fooParams, {}).then(() => {
+          return test.assert.fail()
+        }, err => {
+          return test.expect(err).to.be.an.instanceof(Error)
+        })
+      })
+
+      test.it('should reject if user is not admin and wants to update role', () => {
+        commandsMocks.stubs.user.getById.resolves({
+          role: 'operator'
+        })
+
+        return operations.updateUser.auth({
+          ...fooUser,
+          role: 'operator'
+        }, fooParams, {
+          role: 'admin'
+        }).then(() => {
+          return test.assert.fail()
+        }, err => {
+          return test.expect(err).to.be.an.instanceof(Error)
+        })
+      })
+
+      test.it('should reject if user is admin and wants to update to a role different to admin or operator', () => {
+        commandsMocks.stubs.user.getById.resolves({
+          role: 'operator'
+        })
+
+        return operations.updateUser.auth(fooUser, fooParams, {
+          role: 'module'
+        }).then(() => {
+          return test.assert.fail()
+        }, err => {
+          return test.expect(err).to.be.an.instanceof(Error)
+        })
+      })
+
+      test.it('should resolve if user is admin and wants to update to a role admin or operator', () => {
+        commandsMocks.stubs.user.getById.resolves({
+          role: 'operator'
+        })
+
+        return operations.updateUser.auth(fooUser, fooParams, {
+          role: 'admin'
+        }).then(() => {
+          return test.expect(true).to.be.true()
+        })
+      })
+
+      test.it('should resolve if logged user is editing himself and wants to update data different to role', () => {
+        commandsMocks.stubs.user.getById.resolves({
+          _id: 'foo-user-id',
+          role: 'operator'
+        })
+
+        return operations.updateUser.auth({
+          ...fooUser,
+          role: 'operator'
+        }, fooParams, {
+          password: 'foo'
+        }).then(() => {
+          return test.expect(true).to.be.true()
+        })
+      })
+    })
+
+    test.describe('updateUser handler', () => {
+      const fooId = 'foo-id'
+      const fooUser = {
+        _id: fooId,
+        name: 'foo-name'
+      }
+      const fooBody = {
+        password: 'foo'
+      }
+      const fooParams = {
+        path: {
+          id: fooId
+        }
+      }
+      let sandbox
+      let response
+
+      test.beforeEach(() => {
+        sandbox = test.sinon.createSandbox()
+        response = {
+          status: sandbox.stub(),
+          header: sandbox.stub()
+        }
+        commandsMocks.stubs.user.update.resolves(fooUser)
+      })
+
+      test.afterEach(() => {
+        sandbox.restore()
+      })
+
+      test.it('should call to update user, passing the received body and id', () => {
+        return operations.updateUser.handler(fooParams, fooBody, response)
+          .then((result) => {
+            return test.expect(commandsMocks.stubs.user.update).to.have.been.calledWith(fooId, fooBody)
+          })
+      })
+
+      test.it('should add a 204 header to response', () => {
+        return operations.updateUser.handler(fooParams, fooBody, response)
+          .then(() => {
+            return test.expect(response.status).to.have.been.calledWith(204)
+          })
+      })
+
+      test.it('should set the response header with the user id', () => {
+        return operations.updateUser.handler(fooParams, fooBody, response)
+          .then(() => {
+            return test.expect(response.header).to.have.been.calledWith('location', '/api/users/foo-id')
+          })
+      })
+
+      test.it('should emit a plugin event', () => {
+        return operations.updateUser.handler(fooParams, fooBody, response)
+          .then(() => {
+            return test.expect(eventsMocks.stubs.plugin).to.have.been.calledWith('user', 'updated', fooUser)
+          })
+      })
+
+      test.it('should resolve the promise with no value', () => {
+        return operations.updateUser.handler(fooParams, fooBody, response)
+          .then((result) => {
+            return test.expect(result).to.be.undefined()
+          })
+      })
+    })
+
+    test.describe('deleteUser handler', () => {
+      const fooId = 'foo-id'
+      const fooParams = {
+        path: {
+          id: fooId
+        }
+      }
+      let sandbox
+      let response
+
+      test.beforeEach(() => {
+        sandbox = test.sinon.createSandbox()
+        response = {
+          status: sandbox.stub(),
+          header: sandbox.stub()
+        }
+      })
+
+      test.afterEach(() => {
+        sandbox.restore()
+      })
+
+      test.it('should call to delete user, passing the received  id', () => {
+        return operations.deleteUser.handler(fooParams, null, response)
+          .then((result) => {
+            return test.expect(commandsMocks.stubs.composed.removeUser).to.have.been.calledWith(fooId)
+          })
+      })
+
+      test.it('should add a 204 header to response', () => {
+        return operations.deleteUser.handler(fooParams, null, response)
+          .then(() => {
+            return test.expect(response.status).to.have.been.calledWith(204)
+          })
+      })
+
+      test.it('should emit a plugin event', () => {
+        return operations.deleteUser.handler(fooParams, null, response)
+          .then(() => {
+            return test.expect(eventsMocks.stubs.plugin).to.have.been.calledWith('user', 'deleted', {
+              _id: fooId
+            })
+          })
+      })
+
+      test.it('should resolve the promise with no value', () => {
+        return operations.deleteUser.handler(fooParams, null, response)
+          .then((result) => {
+            return test.expect(result).to.be.undefined()
+          })
+      })
+    })
   })
 
   test.describe('openapi', () => {

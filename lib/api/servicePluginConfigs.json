@@ -284,6 +284,36 @@
         }, {
           "apiKey": []
         }]
+      },
+      "delete": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "Service plugin configuration id"
+          }
+        ],
+        "tags": ["service"],
+        "summary": "Delete service plugin configuration",
+        "description": "Delete service plugin configuration",
+        "operationId": "deleteServicePluginConfig",
+        "responses": {
+          "204": {
+            "$ref": "#/components/responses/Deleted"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          }
+        },
+        "security": [{
+          "jwt": []
+        }, {
+          "apiKey": []
+        }]
       }
     }
   }

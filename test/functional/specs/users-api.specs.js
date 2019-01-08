@@ -4,10 +4,12 @@ const test = require('narval')
 const utils = require('./utils')
 
 test.describe('users api', function () {
+  this.timeout(10000)
   let authenticator = utils.Authenticator()
   let adminUserId
   let pluginId
   let entityId
+  let operatorUserId
 
   const getUsers = function (query) {
     return utils.request('/users', {
@@ -24,9 +26,84 @@ test.describe('users api', function () {
     })
   }
 
+  const updateUser = function (userId, body) {
+    return utils.request(`/users/${userId}`, {
+      method: 'PATCH',
+      body,
+      ...authenticator.credentials()
+    })
+  }
+
+  const deleteUser = function (userId, body) {
+    return utils.request(`/users/${userId}`, {
+      method: 'DELETE',
+      ...authenticator.credentials()
+    })
+  }
+
   const getUserMe = function () {
     return utils.request(`/users/me`, {
       method: 'GET',
+      ...authenticator.credentials()
+    })
+  }
+
+  const getServices = function (filters) {
+    return utils.request('/services', {
+      method: 'GET',
+      query: filters,
+      ...authenticator.credentials()
+    })
+  }
+
+  const addService = function (serviceData) {
+    return utils.request('/services', {
+      method: 'POST',
+      body: serviceData,
+      ...authenticator.credentials()
+    })
+  }
+
+  const addAbility = function (abilityData) {
+    return utils.request('/abilities', {
+      method: 'POST',
+      body: abilityData,
+      ...authenticator.credentials()
+    })
+  }
+
+  const getAbilities = function (filters) {
+    return utils.request('/abilities', {
+      method: 'GET',
+      query: filters,
+      ...authenticator.credentials()
+    })
+  }
+
+  const getAccessToken = userData => {
+    return utils.getAccessToken(authenticator, userData)
+  }
+
+  const getAuthTokens = filters => {
+    return utils.request('/auth/tokens', {
+      method: 'GET',
+      query: filters,
+      ...authenticator.credentials()
+    })
+  }
+
+  const addServicePluginConfig = servicePluginConfigData => {
+    return utils.request('/service-plugin-configs', {
+      method: 'POST',
+      body: servicePluginConfigData,
+      ...authenticator.credentials()
+    })
+  }
+
+  const getServicePluginConfigs = query => {
+    return utils.request(`/service-plugin-configs`, {
+      method: 'GET',
+      query,
       ...authenticator.credentials()
     })
   }
@@ -392,6 +469,154 @@ test.describe('users api', function () {
   testRole(pluginUser, serviceUser)
   testRole(serviceRegistererUser, newUser)
 
+  test.describe('update user', () => {
+    let moduleUserId
+    let pluginUserId
+
+    test.before(() => {
+      return utils.doLogin(authenticator)
+        .then(() => {
+          return getUsers().then(usersResponse => {
+            operatorUserId = usersResponse.body.find(userData => userData.role === 'operator')._id
+            moduleUserId = usersResponse.body.find(userData => userData.role === 'module')._id
+            pluginUserId = usersResponse.body.find(userData => userData.role === 'plugin')._id
+            return Promise.resolve()
+          })
+        })
+    })
+
+    test.describe('when user is admin', () => {
+      test.it('should return a bad data error when trying to update email', () => {
+        return updateUser(adminUserId, {
+          role: 'admin',
+          email: 'foo-other-email@foo.com'
+        }).then(response => {
+          return Promise.all([
+            test.expect(response.body.message).to.contain('"email" exists in instance when not allowed'),
+            test.expect(response.statusCode).to.equal(422)
+          ])
+        })
+      })
+
+      test.it('should be able to update self data, including role', () => {
+        return updateUser(adminUserId, {
+          role: 'admin'
+        }).then(response => {
+          return test.expect(response.statusCode).to.equal(204)
+        })
+      })
+
+      test.it('should be able to update data of operator users, including role', () => {
+        return updateUser(operatorUserId, {
+          password: 'foo',
+          role: 'operator'
+        }).then(response => {
+          return test.expect(response.statusCode).to.equal(204)
+        })
+      })
+
+      test.it('should not be able to update data of module users', () => {
+        return updateUser(moduleUserId, {
+          password: 'foo'
+        }).then(response => {
+          return Promise.all([
+            test.expect(response.body.message).to.contain('Not authorized'),
+            test.expect(response.statusCode).to.equal(403)
+          ])
+        })
+      })
+
+      test.it('should not be able to update data of plugin users', () => {
+        return updateUser(pluginUserId, {
+          password: 'foo'
+        }).then(response => {
+          return Promise.all([
+            test.expect(response.body.message).to.contain('Not authorized'),
+            test.expect(response.statusCode).to.equal(403)
+          ])
+        })
+      })
+    })
+
+    test.describe('when user is operator', () => {
+      test.before(() => {
+        return utils.ensureUserAndDoLogin(authenticator, operatorUser)
+      })
+
+      test.it('should be able to update self data', () => {
+        return updateUser(operatorUserId, {
+          password: 'foo'
+        }).then(response => {
+          return test.expect(response.statusCode).to.equal(204)
+        })
+      })
+
+      test.it('should not be able to update self role', () => {
+        return updateUser(operatorUserId, {
+          password: 'foo',
+          role: 'admin'
+        }).then(response => {
+          return Promise.all([
+            test.expect(response.body.message).to.contain('Not authorized'),
+            test.expect(response.statusCode).to.equal(403)
+          ])
+        })
+      })
+
+      test.it('should not be able to update data of module users', () => {
+        return updateUser(moduleUserId, {
+          password: 'foo',
+          role: 'admin'
+        }).then(response => {
+          return Promise.all([
+            test.expect(response.body.message).to.contain('Not authorized'),
+            test.expect(response.statusCode).to.equal(403)
+          ])
+        })
+      })
+
+      test.it('should not be able to update data of plugin users', () => {
+        return updateUser(pluginUserId, {
+          password: 'foo',
+          role: 'admin'
+        }).then(response => {
+          return Promise.all([
+            test.expect(response.body.message).to.contain('Not authorized'),
+            test.expect(response.statusCode).to.equal(403)
+          ])
+        })
+      })
+    })
+
+    test.describe('when user is module', () => {
+      test.before(() => {
+        return utils.ensureUserAndDoLogin(authenticator, operatorUser)
+      })
+
+      test.it('should not be able to update self data', () => {
+        return updateUser(moduleUserId, {
+          password: 'foo'
+        }).then(response => {
+          return Promise.all([
+            test.expect(response.body.message).to.contain('Not authorized'),
+            test.expect(response.statusCode).to.equal(403)
+          ])
+        })
+      })
+
+      test.it('should not be able to update other users data', () => {
+        return updateUser(pluginUserId, {
+          password: 'foo'
+        }).then(response => {
+          return Promise.all([
+            test.expect(response.body.message).to.contain('Not authorized'),
+            test.expect(response.statusCode).to.equal(403)
+          ])
+        })
+      })
+    })
+  })
+
   test.describe('when user has role "plugin"', () => {
     let operatorUserId
     const newOperatorUser = {
@@ -510,5 +735,123 @@ test.describe('users api', function () {
     testUser(serviceUser)
     testUser(pluginUser)
     testUser(serviceRegistererUser)
+  })
+
+  test.describe('delete user', () => {
+    let serviceId
+    let userId
+
+    test.before(() => {
+      return utils.doLogin(authenticator)
+        .then(() => {
+          return getUsers()
+            .then(response => {
+              userId = response.body.find(user => user.name === serviceUser.name)._id
+              return Promise.resolve()
+            })
+        })
+        .then(() => {
+          return utils.ensureUserAndDoLogin(authenticator, serviceUser)
+        })
+        .then(() => {
+          return getAccessToken(serviceUser)
+        })
+        .then(() => {
+          return addService({
+            processId: 'foo-service-id',
+            description: 'foo-description',
+            package: 'foo-package',
+            version: '1.0.0',
+            apiKey: 'dasasfdfsdf423efwsfds',
+            url: 'https://192.168.1.1',
+            type: 'module'
+          }).then(response => {
+            serviceId = response.headers.location.split('/').pop()
+            return Promise.resolve()
+          })
+        })
+        .then(() => {
+          return addAbility({
+            name: 'foo-ability-name'
+          })
+        })
+        .then(() => {
+          return addServicePluginConfig({
+            _service: serviceId,
+            pluginPackageName: 'foo-plugin',
+            config: {
+              foo: 'foo-data'
+            }
+          })
+        })
+    })
+
+    test.describe('when user is not admin', () => {
+      test.it('should return a forbidden error', () => {
+        return deleteUser(userId).then(response => {
+          return test.expect(response.statusCode).to.equal(403)
+        })
+      })
+    })
+
+    test.describe('when user is admin', () => {
+      test.before(() => {
+        return utils.doLogin(authenticator)
+      })
+
+      test.describe('when deleting an operator', () => {
+        test.it('should delete user', () => {
+          return deleteUser(operatorUserId).then(response => {
+            return test.expect(response.statusCode).to.equal(204)
+          })
+        })
+      })
+
+      test.describe('when is deleting a service', () => {
+        test.it('should delete user and all related services, abilities, securityTokens and servicePluginConfigs', () => {
+          return Promise.all([
+            getServices(),
+            getAbilities(),
+            getAuthTokens(),
+            getServicePluginConfigs()
+          ]).then(previousResults => {
+            return deleteUser(userId).then(response => {
+              return Promise.all([
+                getServices(),
+                getAbilities(),
+                getAuthTokens(),
+                getServicePluginConfigs(),
+                getUsers()
+              ]).then(afterResults => {
+                const previousServices = previousResults[0].body.filter(service => service._user === userId)
+                const previousAbilities = previousResults[1].body.filter(ability => ability._service === serviceId)
+                const previousTokens = previousResults[2].body.filter(token => token._user === userId)
+                const previousServicesConfigs = previousResults[3].body.filter(serviceConfig => serviceConfig._service === serviceId)
+
+                const afterServices = afterResults[0].body.filter(service => service._user === userId)
+                const afterAbilities = afterResults[1].body.filter(ability => ability._service === serviceId)
+                const afterTokens = afterResults[2].body.filter(token => token._user === userId)
+                const afterServicesConfigs = afterResults[3].body.filter(serviceConfig => serviceConfig._service === serviceId)
+
+                const afterUser = afterResults[4].body.find(user => user.name === serviceUser.name)
+
+                return Promise.all([
+                  test.expect(response.statusCode).to.equal(204),
+                  test.expect(previousServices.length).to.be.above(0),
+                  test.expect(previousAbilities.length).to.be.above(0),
+                  test.expect(previousTokens.length).to.be.above(0),
+                  test.expect(previousServicesConfigs.length).to.be.above(0),
+                  test.expect(afterServices.length).to.equal(0),
+                  test.expect(afterAbilities.length).to.equal(0),
+                  test.expect(afterTokens.length).to.equal(0),
+                  test.expect(afterServicesConfigs.length).to.equal(0),
+                  test.expect(afterUser).to.be.undefined()
+                ])
+              })
+            })
+          })
+        })
+      })
+    })
   })
 })

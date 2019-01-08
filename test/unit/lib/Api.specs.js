@@ -54,6 +54,7 @@ test.describe('Api', () => {
           'getServicePluginConfig',
           'addServicePluginConfig',
           'updateServicePluginConfig',
+          'deleteServicePluginConfig',
           'getAbilities',
           'getAbility',
           'updateAbility',

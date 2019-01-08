@@ -320,6 +320,36 @@
         }, {
           "apiKey": []
         }]
+      },
+      "delete": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "Service id"
+          }
+        ],
+        "tags": ["service"],
+        "summary": "Delete service",
+        "description": "Delete service",
+        "operationId": "deleteService",
+        "responses": {
+          "204": {
+            "$ref": "#/components/responses/Deleted"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          }
+        },
+        "security": [{
+          "jwt": []
+        }, {
+          "apiKey": []
+        }]
       }
     }
   }

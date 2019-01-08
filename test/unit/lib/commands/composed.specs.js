@@ -17,6 +17,7 @@ test.describe('composed commands', () => {
     let abilityCommandsMocks
     let serviceCommandsMocks
     let logCommandsMocks
+    let servicePluginConfigCommandMocks
 
     test.beforeEach(() => {
       baseMocks = new mocks.Base()
@@ -27,6 +28,7 @@ test.describe('composed commands', () => {
       securityTokenCommandsMocks = new mocks.commands.SecurityToken()
       abilityCommandsMocks = new mocks.commands.Ability()
       serviceCommandsMocks = new mocks.commands.Service()
+      servicePluginConfigCommandMocks = new mocks.commands.ServicePluginConfig()
       logCommandsMocks = new mocks.commands.Log()
 
       commands = composed.Commands(baseMocks.stubs.service, modelsMocks.stubs, clientMocks.stubs, {
@@ -34,7 +36,8 @@ test.describe('composed commands', () => {
         securityToken: securityTokenCommandsMocks.stubs.commands,
         ability: abilityCommandsMocks.stubs.commands,
         service: serviceCommandsMocks.stubs.commands,
-        log: logCommandsMocks.stubs.commands
+        log: logCommandsMocks.stubs.commands,
+        servicePluginConfig: servicePluginConfigCommandMocks.stubs.commands
       })
     })
 
@@ -48,6 +51,7 @@ test.describe('composed commands', () => {
       abilityCommandsMocks.restore()
       serviceCommandsMocks.restore()
       logCommandsMocks.restore()
+      servicePluginConfigCommandMocks.restore()
     })
 
     test.describe('initUsers method', () => {
@@ -339,6 +343,75 @@ test.describe('composed commands', () => {
           return commands.getAbilityOwner(fooUser, fooAbility).then(result => {
             return test.expect(result).to.equal(fooUser)
           })
+        })
+      })
+    })
+
+    test.describe('removeService method', () => {
+      test.it('should call to remove service, servicePluginConfigs and abilities', () => {
+        const fooId = 'foo-id'
+        return commands.removeService(fooId).then(() => {
+          return Promise.all([
+            test.expect(serviceCommandsMocks.stubs.commands.remove).to.have.been.calledWith(fooId),
+            test.expect(servicePluginConfigCommandMocks.stubs.commands.findAndRemove).to.have.been.calledWith({
+              _service: fooId
+            }),
+            test.expect(abilityCommandsMocks.stubs.commands.findAndRemove).to.have.been.calledWith({
+              _service: fooId
+            })
+          ])
+        })
+      })
+    })
+
+    test.describe('removeUser method', () => {
+      const fooId = 'foo-id'
+      const fooUserServices = [
+        {
+          _id: 'foo-service-id-1'
+        },
+        {
+          _id: 'foo-service-id-2'
+        }
+      ]
+      test.beforeEach(() => {
+        serviceCommandsMocks.stubs.commands.getFiltered.resolves(fooUserServices)
+      })
+
+      test.it('should call to remove user and user securityTokens', () => {
+        return commands.removeUser(fooId).then(() => {
+          return Promise.all([
+            test.expect(userCommandsMocks.stubs.commands.remove).to.have.been.calledWith({
+              _id: fooId
+            }),
+            test.expect(securityTokenCommandsMocks.stubs.commands.findAndRemove).to.have.been.calledWith({
+              _user: fooId
+            })
+          ])
+        })
+      })
+
+      test.it('should call to remove all services that belongs to user', () => {
+        return commands.removeUser(fooId).then(() => {
+          return Promise.all([
+            test.expect(serviceCommandsMocks.stubs.commands.getFiltered).to.have.been.calledWith({
+              _user: fooId
+            }),
+            test.expect(serviceCommandsMocks.stubs.commands.remove).to.have.been.calledWith(fooUserServices[0]._id),
+            test.expect(servicePluginConfigCommandMocks.stubs.commands.findAndRemove).to.have.been.calledWith({
+              _service: fooUserServices[0]._id
+            }),
+            test.expect(abilityCommandsMocks.stubs.commands.findAndRemove).to.have.been.calledWith({
+              _service: fooUserServices[0]._id
+            }),
+            test.expect(serviceCommandsMocks.stubs.commands.remove).to.have.been.calledWith(fooUserServices[1]._id),
+            test.expect(servicePluginConfigCommandMocks.stubs.commands.findAndRemove).to.have.been.calledWith({
+              _service: fooUserServices[1]._id
+            }),
+            test.expect(abilityCommandsMocks.stubs.commands.findAndRemove).to.have.been.calledWith({
+              _service: fooUserServices[1]._id
+            })
+          ])
         })
       })
     })

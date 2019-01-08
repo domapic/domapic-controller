@@ -16,6 +16,7 @@ const Mock = function () {
   AbilityStub.findById = sandbox.stub().usingPromise().resolves()
   AbilityStub.findOneAndUpdate = sandbox.stub().usingPromise().resolves()
   AbilityStub.findOneAndRemove = sandbox.stub().usingPromise().resolves()
+  AbilityStub.deleteMany = sandbox.stub().usingPromise().resolves()
 
   const stubs = {
     ability: abilityStub,
