@@ -30,7 +30,7 @@
     "isuri": "2.0.3",
     "jsonschema": "1.2.4",
     "md5": "2.2.1",
-    "mongoose": "5.4.0",
+    "mongoose": "5.4.2",
     "rand-token": "0.4.0"
   },
   "devDependencies": {
