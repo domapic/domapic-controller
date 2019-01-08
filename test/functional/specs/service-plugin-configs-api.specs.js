@@ -8,6 +8,8 @@ test.describe('service-plugin-configs api', function () {
   let authenticator = utils.Authenticator()
   let serviceId
   let servicePluginConfigId
+  let servicePluginConfigId2
+  let servicePluginConfigId3
 
   const addServicePluginConfig = servicePluginConfigData => {
     return utils.request('/service-plugin-configs', {
@@ -21,6 +23,13 @@ test.describe('service-plugin-configs api', function () {
     return utils.request(`/service-plugin-configs/${id}`, {
       method: 'PATCH',
       body: servicePluginConfigData,
+      ...authenticator.credentials()
+    })
+  }
+
+  const deleteServicePluginConfig = id => {
+    return utils.request(`/service-plugin-configs/${id}`, {
+      method: 'DELETE',
       ...authenticator.credentials()
     })
   }
@@ -151,6 +160,7 @@ test.describe('service-plugin-configs api', function () {
               foo: 'foo-data'
             }
           }).then(response => {
+            servicePluginConfigId2 = response.headers.location.split('/').pop()
             return test.expect(response.statusCode).to.equal(201)
           })
         })
@@ -213,6 +223,7 @@ test.describe('service-plugin-configs api', function () {
                   ]
                 }
               }).then(response => {
+                servicePluginConfigId3 = response.headers.location.split('/').pop()
                 return test.expect(response.statusCode).to.equal(201)
               })
             })
@@ -285,6 +296,44 @@ test.describe('service-plugin-configs api', function () {
             test.expect(response.body.uniqueId).to.be.undefined(),
             test.expect(response.body.updatedAt).to.not.be.undefined(),
             test.expect(response.body.createdAt).to.not.be.undefined()
+          ])
+        })
+      })
+    })
+
+    test.describe('delete', () => {
+      test.it('should allow to delete if provided config belongs to logged user', () => {
+        return utils.ensureUserAndDoLogin(authenticator, moduleUser)
+          .then(() => {
+            return deleteServicePluginConfig(servicePluginConfigId).then(response => {
+              return test.expect(response.statusCode).to.equal(204)
+            })
+          })
+      })
+
+      test.it('should allow to delete if logged user is plugin', () => {
+        return utils.ensureUserAndDoLogin(authenticator, pluginUser)
+          .then(() => {
+            return deleteServicePluginConfig(servicePluginConfigId2).then(response => {
+              return test.expect(response.statusCode).to.equal(204)
+            })
+          })
+      })
+
+      test.it('should allow to delete if logged user is admin', () => {
+        return utils.ensureUserAndDoLogin(authenticator, adminUser)
+          .then(() => {
+            return deleteServicePluginConfig(servicePluginConfigId3).then(response => {
+              return test.expect(response.statusCode).to.equal(204)
+            })
+          })
+      })
+
+      test.it('should have really deleted configurations from database', () => {
+        return getServicePluginConfigs().then(response => {
+          return Promise.all([
+            test.expect(response.statusCode).to.equal(200),
+            test.expect(response.body.length).to.equal(0)
           ])
         })
       })

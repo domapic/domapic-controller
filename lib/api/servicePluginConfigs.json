@@ -300,7 +300,7 @@
         "tags": ["service"],
         "summary": "Delete service plugin configuration",
         "description": "Delete service plugin configuration",
-        "operationId": "deleteServicePluginConfiguration",
+        "operationId": "deleteServicePluginConfig",
         "responses": {
           "204": {
             "$ref": "#/components/responses/Deleted"
