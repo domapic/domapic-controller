@@ -26,7 +26,7 @@
           "role": {
             "description": "Role assigned to the user",
             "type": "string",
-            "enum": ["admin", "operator", "module", "plugin", "service-registerer"]
+            "enum": ["admin", "operator", "module", "plugin", "service-registerer", "anonymous"]
           },
           "createdAt": {
             "description": "Creation date timestamp",
