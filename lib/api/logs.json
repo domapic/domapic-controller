@@ -2,6 +2,9 @@
   "tags": [{
     "name": "log",
     "description": "Controller events and actions logs"
+  },{
+    "name": "stats",
+    "description": "Stats"
   }],
   "components": {
     "schemas": {
@@ -50,12 +53,44 @@
         "items": {
           "$ref": "#/components/schemas/Log"
         }
+      },
+      "LogsStats": {
+        "description": "Log stats data",
+        "type": "object",
+        "properties": {
+          "total": {
+            "description": "Total number of registered logs",
+            "type": "number"
+          }
+        },
+        "additionalProperties": false,
+        "example": {
+          "total": "1547"
+        }
       }
     }
   },
   "paths": {
     "/logs": {
       "get": {
+        "parameters": [
+          {
+            "in": "query",
+            "name": "ability",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter logs by ability"
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Returns only logs of received page. Each page contains 10 logs"
+          }
+        ],
         "tags": ["log", "action", "event", "ability"],
         "summary": "Return logs",
         "description": "Returns an array with all events and actions logs",
@@ -67,6 +102,41 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Logs"
+                }
+              }
+            }
+          }
+        },
+        "security": [{
+          "jwt": []
+        }, {
+          "apiKey": []
+        }]
+      }
+    },
+    "/logs/stats": {
+      "get": {
+        "parameters": [
+          {
+            "in": "query",
+            "name": "ability",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter stats by ability"
+          }
+        ],
+        "tags": ["log", "action", "event", "ability", "stats"],
+        "summary": "Returns logs stats",
+        "description": "Returns logs stats",
+        "operationId": "getLogsStats",
+        "responses": {
+          "200": {
+            "description": "Logs stats response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LogsStats"
                 }
               }
             }
