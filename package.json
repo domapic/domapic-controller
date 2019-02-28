@@ -29,9 +29,12 @@
     "inquirer": "6.2.1",
     "inquirer-autocomplete-prompt": "1.0.1",
     "jsonschema": "1.2.4",
+    "lodash": "^4.17.11",
     "md5": "2.2.1",
     "mongoose": "5.4.2",
     "rand-token": "0.4.0",
+    "socket.io": "^2.2.0",
+    "socketio-auth": "^0.1.1",
     "validator": "^10.11.0"
   },
   "devDependencies": {
