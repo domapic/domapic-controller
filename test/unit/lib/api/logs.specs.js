@@ -24,11 +24,13 @@ test.describe('logs api', () => {
     })
 
     test.describe('getLogs handler', () => {
-      test.it('should return all logs, calling to correspondant command', () => {
+      test.it('should return all logs, calling to correspondant command when no query is received', () => {
         const fooResult = 'foo result'
         commandsMocks.stubs.log.getAll.resolves(fooResult)
 
-        return operations.getLogs.handler()
+        return operations.getLogs.handler({
+          query: {}
+        })
           .then((result) => {
             return Promise.all([
               test.expect(result).to.equal(fooResult)

@@ -61,7 +61,7 @@ test.describe('apiKey security', () => {
           security.verify()
         ]).then(result => {
           return Promise.all([
-            test.expect(commandsMocks.stubs.user.get).to.have.been.calledOnce(),
+            test.expect(commandsMocks.stubs.user.get).to.not.have.been.called(),
             test.expect(result[0]).to.deep.equal(cleanUser)
           ])
         })
