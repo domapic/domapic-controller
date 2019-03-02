@@ -30,4 +30,47 @@ test.describe('events', () => {
       })
     })
   })
+
+  test.describe('socket method', () => {
+    test.it('should emit a socket event, passing entity, operation, data and roles', () => {
+      const fooEntity = 'foo-entity'
+      const fooOperation = 'foo-operation'
+      const fooData = {
+        foo: 'foo'
+      }
+      const fooRoles = ['foo', 'foo2']
+      events.socket(fooEntity, fooOperation, fooData, fooRoles)
+      return test.expect(events.emitter.emit).to.have.been.calledWith('socket', {
+        entity: fooEntity,
+        operation: fooOperation,
+        data: fooData,
+        roles: fooRoles
+      })
+    })
+  })
+
+  test.describe('all method', () => {
+    test.it('should emit plugin and socket events', () => {
+      const fooEntity = 'foo-entity'
+      const fooOperation = 'foo-operation'
+      const fooData = {
+        foo: 'foo'
+      }
+      const fooRoles = ['foo', 'foo2']
+      events.all(fooEntity, fooOperation, fooData, fooRoles)
+      return Promise.all([
+        test.expect(events.emitter.emit).to.have.been.calledWith('socket', {
+          entity: fooEntity,
+          operation: fooOperation,
+          data: fooData,
+          roles: fooRoles
+        }),
+        test.expect(events.emitter.emit).to.have.been.calledWith('plugin', {
+          entity: fooEntity,
+          operation: fooOperation,
+          data: fooData
+        })
+      ])
+    })
+  })
 })

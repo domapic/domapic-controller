@@ -62,5 +62,70 @@ test.describe('log commands', () => {
           })
       })
     })
+
+    test.describe('getPaginated method', () => {
+      test.it('should call to log model find method skipping correspondant results and return the result', () => {
+        const fooResult = 'foo'
+        modelsMocks.stubs.Log.findSort.resolves(fooResult)
+        return commands.getPaginated(2)
+          .then((result) => {
+            return Promise.all([
+              test.expect(result).to.equal(fooResult),
+              test.expect(modelsMocks.stubs.Log.find.getCall(0).args[2]).to.deep.equal({
+                skip: 10,
+                limit: 10
+              })
+            ])
+          })
+      })
+
+      test.it('should pass received filter to find command', () => {
+        const fooResult = 'foo'
+        modelsMocks.stubs.Log.findSort.resolves(fooResult)
+        return commands.getPaginated(2, {
+          _ability: 'foo'
+        })
+          .then((result) => {
+            return Promise.all([
+              test.expect(result).to.equal(fooResult),
+              test.expect(modelsMocks.stubs.Log.find.getCall(0).args[0]).to.deep.equal({
+                _ability: 'foo'
+              })
+            ])
+          })
+      })
+    })
+
+    test.describe('getStats method', () => {
+      test.it('should call to log model countDocument methods if receives a filter', () => {
+        const fooResult = 4
+        modelsMocks.stubs.Log.countDocuments.resolves(fooResult)
+        return commands.getStats({
+          _ability: 'foo'
+        })
+          .then((result) => {
+            return Promise.all([
+              test.expect(modelsMocks.stubs.Log.countDocuments).to.have.been.called(),
+              test.expect(result).to.deep.equal({
+                total: fooResult
+              })
+            ])
+          })
+      })
+
+      test.it('should call to log model estimatedDocumentCount method if does not receive a filter', () => {
+        const fooResult = 4
+        modelsMocks.stubs.Log.estimatedDocumentCount.returns(fooResult)
+        return commands.getStats()
+          .then((result) => {
+            return Promise.all([
+              test.expect(modelsMocks.stubs.Log.estimatedDocumentCount).to.have.been.called(),
+              test.expect(result).to.deep.equal({
+                total: fooResult
+              })
+            ])
+          })
+      })
+    })
   })
 })

@@ -16,6 +16,8 @@ const Mock = function () {
   LogStub.find = sandbox.stub().usingPromise().returns({
     sort: findSort
   })
+  LogStub.countDocuments = sandbox.stub().usingPromise().resolves()
+  LogStub.estimatedDocumentCount = sandbox.stub().returns(4)
 
   const stubs = {
     log: logStub,
