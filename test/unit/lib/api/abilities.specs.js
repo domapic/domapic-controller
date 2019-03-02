@@ -142,10 +142,10 @@ test.describe('abilities api', () => {
           })
       })
 
-      test.it('should emit a plugin event', () => {
+      test.it('should emit an event', () => {
         return operations.addAbility.handler({}, fooBody, response, fooUserData)
           .then(() => {
-            return test.expect(eventsMocks.stubs.plugin).to.have.been.calledWith('ability', 'created', fooAbility)
+            return test.expect(eventsMocks.stubs.all).to.have.been.calledWith('ability', 'created', fooAbility)
           })
       })
 
@@ -251,14 +251,14 @@ test.describe('abilities api', () => {
           })
       })
 
-      test.it('should emit a plugin event', () => {
+      test.it('should emit an event', () => {
         return operations.updateAbility.handler({
           path: {
             id: fooId
           }
         }, fooBody, response)
           .then(() => {
-            return test.expect(eventsMocks.stubs.plugin).to.have.been.calledWith('ability', 'updated', fooAbility)
+            return test.expect(eventsMocks.stubs.all).to.have.been.calledWith('ability', 'updated', fooAbility)
           })
       })
 
@@ -352,14 +352,14 @@ test.describe('abilities api', () => {
           })
       })
 
-      test.it('should emit a plugin event', () => {
+      test.it('should emit an event', () => {
         return operations.deleteAbility.handler({
           path: {
             id: fooId
           }
         }, {}, response)
           .then(() => {
-            return test.expect(eventsMocks.stubs.plugin).to.have.been.calledWith('ability', 'deleted', {
+            return test.expect(eventsMocks.stubs.all).to.have.been.calledWith('ability', 'deleted', {
               _id: fooId
             })
           })
@@ -431,14 +431,14 @@ test.describe('abilities api', () => {
           })
       })
 
-      test.it('should emit a plugin event', () => {
+      test.it('should emit an event', () => {
         return operations.abilityAction.handler({
           path: {
             id: fooId
           }
         }, fooActionData, response)
           .then(() => {
-            return test.expect(eventsMocks.stubs.plugin).to.have.been.calledWith('ability', 'action', {
+            return test.expect(eventsMocks.stubs.all).to.have.been.calledWith('ability', 'action', {
               _id: fooId,
               ...fooActionData
             })
@@ -560,14 +560,14 @@ test.describe('abilities api', () => {
           })
       })
 
-      test.it('should emit a plugin event', () => {
+      test.it('should emit an event', () => {
         return operations.abilityEvent.handler({
           path: {
             id: fooId
           }
         }, fooActionData, response)
           .then(() => {
-            return test.expect(eventsMocks.stubs.plugin).to.have.been.calledWith('ability', 'event', {
+            return test.expect(eventsMocks.stubs.all).to.have.been.calledWith('ability', 'event', {
               _id: fooId,
               ...fooActionData
             })

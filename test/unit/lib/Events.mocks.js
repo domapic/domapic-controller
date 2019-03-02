@@ -50,7 +50,9 @@ const Mock = function () {
 
   const stubs = {
     emitter: emitterStubs,
-    plugin: sandbox.stub(events, 'plugin')
+    plugin: sandbox.stub(events, 'plugin'),
+    socket: sandbox.stub(events, 'socket'),
+    all: sandbox.stub(events, 'all')
   }
 
   const restore = function () {
