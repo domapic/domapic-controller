@@ -13,6 +13,7 @@ test.describe('controller', () => {
     let baseMocks
     let indexMocks
     let pluginHandlerMocks
+    let socketsHandlerMocks
 
     test.beforeEach(() => {
       indexMocks = new mocks.Index()
