@@ -18,7 +18,7 @@ test.describe('logs api', function () {
         method: 'GET',
         ...authenticator.credentials()
       }).then(logsResponse => {
-        const log = logsResponse.body[0]
+        const log = logsResponse.body[2]
         return Promise.all([
           test.expect(log.type).to.equal('event'),
           test.expect(log._ability).to.not.be.undefined(),
