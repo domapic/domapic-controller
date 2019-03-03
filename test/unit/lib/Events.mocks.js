@@ -45,12 +45,15 @@ const Mock = function () {
   }
 
   emitterStubs.on.returns = emmiterOnFake.returns
+  emitterStubs.on.runOnRegister = emmiterOnFake.runOnRegister
 
   events.emitter = emitterStubs
 
   const stubs = {
     emitter: emitterStubs,
-    plugin: sandbox.stub(events, 'plugin')
+    plugin: sandbox.stub(events, 'plugin'),
+    socket: sandbox.stub(events, 'socket'),
+    all: sandbox.stub(events, 'all')
   }
 
   const restore = function () {

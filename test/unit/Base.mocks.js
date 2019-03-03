@@ -17,6 +17,8 @@ const Mock = function () {
       addOperations: sandbox.stub().usingPromise().resolves(),
       addMiddleware: sandbox.stub().usingPromise().resolves(),
       extendOpenApi: sandbox.stub().usingPromise().resolves(),
+      init: sandbox.stub().usingPromise().resolves(),
+      addStatic: sandbox.stub().usingPromise().resolves(),
       start: sandbox.stub().usingPromise().resolves()
     },
     config: {

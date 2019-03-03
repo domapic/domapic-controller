@@ -171,10 +171,10 @@ test.describe('services api', () => {
           })
       })
 
-      test.it('should emit a plugin event', () => {
+      test.it('should emit an event', () => {
         return operations.addService.handler({}, fooBody, response, fooUserData)
           .then(() => {
-            return test.expect(eventsMocks.stubs.plugin).to.have.been.calledWith('service', 'created', fooService)
+            return test.expect(eventsMocks.stubs.all).to.have.been.calledWith('service', 'created', fooService)
           })
       })
 
@@ -279,14 +279,14 @@ test.describe('services api', () => {
           })
       })
 
-      test.it('should emit a plugin event', () => {
+      test.it('should emit an event', () => {
         return operations.updateService.handler({
           path: {
             id: fooId
           }
         }, fooBody, response)
           .then(() => {
-            return test.expect(eventsMocks.stubs.plugin).to.have.been.calledWith('service', 'updated', fooService)
+            return test.expect(eventsMocks.stubs.all).to.have.been.calledWith('service', 'updated', fooService)
           })
       })
 
@@ -341,14 +341,14 @@ test.describe('services api', () => {
           })
       })
 
-      test.it('should emit a plugin event', () => {
+      test.it('should emit an event', () => {
         return operations.deleteService.handler({
           path: {
             id: fooId
           }
         }, null, response)
           .then(() => {
-            return test.expect(eventsMocks.stubs.plugin).to.have.been.calledWith('service', 'deleted', {
+            return test.expect(eventsMocks.stubs.all).to.have.been.calledWith('service', 'deleted', {
               _id: fooId
             })
           })

@@ -13,12 +13,14 @@ test.describe('controller', () => {
     let baseMocks
     let indexMocks
     let pluginHandlerMocks
+    let socketsHandlerMocks
 
     test.beforeEach(() => {
       indexMocks = new mocks.Index()
       indexMocks.stubs.security.methods.resolves(fooSecurityMethods)
       baseMocks = new mocks.Base()
       pluginHandlerMocks = new mocks.PluginsHandler()
+      socketsHandlerMocks = new mocks.SocketsHandler()
       return controller.start()
     })
 
@@ -26,6 +28,7 @@ test.describe('controller', () => {
       indexMocks.restore()
       baseMocks.restore()
       pluginHandlerMocks.restore()
+      socketsHandlerMocks.restore()
     })
 
     test.it('should have created a new Service instance', () => {
@@ -58,6 +61,10 @@ test.describe('controller', () => {
 
     test.it('should have inited plugins handler', () => {
       test.expect(pluginHandlerMocks.stubs.init).to.have.been.called()
+    })
+
+    test.it('should have inited sockets handler', () => {
+      test.expect(socketsHandlerMocks.stubs.init).to.have.been.called()
     })
 
     test.it('should have called to connect to database', () => {

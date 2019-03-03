@@ -412,10 +412,10 @@ test.describe('users api', () => {
           })
       })
 
-      test.it('should emit a plugin event', () => {
+      test.it('should emit an event', () => {
         return operations.addUser.handler({}, fooBody, response)
           .then(() => {
-            return test.expect(eventsMocks.stubs.plugin).to.have.been.calledWith('user', 'created', fooUser)
+            return test.expect(eventsMocks.stubs.all).to.have.been.calledWith('user', 'created', fooUser, ['admin', 'anonymous'])
           })
       })
 
@@ -561,10 +561,10 @@ test.describe('users api', () => {
           })
       })
 
-      test.it('should emit a plugin event', () => {
+      test.it('should emit an event', () => {
         return operations.updateUser.handler(fooParams, fooBody, response)
           .then(() => {
-            return test.expect(eventsMocks.stubs.plugin).to.have.been.calledWith('user', 'updated', fooUser)
+            return test.expect(eventsMocks.stubs.all).to.have.been.calledWith('user', 'updated', fooUser, ['admin', 'anonymous'])
           })
       })
 
@@ -612,12 +612,12 @@ test.describe('users api', () => {
           })
       })
 
-      test.it('should emit a plugin event', () => {
+      test.it('should emit an event', () => {
         return operations.deleteUser.handler(fooParams, null, response)
           .then(() => {
-            return test.expect(eventsMocks.stubs.plugin).to.have.been.calledWith('user', 'deleted', {
+            return test.expect(eventsMocks.stubs.all).to.have.been.calledWith('user', 'deleted', {
               _id: fooId
-            })
+            }, ['admin', 'anonymous'])
           })
       })
 

@@ -6,8 +6,10 @@ const Events = require('./lib/Events.mocks')
 const Security = require('./lib/Security.mocks')
 const Utils = require('./lib/Utils.mocks')
 const PluginsHandler = require('./lib/PluginsHandler.mocks')
+const SocketsHandler = require('./lib/SocketsHandler.mocks')
 
 const Controller = require('./lib/Controller.mocks')
+const Libs = require('./lib/Libs.mocks')
 const Database = require('./lib/Database.mocks')
 const Index = require('./lib/Index.mocks')
 
@@ -64,9 +66,11 @@ module.exports = {
     Log: LogModel
   },
   Base,
+  Libs,
   Client,
   Events,
   PluginsHandler,
+  SocketsHandler,
   Commands,
   Controller,
   Database,

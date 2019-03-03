@@ -10,6 +10,21 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 ### Removed
 
+## [1.0.0-beta.2] - 2019-03-02
+### Added
+- Add web ui
+- Add socket.io server
+- Emit events to socket authenticated users connected using sockets
+- Add page and ability filters to logs api
+- Add logs/stats api
+
+### Fixed
+- Add "anonymous" role to swagger. Now anomnymous user has anonymous role.
+- Fix logs capped collection max size
+
+### Changed
+- Use validator library for emails and uri validations
+
 ## [1.0.0-beta.1] - 2019-01-08
 ### Added
 - Add DELETE method to servicePluginConfigs api
