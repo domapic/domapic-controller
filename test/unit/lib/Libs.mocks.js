@@ -16,7 +16,7 @@ const Mock = function () {
     ipRangeCheck: sandbox.stub(libs, 'ipRangeCheck').returns(true)
   }
 
-  stubs.socketIo.instance = socketIoInstance;
+  stubs.socketIo.instance = socketIoInstance
 
   const restore = function () {
     sandbox.restore()

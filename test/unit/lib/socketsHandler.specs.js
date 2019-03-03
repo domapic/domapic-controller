@@ -24,8 +24,8 @@ test.describe('socketsHandler', () => {
   }
   const result = {}
   const cb = (error, value) => {
-    result.error = error;
-    result.value = value;
+    result.error = error
+    result.value = value
   }
   let commandsMocks
   let baseMocks
@@ -38,7 +38,13 @@ test.describe('socketsHandler', () => {
 
   test.beforeEach(() => {
     sandbox = test.sinon.createSandbox()
-    socket = { handshake: {}, emit: sandbox.stub(), id: 'foo-id', on: sandbox.stub(), auth: true}
+    socket = {
+      handshake: {},
+      emit: sandbox.stub(),
+      id: 'foo-id',
+      on: sandbox.stub(),
+      auth: true
+    }
     getAnonymousUserStub = sandbox.stub().resolves(anonymousUser)
     getUserBySecurityTokenStub = sandbox.stub().resolves(authUser)
     sandbox.stub(securityUtils, 'GetAnonymousUser').returns(getAnonymousUserStub)
@@ -48,7 +54,7 @@ test.describe('socketsHandler', () => {
     eventsMocks = new mocks.Events()
     eventsMocks.stubs.emitter.on.runOnRegister(false)
     libsMocks = new mocks.Libs()
-    baseMocks.stubs.service.config.get.resolves({auth:false})
+    baseMocks.stubs.service.config.get.resolves({auth: false})
     return socketsHandler.init(baseMocks.stubs.service.server, baseMocks.stubs.service, commandsMocks.stubs)
   })
 
@@ -72,7 +78,7 @@ test.describe('socketsHandler', () => {
     test.it('should have added a listener to socket events', () => {
       return Promise.all([
         test.expect(eventsMocks.stubs.emitter.on).to.have.been.called(),
-        test.expect(eventsMocks.stubs.emitter.on.getCall(0).args[0]).to.equal("socket")
+        test.expect(eventsMocks.stubs.emitter.on.getCall(0).args[0]).to.equal('socket')
       ])
     })
 
@@ -83,7 +89,7 @@ test.describe('socketsHandler', () => {
 
   test.describe('socket authentication', () => {
     test.it('should return true is authentication is disabled', async () => {
-      await libsMocks.stubs.socketIoAuth.getCall(0).args[1].authenticate(socket, {}, cb);
+      await libsMocks.stubs.socketIoAuth.getCall(0).args[1].authenticate(socket, {}, cb)
       return Promise.all([
         test.expect(result.error).to.equal(null),
         test.expect(result.value).to.equal(true)
@@ -93,9 +99,9 @@ test.describe('socketsHandler', () => {
     test.it('should return anonymous user is authentication is disabled for current IP', async () => {
       libsMocks.restore()
       libsMocks = new mocks.Libs()
-      baseMocks.stubs.service.config.get.resolves({auth:true})
+      baseMocks.stubs.service.config.get.resolves({auth: true})
       await socketsHandler.init(baseMocks.stubs.service.server, baseMocks.stubs.service, commandsMocks.stubs)
-      await libsMocks.stubs.socketIoAuth.getCall(0).args[1].authenticate(socket, {}, cb);
+      await libsMocks.stubs.socketIoAuth.getCall(0).args[1].authenticate(socket, {}, cb)
       await waitForFinish()
       return Promise.all([
         test.expect(result.error).to.equal(null),
@@ -108,10 +114,10 @@ test.describe('socketsHandler', () => {
       const error = new Error()
       libsMocks.restore()
       libsMocks = new mocks.Libs()
-      baseMocks.stubs.service.config.get.resolves({auth:true})
+      baseMocks.stubs.service.config.get.resolves({auth: true})
       getAnonymousUserStub.rejects(error)
       await socketsHandler.init(baseMocks.stubs.service.server, baseMocks.stubs.service, commandsMocks.stubs)
-      await libsMocks.stubs.socketIoAuth.getCall(0).args[1].authenticate(socket, {}, cb);
+      await libsMocks.stubs.socketIoAuth.getCall(0).args[1].authenticate(socket, {}, cb)
       await waitForFinish()
       return Promise.all([
         test.expect(result.error).to.equal(error),
@@ -123,9 +129,9 @@ test.describe('socketsHandler', () => {
       libsMocks.restore()
       libsMocks = new mocks.Libs()
       libsMocks.stubs.ipRangeCheck.returns(false)
-      baseMocks.stubs.service.config.get.resolves({auth:true})
+      baseMocks.stubs.service.config.get.resolves({auth: true})
       await socketsHandler.init(baseMocks.stubs.service.server, baseMocks.stubs.service, commandsMocks.stubs)
-      await libsMocks.stubs.socketIoAuth.getCall(0).args[1].authenticate(socket, {}, cb);
+      await libsMocks.stubs.socketIoAuth.getCall(0).args[1].authenticate(socket, {}, cb)
       await waitForFinish()
       return Promise.all([
         test.expect(result.error).to.equal(null),
@@ -139,10 +145,10 @@ test.describe('socketsHandler', () => {
       libsMocks.restore()
       libsMocks = new mocks.Libs()
       libsMocks.stubs.ipRangeCheck.returns(false)
-      baseMocks.stubs.service.config.get.resolves({auth:true})
+      baseMocks.stubs.service.config.get.resolves({auth: true})
       getUserBySecurityTokenStub.rejects(error)
       await socketsHandler.init(baseMocks.stubs.service.server, baseMocks.stubs.service, commandsMocks.stubs)
-      await libsMocks.stubs.socketIoAuth.getCall(0).args[1].authenticate(socket, {}, cb);
+      await libsMocks.stubs.socketIoAuth.getCall(0).args[1].authenticate(socket, {}, cb)
       await waitForFinish()
       return Promise.all([
         test.expect(result.error).to.equal(error),
@@ -156,9 +162,9 @@ test.describe('socketsHandler', () => {
       libsMocks.restore()
       libsMocks = new mocks.Libs()
       libsMocks.stubs.ipRangeCheck.returns(false)
-      baseMocks.stubs.service.config.get.resolves({auth:true})
+      baseMocks.stubs.service.config.get.resolves({auth: true})
       await socketsHandler.init(baseMocks.stubs.service.server, baseMocks.stubs.service, commandsMocks.stubs)
-      await libsMocks.stubs.socketIoAuth.getCall(0).args[1].authenticate(socket, {}, cb);
+      await libsMocks.stubs.socketIoAuth.getCall(0).args[1].authenticate(socket, {}, cb)
       await waitForFinish()
     })
 
@@ -213,9 +219,9 @@ test.describe('socketsHandler', () => {
       libsMocks.restore()
       libsMocks = new mocks.Libs()
       libsMocks.stubs.ipRangeCheck.returns(false)
-      baseMocks.stubs.service.config.get.resolves({auth:true})
+      baseMocks.stubs.service.config.get.resolves({auth: true})
       await socketsHandler.init(baseMocks.stubs.service.server, baseMocks.stubs.service, commandsMocks.stubs)
-      await libsMocks.stubs.socketIoAuth.getCall(0).args[1].authenticate(socket, {}, cb);
+      await libsMocks.stubs.socketIoAuth.getCall(0).args[1].authenticate(socket, {}, cb)
       await waitForFinish()
     })
 
