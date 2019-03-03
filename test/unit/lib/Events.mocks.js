@@ -45,6 +45,7 @@ const Mock = function () {
   }
 
   emitterStubs.on.returns = emmiterOnFake.returns
+  emitterStubs.on.runOnRegister = emmiterOnFake.runOnRegister
 
   events.emitter = emitterStubs
 
