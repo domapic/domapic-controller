@@ -572,16 +572,19 @@ test.describe('users api', function () {
             console.log(response.body)
             console.log('----------------- pluginUserId')
             console.log(pluginUserId)
-            return getApiKey({
-              user: response.body._id
-            }).then(response => {
-              console.log(response)
-              pluginApiKey = response.body.apiKey
-              console.log('----------------- pluginApiKey')
-              console.log(pluginApiKey)
-              authenticator.loginApiKey(response.body.name, pluginApiKey);
-              return Promise.resolve()
-            })
+            return utils.doLogin(authenticator)
+              .then(() => {
+                return getApiKey({
+                  user: pluginUserId
+                }).then(response => {
+                  console.log(response.body)
+                  pluginApiKey = response.body.apiKey
+                  console.log('----------------- pluginApiKey')
+                  console.log(pluginApiKey)
+                  authenticator.loginApiKey(response.body.name, pluginApiKey);
+                  return Promise.resolve()
+                })
+              })
           })
         })
       })
