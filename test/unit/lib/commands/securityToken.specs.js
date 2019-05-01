@@ -41,6 +41,10 @@ test.describe('securityToken commands', () => {
       const fooUserData = {
         _id: fooUserId
       }
+      const fooCreatorId = 'foo-creator-id'
+      const fooCreatorData = {
+        _id: fooCreatorId
+      }
       test.it('should create and save a SecurityToken model with the received user data', () => {
         return commands.add(fooUserData, 'jwt')
           .then(() => {
@@ -49,7 +53,24 @@ test.describe('securityToken commands', () => {
               test.expect(modelsMocks.stubs.SecurityToken).to.have.been.calledWith({
                 _user: fooUserId,
                 token: 'foo-token',
-                type: 'jwt'
+                type: 'jwt',
+                createdBy: undefined
+              }),
+              test.expect(modelsMocks.stubs.securityToken.save).to.have.been.called()
+            ])
+          })
+      })
+
+      test.it('should add the user creator id to the securityToken', () => {
+        return commands.add(fooUserData, 'apiKey', fooCreatorData)
+          .then(() => {
+            return Promise.all([
+              test.expect(randTokenStub).to.have.been.called(),
+              test.expect(modelsMocks.stubs.SecurityToken).to.have.been.calledWith({
+                _user: fooUserId,
+                token: 'foo-token',
+                type: 'apiKey',
+                createdBy: fooCreatorId
               }),
               test.expect(modelsMocks.stubs.securityToken.save).to.have.been.called()
             ])

@@ -58,6 +58,30 @@ test.describe('security utils', () => {
           ])
         })
     })
+
+    test.it('should override role to admin if user has adminPermissions property set to true', () => {
+      const fooToken = 'fooToken'
+      commandsMocks.stubs.securityToken.getUser.resolves({
+        _id: 'fooId',
+        name: 'fooName',
+        email: 'fooEmail',
+        role: 'fooRole',
+        password: 'fooPassword',
+        adminPermissions: true
+      })
+      return getUserBySecurityToken(fooToken)
+        .then(result => {
+          return Promise.all([
+            test.expect(commandsMocks.stubs.securityToken.getUser).to.have.been.calledWith(fooToken),
+            test.expect(result).to.deep.equal({
+              _id: 'fooId',
+              name: 'fooName',
+              email: 'fooEmail',
+              role: 'admin'
+            })
+          ])
+        })
+    })
   })
 
   test.describe('AdminOrOwner instance', () => {
