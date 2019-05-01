@@ -560,7 +560,7 @@ test.describe('users api', function () {
       })
     })
 
-    test.describe('when user has role "plugin" with adminPermissions checked', () => {
+    test.describe('when user has role "plugin" with adminPermissions checked and is logged using api key', () => {
       let pluginUserId
       let pluginApiKey
 
@@ -575,6 +575,7 @@ test.describe('users api', function () {
             return getApiKey({
               user: response.body._id
             }).then(response => {
+              console.log(response)
               pluginApiKey = response.body.apiKey
               console.log('----------------- pluginApiKey')
               console.log(pluginApiKey)
