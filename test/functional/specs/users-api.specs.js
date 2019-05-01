@@ -546,6 +546,27 @@ test.describe('users api', function () {
       })
     })
 
+    test.describe('when user has role "plugin" with adminPermissions checked', () => {
+      test.before(() => {
+        return utils.ensureUserAndDoLogin(authenticator, pluginUser)
+      })
+
+      test.after(() => {
+        return updateUser(pluginUserId, {
+          adminPermissions: false
+        })
+      })
+
+      test.it('should be able to update data of operator users, including role', () => {
+        return updateUser(operatorUserId, {
+          password: 'foo',
+          role: 'operator'
+        }).then(response => {
+          return test.expect(response.statusCode).to.equal(204)
+        })
+      })
+    })
+
     test.describe('when user is operator', () => {
       test.before(() => {
         return utils.ensureUserAndDoLogin(authenticator, operatorUser)
@@ -636,6 +657,17 @@ test.describe('users api', function () {
 
     test.before(() => {
       return utils.ensureUserAndDoLogin(authenticator, pluginUser)
+    })
+
+    test.it('should not be able to update self data', () => {
+      return updateUser(pluginUserId, {
+        adminPermissions: true
+      }).then(response => {
+        return Promise.all([
+          test.expect(response.body.message).to.contain('Not authorized'),
+          test.expect(response.statusCode).to.equal(403)
+        ])
+      })
     })
 
     test.describe('add user', () => {
