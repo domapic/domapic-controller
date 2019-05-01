@@ -8,6 +8,7 @@ test.describe('users api', function () {
   let authenticator = utils.Authenticator()
   let adminUserId
   let pluginId
+  let pluginUserId
   let entityId
   let operatorUserId
 
@@ -471,7 +472,6 @@ test.describe('users api', function () {
 
   test.describe('update user', () => {
     let moduleUserId
-    let pluginUserId
 
     test.before(() => {
       return utils.doLogin(authenticator)
