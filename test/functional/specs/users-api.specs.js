@@ -538,21 +538,27 @@ test.describe('users api', function () {
       })
 
       test.it('should be able to update adminPermissions of plugin users', () => {
-        return updateUser(pluginUserId, {
-          adminPermissions: true
-        }).then(response => {
-          return test.expect(response.statusCode).to.equal(204)
+        return getUsers().then(usersResponse => {
+          return Promise.resolve(usersResponse.body.find(userData => userData.name === 'foo-plugin')._id)
+        }).then(pluginId => {
+          return updateUser(pluginId, {
+            adminPermissions: true
+          }).then(response => {
+            return test.expect(response.statusCode).to.equal(204)
+          })
         })
       })
     })
 
     test.describe('when user has role "plugin" with adminPermissions checked', () => {
+      let pluginUserId
       test.before(() => {
         return utils.ensureUserAndDoLogin(authenticator, pluginUser).then(() => {
-          return getUserMe().then(data => {
-            console.log("----------------- userMe")
-            console.log(data)
-            console.log("----------------- pluginUserId")
+          return getUserMe().then(response => {
+            pluginUserId = response.body._id
+            console.log('----------------- userMe')
+            console.log(response.body)
+            console.log('----------------- pluginUserId')
             console.log(pluginUserId)
             return Promise.resolve()
           })
