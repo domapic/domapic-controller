@@ -548,7 +548,15 @@ test.describe('users api', function () {
 
     test.describe('when user has role "plugin" with adminPermissions checked', () => {
       test.before(() => {
-        return utils.ensureUserAndDoLogin(authenticator, pluginUser)
+        return utils.ensureUserAndDoLogin(authenticator, pluginUser).then(() => {
+          return getUserMe().then(data => {
+            console.log("----------------- userMe")
+            console.log(data)
+            console.log("----------------- pluginUserId")
+            console.log(pluginUserId)
+            return Promise.resolve()
+          })
+        })
       })
 
       test.after(() => {
