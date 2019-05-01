@@ -568,14 +568,14 @@ test.describe('users api', function () {
         return utils.ensureUserAndDoLogin(authenticator, pluginUser).then(() => {
           return getUserMe().then(response => {
             pluginUserId = response.body._id
-                return getApiKey(pluginUserId).then(response => {
-                  console.log(response.body)
-                  pluginApiKey = response.body.apiKey
-                  console.log('----------------- pluginApiKey')
-                  console.log(pluginApiKey)
-                  authenticator.loginApiKey(response.body.name, pluginApiKey);
-                  return Promise.resolve()
-                })
+            return getApiKey(pluginUserId).then(response => {
+              console.log(response.body)
+              pluginApiKey = response.body.apiKey
+              console.log('----------------- pluginApiKey')
+              console.log(pluginApiKey)
+              authenticator.loginApiKey(response.body.name, pluginApiKey)
+              return Promise.resolve()
+            })
           })
         })
       })
