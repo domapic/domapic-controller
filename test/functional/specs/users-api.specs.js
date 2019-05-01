@@ -73,6 +73,16 @@ test.describe('users api', function () {
     })
   }
 
+  const getApiKey = user => {
+    return utils.request('/auth/apikey', {
+      method: 'POST',
+      body: {
+        user
+      },
+      ...authenticator.credentials()
+    })
+  }
+
   const getAbilities = function (filters) {
     return utils.request('/abilities', {
       method: 'GET',
@@ -552,6 +562,8 @@ test.describe('users api', function () {
 
     test.describe('when user has role "plugin" with adminPermissions checked', () => {
       let pluginUserId
+      let pluginApiKey
+
       test.before(() => {
         return utils.ensureUserAndDoLogin(authenticator, pluginUser).then(() => {
           return getUserMe().then(response => {
@@ -560,7 +572,15 @@ test.describe('users api', function () {
             console.log(response.body)
             console.log('----------------- pluginUserId')
             console.log(pluginUserId)
-            return Promise.resolve()
+            return getApiKey({
+              user: response.body._id
+            }).then(response => {
+              pluginApiKey = response.apiKey
+              console.log('----------------- pluginApiKey')
+              console.log(pluginApiKey)
+              authenticator.loginApiKey(response.body.name, pluginApiKey);
+              return Promise.resolve()
+            })
           })
         })
       })
