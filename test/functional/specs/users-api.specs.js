@@ -575,7 +575,7 @@ test.describe('users api', function () {
             return getApiKey({
               user: response.body._id
             }).then(response => {
-              pluginApiKey = response.apiKey
+              pluginApiKey = response.body.apiKey
               console.log('----------------- pluginApiKey')
               console.log(pluginApiKey)
               authenticator.loginApiKey(response.body.name, pluginApiKey);
