@@ -536,6 +536,14 @@ test.describe('users api', function () {
           ])
         })
       })
+
+      test.it('should be able to update adminPermissions of plugin users', () => {
+        return updateUser(pluginUserId, {
+          adminPermissions: true
+        }).then(response => {
+          return test.expect(response.statusCode).to.equal(204)
+        })
+      })
     })
 
     test.describe('when user is operator', () => {
