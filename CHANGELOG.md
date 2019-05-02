@@ -10,6 +10,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 ### Removed
 
+## [1.0.0-beta.4] - 2019-05-02
+### Fixed
+- Remove unnecessary folder published to npm.
+
+### Changed
+- Use files property in package.json instead of npmignore file.
+
 ## [1.0.0-beta.3] - 2019-05-01
 ### Added
 - Add user adminPermissions property, intended for grant admin permissions to plugin users when login using apiKey
