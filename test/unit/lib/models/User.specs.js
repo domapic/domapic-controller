@@ -62,7 +62,7 @@ test.describe('user model', () => {
     test.describe('email set', () => {
       test.it('should convert email to lower case', () => {
         model = user.Model(baseMocks.stubs.service)
-        test.expect(model.email.set("Foo@fOO.coM")).to.equal("foo@foo.com")
+        test.expect(model.email.set('Foo@fOO.coM')).to.equal('foo@foo.com')
       })
     })
 
