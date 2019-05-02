@@ -313,6 +313,20 @@ test.describe('users api', function () {
         })
       })
 
+      test.it('should return a bad data error if an already existant email with upperCases is provided', () => {
+        return utils.createUser(authenticator, {
+          name: 'foo-name-2',
+          role: 'admin',
+          email: 'OPERATOR@foo.com',
+          password: 'foo'
+        }).then((response) => {
+          return Promise.all([
+            test.expect(response.body.message).to.equal('email: Email already exists'),
+            test.expect(response.statusCode).to.equal(422)
+          ])
+        })
+      })
+
       test.it('should return a bad data error if an already existant name is provided', () => {
         return utils.createUser(authenticator, {
           name: operatorUser.name,

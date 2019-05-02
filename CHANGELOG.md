@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [1.0.0-beta.4] - 2019-05-02
 ### Fixed
 - Remove unnecessary folder published to npm.
+- Convert email into lowercase when saving it to database.
 
 ### Changed
 - Use files property in package.json instead of npmignore file.
