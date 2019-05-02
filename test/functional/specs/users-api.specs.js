@@ -8,6 +8,7 @@ test.describe('users api', function () {
   let authenticator = utils.Authenticator()
   let adminUserId
   let pluginId
+  let pluginUserId
   let entityId
   let operatorUserId
 
@@ -68,6 +69,16 @@ test.describe('users api', function () {
     return utils.request('/abilities', {
       method: 'POST',
       body: abilityData,
+      ...authenticator.credentials()
+    })
+  }
+
+  const getApiKey = user => {
+    return utils.request('/auth/apikey', {
+      method: 'POST',
+      body: {
+        user
+      },
       ...authenticator.credentials()
     })
   }
@@ -471,7 +482,6 @@ test.describe('users api', function () {
 
   test.describe('update user', () => {
     let moduleUserId
-    let pluginUserId
 
     test.before(() => {
       return utils.doLogin(authenticator)
@@ -534,6 +544,51 @@ test.describe('users api', function () {
             test.expect(response.body.message).to.contain('Not authorized'),
             test.expect(response.statusCode).to.equal(403)
           ])
+        })
+      })
+
+      test.it('should be able to update adminPermissions of plugin users', () => {
+        return getUsers().then(usersResponse => {
+          return Promise.resolve(usersResponse.body.find(userData => userData.name === 'foo-plugin')._id)
+        }).then(pluginId => {
+          return updateUser(pluginId, {
+            adminPermissions: true
+          }).then(response => {
+            return test.expect(response.statusCode).to.equal(204)
+          })
+        })
+      })
+    })
+
+    test.describe('when user has role "plugin" with adminPermissions checked and is logged using api key', () => {
+      let pluginUserId
+      let pluginApiKey
+
+      test.before(() => {
+        return utils.ensureUserAndDoLogin(authenticator, pluginUser).then(() => {
+          return getUserMe().then(response => {
+            pluginUserId = response.body._id
+            return getApiKey(pluginUserId).then(response => {
+              pluginApiKey = response.body.apiKey
+              authenticator.loginApiKey(response.body.name, pluginApiKey)
+              return Promise.resolve()
+            })
+          })
+        })
+      })
+
+      test.after(() => {
+        return updateUser(pluginUserId, {
+          adminPermissions: false
+        })
+      })
+
+      test.it('should be able to update data of operator users, including role', () => {
+        return updateUser(operatorUserId, {
+          password: 'foo',
+          role: 'operator'
+        }).then(response => {
+          return test.expect(response.statusCode).to.equal(204)
         })
       })
     })
@@ -628,6 +683,17 @@ test.describe('users api', function () {
 
     test.before(() => {
       return utils.ensureUserAndDoLogin(authenticator, pluginUser)
+    })
+
+    test.it('should not be able to update self data', () => {
+      return updateUser(pluginUserId, {
+        adminPermissions: true
+      }).then(response => {
+        return Promise.all([
+          test.expect(response.body.message).to.contain('Not authorized'),
+          test.expect(response.statusCode).to.equal(403)
+        ])
+      })
     })
 
     test.describe('add user', () => {

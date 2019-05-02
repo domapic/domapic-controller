@@ -450,9 +450,50 @@ test.describe('users api', () => {
         })
       })
 
+      test.it('should resolve if target user has plugin role and only adminPermissions are being updated', () => {
+        commandsMocks.stubs.user.getById.resolves({
+          role: 'plugin'
+        })
+
+        return operations.updateUser.auth(fooUser, fooParams, {
+          adminPermissions: true
+        }).then(() => {
+          return test.expect(true).to.be.true()
+        })
+      })
+
+      test.it('should reject if target user has plugin role and any other key plus adminPermissions is being updated', () => {
+        commandsMocks.stubs.user.getById.resolves({
+          role: 'plugin'
+        })
+
+        return operations.updateUser.auth(fooUser, fooParams, {
+          adminPermissions: true,
+          name: 'foo'
+        }).then(() => {
+          return test.assert.fail()
+        }, err => {
+          return test.expect(err).to.be.an.instanceof(Error)
+        })
+      })
+
+      test.it('should reject if target user has plugin role and any other key than adminPermissions is being updated', () => {
+        commandsMocks.stubs.user.getById.resolves({
+          role: 'plugin'
+        })
+
+        return operations.updateUser.auth(fooUser, fooParams, {
+          name: 'foo'
+        }).then(() => {
+          return test.assert.fail()
+        }, err => {
+          return test.expect(err).to.be.an.instanceof(Error)
+        })
+      })
+
       test.it('should reject if user is not admin and wants to update role', () => {
         commandsMocks.stubs.user.getById.resolves({
-          role: 'operator'
+          role: 'plugin'
         })
 
         return operations.updateUser.auth({
@@ -460,6 +501,39 @@ test.describe('users api', () => {
           role: 'operator'
         }, fooParams, {
           role: 'admin'
+        }).then(() => {
+          return test.assert.fail()
+        }, err => {
+          return test.expect(err).to.be.an.instanceof(Error)
+        })
+      })
+
+      test.it('should reject if user is admin and wants to update adminPermissions of a non plugin user', () => {
+        commandsMocks.stubs.user.getById.resolves({
+          role: 'operator'
+        })
+
+        return operations.updateUser.auth({
+          fooUser
+        }, fooParams, {
+          adminPermissions: true
+        }).then(() => {
+          return test.assert.fail()
+        }, err => {
+          return test.expect(err).to.be.an.instanceof(Error)
+        })
+      })
+
+      test.it('should reject if user is admin and wants to update adminPermissions', () => {
+        commandsMocks.stubs.user.getById.resolves({
+          role: 'operator'
+        })
+
+        return operations.updateUser.auth({
+          ...fooUser,
+          role: 'plugin'
+        }, fooParams, {
+          adminPermissions: true
         }).then(() => {
           return test.assert.fail()
         }, err => {

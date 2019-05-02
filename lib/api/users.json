@@ -35,6 +35,10 @@
           "updatedAt": {
             "description": "Last update date timestamp",
             "type": "string"
+          },
+          "adminPermissions": {
+            "description": "Grant admin permissions to this user",
+            "type": "boolean"
           }
         },
         "additionalProperties": false,
@@ -98,6 +102,10 @@
             "description": "Role assigned to the user",
             "type": "string",
             "enum": ["admin", "operator", "module", "plugin", "service-registerer"]
+          },
+          "adminPermissions": {
+            "description": "Grant admin permissions to this user",
+            "type": "boolean"
           }
         },
         "additionalProperties": false,

@@ -10,6 +10,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 ### Removed
 
+## [1.0.0-beta.3] - 2019-05-01
+### Added
+- Add user adminPermissions property, intended for grant admin permissions to plugin users when login using apiKey
+- Avoid any other user than admin updating adminPermissions property
+
 ## [1.0.0-beta.2] - 2019-03-02
 ### Added
 - Add web ui
